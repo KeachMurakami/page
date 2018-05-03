@@ -15,13 +15,13 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [[menu.main]]
     name = "About (Jpn)"
-    url = "/About_jpn/"
+    url = "/about_jpn/"
 [[menu.main]]
     name = "About (Eng)"
-    url = "/About_eng/"
+    url = "/about_eng/"
 [[menu.main]]
     name = "Publication"
-    url = "/publicationList/"
+    url = "/publication_list/"
 
 [params]
     description = "A website built through Hugo and blogdown."

@@ -42,7 +42,7 @@
     
     <li><a href="../../../../about_jpn/">About (Jpn)</a></li>
     
-    <li><a href="../../../../publicationlist/">Publication</a></li>
+    <li><a href="../../../../publication_list/">Publication</a></li>
     
   </ul>
 </nav>
@@ -65,9 +65,13 @@
 
     <div class="article-content">
       <ul>
-<li>Jekyll + servr体制からHugo + blogdown体制へ移行</li>
+<li>Jekyll + servr体制からHugo + blogdown体制へ移行
+<ul>
 <li>開発の時流に合わせる意味がメイン</li>
+</ul></li>
 </ul>
+<p>引っかかりどころメモ<br />
+<code>blogdown::build_site()/serve_site()</code>でmenuを生成すると、ディレクトリ名が勝手に変更されるので、<code>config.toml</code>の<code>url</code>と合わず、リンクが効かなくなる。ココらへんは全部snake_caseで書くのがよさそう。</p>
 
     </div>
   </article>

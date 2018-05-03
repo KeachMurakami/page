@@ -4,4 +4,7 @@ date: 2018-05-03
 ---
 
 - Jekyll + servr体制からHugo + blogdown体制へ移行
-- 開発の時流に合わせる意味がメイン
+    - 開発の時流に合わせる意味がメイン
+    
+引っかかりどころメモ  
+`blogdown::build_site()/serve_site()`でmenuを生成すると、ディレクトリ名が勝手に変更されるので、`config.toml`の`url`と合わず、リンクが効かなくなる。ココらへんは全部snake_caseで書くのがよさそう。
