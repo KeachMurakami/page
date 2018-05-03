@@ -1,4 +1,4 @@
-baseurl = "https://keachmurakami.github.io/page/"
+baseurl = "https://keachmurakami.github.io/"
 relativeurls = true
 publishDir = "docs"
 hasCJKLanguage = true
