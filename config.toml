@@ -15,10 +15,10 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [[menu.main]]
     name = "About (Jpn)"
-    url = "/About_jpn/"
+    url = "/cv_jpn/"
 [[menu.main]]
     name = "About (Eng)"
-    url = "/About_eng/"
+    url = "/cv_eng/"
 [[menu.main]]
     name = "Publication"
     url = "/publication_list/"

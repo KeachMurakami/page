@@ -1,5 +1,5 @@
 ---
-title: About
+title: " "
 ---
 
 ```{r echo = F, message = F, warning = F}
@@ -8,7 +8,7 @@ library(knitr)
 opts_chunk$set(echo = FALSE, warning = F, message = F)
 ```
 
-<FONT color="grey">Last update: `r lubridate::now()`  </FONT><br>
+<FONT color="grey">Last update: `r lubridate::now()`  </FONT>
 
 ---
 
