@@ -3,7 +3,7 @@ relativeurls = true
 publishDir = "docs"
 hasCJKLanguage = true
 languageCode = "ja-jp"
-title = "A Hugo website"
+title = "A plant researcher"
 theme = "hugo-lithium"
 googleAnalytics = ""
 disqusShortname = ""
@@ -24,8 +24,6 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     url = "/publication_list/"
 
 [params]
-    description = "A website built through Hugo and blogdown."
-
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.11.0"
     highlightjsCDN = "//cdn.bootcss.com"

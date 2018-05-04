@@ -6,8 +6,8 @@
 <meta name="generator" content="Hugo 0.18.1" />
 
 
-<title>論文投稿 (Regular_005, 3誌目へ再投稿) - A plant researcher</title>
-<meta property="og:title" content="論文投稿 (Regular_005, 3誌目へ再投稿) - A plant researcher">
+<title>jekyll -&gt; Hugo - A plant researcher</title>
+<meta property="og:title" content="jekyll -&gt; Hugo - A plant researcher">
 
 
 
@@ -57,20 +57,26 @@
     <span class="article-duration">1 min read</span>
     
 
-    <h1 class="article-title">論文投稿 (Regular_005, 3誌目へ再投稿)</h1>
+    <h1 class="article-title">jekyll -&gt; Hugo</h1>
 
     
-    <span class="article-date">2018/02/27</span>
+    <span class="article-date">2018/05/03</span>
     
 
     <div class="article-content">
-      <p><a href="https://keachmurakami.github.io/2018/01/04/pub_etr_model.html">年始めに再投稿可リジェクトで帰ってきた論文</a>を再投稿。</p>
+      <ul>
+<li>Jekyll + servr体制からHugo + blogdown体制へ移行
 <ul>
-<li>ANU行きのVISAをようやく申請</li>
-<li>5/7入りの予定</li>
-<li>もろもろ整う気がしない</li>
-<li>農業気象用のスライドをつくり始める</li>
-<li>IHC2018がオーラルに変更された</li>
+<li>blogdown時代なので時流に合わせて</li>
+</ul></li>
+</ul>
+<p>引っかかりどころメモ</p>
+<ul>
+<li><code>blogdown::build_site()</code> -&gt; docs以下に公開ファイル群を生成 -&gt; git push -&gt; github pagesで公開</li>
+<li><code>blogdown::build_site()</code>はデフォルトだと全Rmarkdownを再評価するので遅い
+<ul>
+<li>chunk optionで<code>cash=TRUE</code>しておく</li>
+</ul></li>
 </ul>
 
     </div>

@@ -4,7 +4,10 @@ date: 2018-05-03
 ---
 
 - Jekyll + servr体制からHugo + blogdown体制へ移行
-    - 開発の時流に合わせる意味がメイン
+    - blogdown時代なので時流に合わせて
     
 引っかかりどころメモ  
-`blogdown::build_site()/serve_site()`でmenuを生成すると、ディレクトリ名が勝手に変更されるので、`config.toml`の`url`と合わず、リンクが効かなくなる。ココらへんは全部snake_caseで書くのがよさそう。
+
+- `blogdown::build_site()` -> docs以下に公開ファイル群を生成 -> git push -> github pagesで公開
+- `blogdown::build_site()`はデフォルトだと全Rmarkdownを再評価するので遅い
+    - chunk optionで`cash=TRUE`しておく
