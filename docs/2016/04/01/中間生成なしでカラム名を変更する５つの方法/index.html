@@ -213,19 +213,19 @@ colnames_transmute &lt;-
 
 (time_dplyr_rename &lt;- system.time(colnames_rename(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   9.155   0.234   9.667</code></pre>
+##  10.267   0.381  11.173</code></pre>
 <pre class="r"><code>(time_mag &lt;- system.time(colnames_set_names(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   6.479   0.163   6.859</code></pre>
+##   7.147   0.268   7.751</code></pre>
 <pre class="r"><code>(time_dt &lt;- system.time(colnames_setnames(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   6.923   0.169   7.316</code></pre>
+##   6.100   0.084   6.280</code></pre>
 <pre class="r"><code>(time_dplyr_select &lt;- system.time(colnames_select(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##  18.082   0.503  19.209</code></pre>
+##  14.207   0.046  14.294</code></pre>
 <pre class="r"><code>(time_dplyr_transmute &lt;- system.time(colnames_transmute(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##  21.571   0.600  22.910</code></pre>
+##  16.803   0.066  16.931</code></pre>
 <pre class="r"><code># とりあえず可視化する
 data_frame(funs = factor(c(&quot;dplyr::rename&quot;, &quot;dplyr::select&quot;, &quot;dplyr::transmute&quot;, &quot;magrittr::set_names&quot;, &quot;data.table::setnames&quot;)),
            Time = c(time_dplyr_rename[3], time_dplyr_select[3], time_dplyr_transmute[3], time_mag[3], time_dt[3])) %&gt;%

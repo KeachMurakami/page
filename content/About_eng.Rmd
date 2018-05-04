@@ -2,8 +2,6 @@
 title: About
 ---
 
-<link rel="stylesheet" href="https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css">
-
 ```{r echo = F, message = F, warning = F}
 library(tidyverse)
 library(knitr)
@@ -55,7 +53,7 @@ data.frame(
 ### Works
 
 - [Publications](https://keachmurakami.github.io/publications/)
-- [<i class="ai ai-google-scholar ai-2x"></i>](https://scholar.google.co.jp/citations?user=IgtMr-oAAAAJ&hl=en) / [<i class="ai ai-orcid ai-2x"></i>](https://orcid.org/0000-0001-8150-9535) / [<i class="ai ai-researchgate ai-2x"></i>](https://www.researchgate.net/profile/Keach_Murakami) 
+- [`r icon::ai("google-scholar", size=2)`](https://scholar.google.co.jp/citations?user=IgtMr-oAAAAJ&hl=en) / [`r icon::ai("orcid", size=2)`](https://orcid.org/0000-0001-8150-9535) / [`r icon::ai("researchgate", size=2)`](https://www.researchgate.net/profile/Keach_Murakami) 
 
 ### Professional Experience
 
@@ -109,7 +107,7 @@ data.frame(
 ## Others
 
 - Languages
-    - Japanese > [R](https://www.r-project.org/) >> English
+    - Japanese > [`r icon::fa("r", size=2)`](https://www.r-project.org/) >> English
 - Activities
     - Football/Soccer
     - Cycling (Fuji)
