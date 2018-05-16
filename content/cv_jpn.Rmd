@@ -8,19 +8,18 @@ library(knitr)
 opts_chunk$set(echo = FALSE, warning = F, message = F)
 ```
 
-<FONT color="grey">Last update: `r lubridate::now()`  </FONT>
-
----
+<div style="text-align: right; font-size: .7em">
+<FONT color="grey">Last update: `r lubridate::today()`  </FONT>
+</div>
 
 ## 人物
 
 ### 著者
 
-<ruby>村上<rp>（</rp><rt>むらかみ</rt><rp>）</rp></ruby>   <ruby>貴一<rp>（</rp><rt>きいち</rt><rp>）</rp></ruby> 博士 (農学)  
-Keach MURAKAMI (Ph.D.)
+<ruby>村上<rp>（</rp><rt>むらかみ</rt><rp>）</rp></ruby>   - <ruby>貴一<rp>（</rp><rt>きいち</rt><rp>）</rp></ruby> 博士 (農学); Keach MURAKAMI (Ph.D.)
 
-- E-mail: keach.murakami+gmail.com
-- [CV](https://www.dropbox.com/sh/iifrhaxt3rauv0m/AACqpUHhxcXPIaoColJHmKLaa?preview=CV.pdf)
+- mail: keach.murakami`r icon::fa_at()`gmail.com
+- CV: [`r icon::fa_file_alt()`](https://www.dropbox.com/sh/iifrhaxt3rauv0m/AACqpUHhxcXPIaoColJHmKLaa?preview=CV.pdf)
 
 ### 所属
 
@@ -127,11 +126,12 @@ data.frame(
 
 ### 好きなもの
 
-- サッカー  
+- `r icon::fa("futbol")`  
     - 部活・サークル (--2015)
     - 都リーグ社会人4部 (2015--2016)  
     - サッカー審判員4級 (2015--2016)  
     - 観るだけ (2017--)
-- 自転車
+- `r icon::fa("bicycle")`  
     - Fuji (2代目)
--  [`r icon::fa("r", size=2)`](https://www.r-project.org/)
+    - TREK (Canberra滞在中)
+-  [`r icon::fa("r-project")`](https://www.r-project.org/)

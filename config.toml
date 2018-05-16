@@ -5,7 +5,7 @@ hasCJKLanguage = true
 languageCode = "ja-jp"
 title = "A plant researcher"
 theme = "hugo-lithium"
-googleAnalytics = ""
+googleAnalytics = "UA-119357988-1"
 disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 

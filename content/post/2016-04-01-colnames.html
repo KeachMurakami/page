@@ -5,8 +5,6 @@ date: 2016-04-01
 
 
 
-<pre><code>## Warning in system(&quot;/usr/libexec/java_home&quot;, intern = TRUE): running command
-## &#39;/usr/libexec/java_home&#39; had status 1</code></pre>
 <pre><code>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
 ## logical.return = TRUE, : there is no package called &#39;agricolae&#39;</code></pre>
 <pre><code>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
@@ -149,19 +147,19 @@ colnames_transmute &lt;-
 
 (time_dplyr_rename &lt;- system.time(colnames_rename(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   8.086   0.078   8.299</code></pre>
+##   7.738   0.069   7.889</code></pre>
 <pre class="r"><code>(time_mag &lt;- system.time(colnames_set_names(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   5.802   0.059   6.019</code></pre>
+##   5.187   0.029   5.255</code></pre>
 <pre class="r"><code>(time_dt &lt;- system.time(colnames_setnames(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   7.582   0.257   8.315</code></pre>
+##   5.520   0.020   5.561</code></pre>
 <pre class="r"><code>(time_dplyr_select &lt;- system.time(colnames_select(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##  18.539   0.560  19.812</code></pre>
+##  13.929   0.074  14.084</code></pre>
 <pre class="r"><code>(time_dplyr_transmute &lt;- system.time(colnames_transmute(10000)))</code></pre>
 <pre><code>##    user  system elapsed 
-##  21.864   0.636  23.303</code></pre>
+##  17.193   0.154  17.577</code></pre>
 <pre class="r"><code># とりあえず可視化する
 data_frame(funs = factor(c(&quot;dplyr::rename&quot;, &quot;dplyr::select&quot;, &quot;dplyr::transmute&quot;, &quot;magrittr::set_names&quot;, &quot;data.table::setnames&quot;)),
            Time = c(time_dplyr_rename[3], time_dplyr_select[3], time_dplyr_transmute[3], time_mag[3], time_dt[3])) %&gt;%
@@ -183,8 +181,8 @@ data_frame(funs = factor(c(&quot;dplyr::rename&quot;, &quot;dplyr::select&quot;,
 ##  ui       X11                         
 ##  language (EN)                        
 ##  collate  en_US.UTF-8                 
-##  tz       Asia/Tokyo                  
-##  date     2018-05-04                  
+##  tz       Australia/Brisbane          
+##  date     2018-05-16                  
 ## 
 ##  package      * version   date       source                          
 ##  assertthat     0.2.0     2017-04-11 CRAN (R 3.5.0)                  
@@ -246,8 +244,8 @@ data_frame(funs = factor(c(&quot;dplyr::rename&quot;, &quot;dplyr::select&quot;,
 ##  rprojroot      1.3-2     2018-01-03 CRAN (R 3.5.0)                  
 ##  scales       * 0.5.0     2017-08-24 CRAN (R 3.5.0)                  
 ##  stats        * 3.5.0     2018-04-24 local                           
-##  stringi        1.1.7     2018-03-12 CRAN (R 3.5.0)                  
-##  stringr      * 1.3.0     2018-02-19 CRAN (R 3.5.0)                  
+##  stringi        1.2.2     2018-05-02 cran (@1.2.2)                   
+##  stringr      * 1.3.1     2018-05-10 cran (@1.3.1)                   
 ##  tibble         1.4.2     2018-01-22 CRAN (R 3.5.0)                  
 ##  tidyr        * 0.8.0     2018-01-29 CRAN (R 3.5.0)                  
 ##  tools          3.5.0     2018-04-24 local                           

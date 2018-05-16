@@ -8,18 +8,17 @@ library(knitr)
 opts_chunk$set(echo = FALSE, warning = F, message = F)
 ```
 
-<FONT color="grey">Last update: `r lubridate::now()`  </FONT>
-
----
+<div style="text-align: right; font-size: .7em">
+<FONT color="grey">Last update: `r lubridate::today()`  </FONT>
+</div>
 
 ## Author
 
 ### Contact 
 
-Keach MURAKAMI (Ph.D.)  
-
-- E-mail: keach.murakami+gmail.com
-- [CV](https://www.dropbox.com/sh/iifrhaxt3rauv0m/AACqpUHhxcXPIaoColJHmKLaa?preview=CV.pdf)
+- Keach MURAKAMI (Ph.D.)  
+    - mail: keach.murakami`r icon::fa_at()`gmail.com
+    - CV: [`r icon::fa_file_alt()`](https://www.dropbox.com/sh/iifrhaxt3rauv0m/AACqpUHhxcXPIaoColJHmKLaa?preview=CV.pdf)
 
 ### Affiliation
 
@@ -107,7 +106,7 @@ data.frame(
 ## Others
 
 - Languages
-    - Japanese > [`r icon::fa("r", size=2)`](https://www.r-project.org/) >> English
+    - Japanese > [`r icon::fa("r-project")`](https://www.r-project.org/) >> English
 - Activities
-    - Football/Soccer
-    - Cycling (Fuji)
+    - `r icon::fa("futbol")`
+    - `r icon::fa("bicycle")` (Fuji -> TREK)

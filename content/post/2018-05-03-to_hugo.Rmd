@@ -1,5 +1,5 @@
 ---
-title: "jekyll -> Hugo"
+title: "Jekyll -> Hugo"
 date: 2018-05-03
 ---
 
@@ -10,4 +10,6 @@ date: 2018-05-03
 
 - `blogdown::build_site()` -> docs以下に公開ファイル群を生成 -> git push -> github pagesで公開
 - `blogdown::build_site()`はデフォルトだと全Rmarkdownを再評価するので遅い
-    - chunk optionで`cash=TRUE`しておく
+    - 少なくとも、chunk optionで`cash=TRUE`しておく
+    - `root/R/build.R`に生成用の関数を書いておいて、`blogdown::build_site(method = "custom")`
+- `about`などのいくつかの単語は予約語で大文字小文字など問題が起こるのでmain menuには使わないほうが無難
