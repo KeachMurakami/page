@@ -16,7 +16,7 @@ opts_chunk$set(echo = FALSE, warning = F, message = F)
 
 ### 著者
 
-<ruby>村上<rp>（</rp><rt>むらかみ</rt><rp>）</rp></ruby>   - <ruby>貴一<rp>（</rp><rt>きいち</rt><rp>）</rp></ruby> 博士 (農学); Keach MURAKAMI (Ph.D.)
+<ruby>村上<rp>（</rp><rt>むらかみ</rt><rp>）</rp></ruby>  <ruby>貴一<rp>（</rp><rt>きいち</rt><rp>）</rp></ruby> 博士 (農学); Keach MURAKAMI (Ph.D.)
 
 - mail: keach.murakami`r icon::fa_at()`gmail.com
 - CV: [`r icon::fa_file_alt()`](https://www.dropbox.com/sh/iifrhaxt3rauv0m/AACqpUHhxcXPIaoColJHmKLaa?preview=CV.pdf)
@@ -24,7 +24,7 @@ opts_chunk$set(echo = FALSE, warning = F, message = F)
 ### 所属
 
 2018.05--2019.01  
-The Australian National UniversityのChow laboratoryで客員研究員をしています
+Australian National UniversityのChow laboratoryで客員研究員をしています
 
 2017.04--2020.03  
 山口大学大学院創成科学研究科の生物環境情報工学研究室で博士研究員をしています  
