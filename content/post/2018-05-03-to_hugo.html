@@ -16,7 +16,7 @@ date: 2018-05-03
 <li><code>blogdown::build_site()</code> -&gt; docs以下に公開ファイル群を生成 -&gt; git push -&gt; github pagesで公開</li>
 <li><code>blogdown::build_site()</code>はデフォルトだと全Rmarkdownを再評価するので遅い
 <ul>
-<li>少なくとも、chunk optionで<code>cash=TRUE</code>しておく</li>
+<li>少なくとも、chunk optionで<code>cache=TRUE</code>しておく</li>
 <li><code>root/R/build.R</code>に生成用の関数を書いておいて、<code>blogdown::build_site(method = &quot;custom&quot;)</code></li>
 </ul></li>
 <li><code>about</code>などのいくつかの単語は予約語で大文字小文字など問題が起こるのでmain menuには使わないほうが無難</li>

@@ -127,7 +127,7 @@ original_articles <-
 other_articles <-
   c(
     ToRecord(
-      "co-authored",
+      "",
       "Effects of spectral distribution and photosynthetic photon flux density for overnight LED light irradiation on tomato seedling growth and leaf injury",
       paste(correspond(RM), "Takuto Yamano", KM, KF, sep = ", "),
       "2016",
@@ -136,7 +136,7 @@ other_articles <-
       "http://www.sciencedirect.com/science/article/pii/S0304423815303198"),
       
     ToRecord(
-      "letter",
+      "",
       "A basis for selecting light spectral distribution for evaluating leaf photosynthetic rates of plants grown under different light spectral distributions",
       paste(correspond(KM), RM, KF, sep = ", "),
       "2017",
@@ -350,33 +350,6 @@ symp_domestic <-
   )
 ```
 
-<!-- #### 業績一覧 -->
-
-<!-- #### 村上 貴一 (生物環境工学研究室) -->
-
-<!-- <br> -->
-
-<!-- ##### 査読付き論文 -->
-
-
-<!-- ##### 英文書籍 -->
-
-<!-- - `r length(books)/4`件 -->
-<!--     - 筆頭での執筆: 1件 -->
-
-<!-- ##### 国際学会 -->
-
-<!-- - `r length(symp_int)/4`件 -->
-<!--     - 筆頭での口頭発表: 1件 -->
-<!--     - 筆頭でのポスター発表: 2件 -->
-
-<!-- ##### 国内学会 -->
-
-<!-- - `r length(symp_domestic)/4`件 -->
-<!--     - 筆頭での口頭発表: 5件 -->
-<!--     - 筆頭でのポスター: 2件 -->
-
---------------
 
 <br>
 <sup>+</sup> -> Corresponding Author  
@@ -384,7 +357,7 @@ symp_domestic <-
 
 ### Journal Articles
 
-#### Original and first-author
+#### {(First | Corresponding) & Original} papers
 
 ```{r, message = F, echo = F, warning = F}
 original_articles %>%
@@ -393,7 +366,7 @@ original_articles %>%
 
 <br>
 
-#### Others
+#### Others papers
 
 ```{r, message = F, echo = F, warning = F}
 other_articles %>%
@@ -415,37 +388,9 @@ books %>%
 
 --------------
 
-<br>
-<sup>○</sup> -> Speaker  
+### Presentations
 
-### Presentations in International Academic Conferences
-
-```{r, message = F, echo = F}
-symp_int %>%
-  ToKable(in_what = "Venue Date")
-```
-
-<br>
-
-
-### Presentations in Domestic Academic Conferences
-
-```{r, message = F, echo = F}
-symp_domestic %>%
-  ToKable(in_what = "Venue Date")
-```
-
-----
-
-```{r eval = F, echo = F}
-# rmarkdown::render("~/Dropbox/KeachMurakami.github.io/PublicationList.Rmd")
-# knit(input = "~/Dropbox/KeachMurakami.github.io/PublicationList.Rmd",
-#      output = "~/Dropbox/KeachMurakami.github.io/PublicationList.md")
-```
-
-```{r map, echo = F, eval = F}
-library(leaflet)
-
+```{r map, echo = F, cache = T, message = F, warning = F}
 work_location <-
   data.frame(
     name = c("東大環境研", "山口大荊木研"),
@@ -460,56 +405,130 @@ work_location <-
 
 # name, lat, lng, from, to, url
 
-# ECB
-`_symp_ecb2012` <- c("日本生物環境工学会@東大", 35.7167, 139.7616, "2012-09-04", "2012-09-07", "")
-`_symp_ecb2013` <- c("日本生物環境工学会@香川大", 34.3428, 134.0380, "2013-09-02", "2013-09-05", "")
-`_symp_ecb2014` <- c("日本生物環境工学会@明治大御茶ノ水", 35.697224, 139.761536, "2014-09-09", "2014-09-11", "")
-`_symp_ecb2015` <- c("日本生物環境工学会@宮崎", 31.9603, 131.4704, "2015-09-08", "2015-09-11", "")
-`_symp_ecb2017` <- c("日本生物環境工学会@愛媛大樽味", 33.8389, 132.7919, "2017-08-30", "2017-09-04", "")
+# checker for me
+# symp_domestic %>%
+#   str_subset("@") %>%
+#   str_extract("@+.*")
 
-# AgrMet
-`_symp_agrmet2014` <- c("日本農業気象学会全国大会@北大", 43.0719, 141.3449, "2014-03-18", "2014-03-21", "")
-`_symp_agrmet2015` <- c("日本農業気象学会全国大会@つくば", 36.074657, 140.117862, "2015-03-16", "2015-03-19", "")
-`_symp_agrmet2016` <- c("日本農業気象学会全国大会@岡山大津山", 34.6874, 133.9222, "2016-03-14", "2016-03-17", "")
-`_symp_agrmet2017` <- c("日本農業気象学会全国大会@北里大十和田", 40.6242, 141.2379, "2017-03-14", "2017-03-17", "-")
-`_symp_agrmet2017block` <- c("日本農業気象学会 中国四国支部大会", 35.5152, 134.1734, "2017-12-07", "2017-12-08", "")
+Sys.unsetenv("ftp_proxy")
+Sys.unsetenv("http_proxy")
+Sys.unsetenv("https_proxy")
 
-# Photosynthesis
-`_symp_photosyn2014` <- c("日本光合成学会年会@近畿大奈良", 34.6720, 135.7325, "2014-05-30", "2014-05-31", "")
-`_symp_photosyn2015` <- c("日本光合成学会年会@岡山", 34.6682, 133.9164, "2015-05-22", "2015-05-23", "-")
-`_symp_photosyn2017` <- c("日本光合成学会年会@龍谷大瀬田", 34.9642, 135.9405, "2017-05-27", "2017-05-28", "")
+library(ggmap)
 
-# Horticulture
-`_symp_hort2015spr` <- c("園芸学会@千葉大西千葉", 35.6253, 140.1033, "2015-03-28", "2015-03-29", "-")
-`_symp_hort2016spr` <- c("園芸学会@東京農大本厚木", 35.4325, 139.3457, "2016-03-26", "2016-03-27", "-")
-`_symp_hort2017spr` <- c("園芸学会@日本大藤沢", 35.3804, 139.4688, "2017-03-19", "2017-03-20", "-")
+venue_domestic <-
+  c("伊都キャンパス",
+    "伊都キャンパス",
+    "鳥取大",
+    "愛媛大学農学部",
+    "龍谷大学瀬田キャンパス",
+    "岡山大学",
+    "岡山大学",
+    "シーガイア",
+    "文部科学省研究交流センター",
+    "近畿大学奈良キャンパス",
+    "北海道大学",
+    "北海道大学",
+    "香川大",
+    "東京大学弥生キャンパス",
+    "大阪府立大学中百舌鳥キャンパス")
 
-# Others
-`_symp_botany2014` <- c("植物学会@明治大生田", 35.613543, 139.548751, "2014-09-12", "2017-09-14", "-")
-`_symp_ecol2017` <- c("日本生態学会大会@早稲田大", 35.7087, 139.7196, "2017-03-14", "2017-03-18", "-")
+venue_int <-
+  c("Istanbul", "Canberra", "Evora", "Wageningen")
 
-# Interanational
-`_symp_lightsym2012` <- c("LightSym2012@Wageningen Univ (The Netherlands)", 51.985223, 5.663653, "2015-07-19", "2015-07-23", "")
-`_symp_greensys2015` <- c("GreenSys2015@University of Evora (Portugal)", 38.573125, -7.905660, "2015-07-19", "2015-07-23", "")
-`_symp_auspheno2016` <- c("ICEC|AusPheno2016@CSIRO (Australia)", -35.273162, 149.115286, "2016-07-19", "2015-07-23", "")
+symposium_location_domestic <-
+  symp_domestic %>%
+  str_subset("@") %>%
+  as.list() %>%
+  map2(.x = .,
+       .y = venue_domestic,
+       function(x, y){
+         geos <- geocode(y)
+         tibble(name = x, lat = geos$lat, lng = geos$lon)
+       }) %>%
+  bind_rows()
 
-convert_symp_log_to_df <-
-  function(symp_log){
-    matrix(symp_log) %>%
-    t %>%
-    as_data_frame %>%
-    set_names(c("name", "lat", "lng", "from", "to", "url")) %>%
-    mutate(lat = as.numeric(lat), lng = as.numeric(lng))
+symposium_location_int <-
+  symp_int %>%
+  str_subset("[0-9]{4}/[0-9]{2}/[0-9]{2}") %>%
+  as.list() %>%
+  map2(.x = .,
+       .y = venue_int,
+       function(x, y){
+         geos <- geocode(y)
+         tibble(name = x, lat = geos$lat, lng = geos$lon)
+       }) %>%
+  bind_rows()
+
+fill_na_recursive <-
+  function(tbl, venue){
+    na_index <- is.na(tbl$lat)
+      
+    for(xxx in which(na_index)){
+      geo <- geocode(venue[xxx])
+      tbl[xxx, "lat"] <- geo$lat
+      tbl[xxx, "lng"] <- geo$lon
+    }
+    
+    if(sum(is.na(tbl$lat)) != 0){
+      fill_na_recursive(tbl, venue)
+    } else {
+      return(tbl)
+    }
   }
 
-`_symp_log` <-
-  ls(pattern = "^_symp") %>%
-  map(get) %>%
-  map_df(convert_symp_log_to_df) %>%
-  mutate(popup = paste(name, "<br/>", from, "--", to))
+symposium_location_domestic <-
+  fill_na_recursive(tbl = symposium_location_domestic, venue = venue_domestic)
+symposium_location_int <-
+  fill_na_recursive(tbl = symposium_location_int, venue = venue_int)
 
-map_symp <-
-  leaflet(`_symp_log`) %>% 
-  addTiles() %>%
-  addMarkers(lng = ~lng, lat = ~lat, popup = ~popup)
+library(leaflet)
+library(htmlwidgets)
+library(widgetframe)
+
+symposium_map <-
+  symposium_location_domestic %>%
+    leaflet %>%
+    addTiles() %>%
+    addProviderTiles(providers$Stamen.Toner, group = "Toner") %>%
+    addCircleMarkers(col = "pink", lng = ~lng, lat = ~lat, popup = ~name, group = "Domestic") %>%
+    addCircleMarkers(data = symposium_location_int, 
+                     col = "skyblue", lng = ~lng, lat = ~lat, popup = ~name, group = "International") %>%
+    addLayersControl(
+      overlayGroups = c("Domestic", "International"),
+      options = layersControlOptions(collapsed = FALSE)
+    )
+
+frameWidget(symposium_map)
+
+# currentWD <- getwd()
+# setwd("static/leaflet")
+# saveWidget(symposium_map, "symposium_map.html")
+# setwd(currentWD)
+```
+
+<br>
+<sup>○</sup> -> Speaker  
+
+#### International Academic Conferences
+
+```{r, message = F, echo = F}
+symp_int %>%
+  ToKable(in_what = "Venue Date")
+```
+
+<br>
+
+#### Domestic Academic Conferences
+
+```{r, message = F, echo = F}
+symp_domestic %>%
+  ToKable(in_what = "Venue Date")
+```
+
+
+```{r eval = F, echo = F}
+# rmarkdown::render("~/Dropbox/KeachMurakami.github.io/PublicationList.Rmd")
+# knit(input = "~/Dropbox/KeachMurakami.github.io/PublicationList.Rmd",
+#      output = "~/Dropbox/KeachMurakami.github.io/PublicationList.md")
 ```
