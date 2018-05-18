@@ -390,7 +390,7 @@ books %>%
 
 ### Presentations
 
-```{r map, echo = F, cache = T, message = F, warning = F}
+```{r map, echo = F, cache = T, message = F, warning = F, out.width="100%"}
 work_location <-
   data.frame(
     name = c("東大環境研", "山口大荊木研"),
