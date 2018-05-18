@@ -489,17 +489,18 @@ library(widgetframe)
 symposium_map <-
   symposium_location_domestic %>%
     leaflet %>%
-    addTiles() %>%
-    addProviderTiles(providers$Stamen.Toner, group = "Toner") %>%
-    addCircleMarkers(col = "pink", lng = ~lng, lat = ~lat, popup = ~name, group = "Domestic") %>%
-    addCircleMarkers(data = symposium_location_int, 
-                     col = "skyblue", lng = ~lng, lat = ~lat, popup = ~name, group = "International") %>%
+    addProviderTiles(providers$CartoDB.DarkMatter) %>%
+    addCircleMarkers(lng = ~lng, lat = ~lat, popup = ~name, group = "<FONT color='pink'>Domestic</FONT>",
+                     col = "pink", opacity = .9) %>%
+    addCircleMarkers(data = symposium_location_int, lng = ~lng, lat = ~lat, popup = ~name, group = "<FONT color='skyblue'>International</FONT>",
+                     col = "skyblue", opacity = .9) %>%
     addLayersControl(
-      overlayGroups = c("Domestic", "International"),
-      options = layersControlOptions(collapsed = FALSE)
+      overlayGroups = c("<FONT color='pink'>Domestic</FONT>", "<FONT color='skyblue'>International</FONT>"),
+      options = layersControlOptions(collapsed = T)
     )
 
-# currentWD <- getwd()
+# symposium_map
+
 dir.create("leaflet", showWarnings = FALSE)
 setwd("leaflet")
 saveWidget(symposium_map, "symposium_map.html", selfcontained = T)
