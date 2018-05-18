@@ -483,21 +483,50 @@ symposium_location_int <-
   fill_na_recursive(tbl = symposium_location_int, venue = venue_int)
 
 library(leaflet)
+library(geosphere)
 library(htmlwidgets)
 library(widgetframe)
 
+#
+geos_univ <- list(UT = c(139.762, 35.71268),
+                  YU = c(131.4691, 34.14923),
+                  ANU = c(149.1185, -35.2777))
+
+flight_lines_ut <-
+  map(2:4, function(xxx){
+    xy_end <- c(symposium_location_int[xxx,]$lng, symposium_location_int[xxx,]$lat)
+    
+    gcIntermediate(geos_univ$UT, xy_end, n = 300, addStartEnd = T)
+    })
+
+flight_lines_anu <-
+  map(1, function(xxx){
+    xy_end <- c(symposium_location_int[xxx,]$lng, symposium_location_int[xxx,]$lat)
+    
+    gcIntermediate(geos_univ$ANU, xy_end, n = 300, addStartEnd = T)
+    })
+
+color_set_map <-
+  list(domestic = "<FONT color='pink'>Domestic</FONT>",
+       int = "<FONT color='skyblue'>International</FONT>")
+
+color_flight_path <- "white"
+
 symposium_map <-
   symposium_location_domestic %>%
-    leaflet %>%
-    addProviderTiles(providers$CartoDB.DarkMatter) %>%
-    addCircleMarkers(lng = ~lng, lat = ~lat, popup = ~name, group = "<FONT color='pink'>Domestic</FONT>",
-                     col = "pink", opacity = .9) %>%
-    addCircleMarkers(data = symposium_location_int, lng = ~lng, lat = ~lat, popup = ~name, group = "<FONT color='skyblue'>International</FONT>",
-                     col = "skyblue", opacity = .9) %>%
-    addLayersControl(
-      overlayGroups = c("<FONT color='pink'>Domestic</FONT>", "<FONT color='skyblue'>International</FONT>"),
-      options = layersControlOptions(collapsed = T)
-    )
+  leaflet %>%
+  addProviderTiles(providers$CartoDB.DarkMatter) %>%
+  addPolylines(data = flight_lines_ut[[1]], color = color_flight_path, group = color_set_map[[2]]) %>%
+  addPolylines(data = flight_lines_ut[[2]], color = color_flight_path, group = color_set_map[[2]]) %>%
+  addPolylines(data = flight_lines_ut[[3]], color = color_flight_path, group = color_set_map[[2]]) %>%
+  addPolylines(data = flight_lines_anu[[1]], color = color_flight_path, group = color_set_map[[2]]) %>%
+  addCircleMarkers(lng = ~lng, lat = ~lat, popup = ~name, group = color_set_map[[1]], col = "pink", opacity = .9) %>%
+  addCircleMarkers(data = symposium_location_int,
+                   lng = ~lng, lat = ~lat, popup = ~name, group = color_set_map[[2]], col = "skyblue", opacity = .9) %>%
+  addLayersControl(
+    overlayGroups = c(color_set_map[[1]], color_set_map[[2]]),
+    options = layersControlOptions(collapsed = T)
+  )
 
 # symposium_map
 

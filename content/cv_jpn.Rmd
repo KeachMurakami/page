@@ -54,6 +54,67 @@ data.frame(
   kable
 ```
 
+```{r histrocal_map, eval = F}
+
+library(geosphere)
+library(leaflet)
+library(htmlwidgets)
+library(widgetframe)
+
+gcIntermediate(c(5,52), c(-120,37),
+               n=100, 
+               addStartEnd=TRUE,
+               sp=TRUE)
+
+my_history <-
+  tibble(a = c("広島市", "Hiroshima", 132.4553, 34.3852, "/"),
+         b = c("鳥取市", "Tottori", 134.2351, 35.50113, "/"),
+         c = c("広島市", "Hiroshima", 132.4553, 34.3852, "/"),
+         d = c("米子市", "Yonago", 133.3309, 35.42807, "米子東高校 / "),
+         e = c("世田谷区", "Setagaya/Tokyo", 139.6532, 35.64657, "東大 / Univ. Tokyo"),
+         f = c("文京区", "Bunkyo/Tokyo", 139.7522, 35.70807, "東大 / Univ. Tokyo"),
+         g = c("北区", "Kita/Tokyo", 139.7335, 35.7528, "東大 / Univ. Tokyo"),
+         h = c("山口市", "Yamaguchi", 131.4737, 34.1785, "山口大 / Yamaguchi Univ"),
+         i = c("Canberra", "Canberra", 149.13, -35.28094, "オーストラリア国立大/ ANU")) %>%
+    t %>%
+    as_tibble %>%
+    transmute(name_jpn = V1, name_eng = V2, lng = as.numeric(V3), lat = as.numeric(V4),
+              group = V5) 
+
+flight_lines <-
+  map(2:nrow(my_history), function(xxx){
+    xy_frm <- c(my_history[xxx - 1,]$lng, my_history[xxx - 1,]$lat)
+    xy_end <- c(my_history[xxx,]$lng, my_history[xxx,]$lat)
+    
+    gcIntermediate(xy_frm, xy_end, n = 100, addStartEnd = T)
+    })
+
+
+
+my_history %>%
+  leaflet %>%
+  addProviderTiles(providers$CartoDB.DarkMatter) %>%
+  addPolylines(data = flight_lines[[1]], color = "white") %>%
+  addPolylines(data = flight_lines[[2]], color = "white") %>%
+  addPolylines(data = flight_lines[[3]], color = "white") %>%
+  addPolylines(data = flight_lines[[4]], color = "white") %>%
+  addPolylines(data = flight_lines[[5]], color = "white") %>%
+  addPolylines(data = flight_lines[[6]], color = "white") %>%
+  addPolylines(data = flight_lines[[7]], color = "white") %>%
+  addPolylines(data = flight_lines[[8]], color = "white") %>%
+  addCircleMarkers(lng = ~lng, lat = ~lat, popup = ~name_jpn, group = ~group,
+                   col = "skyblue", opacity = 1) %>%
+  addLayersControl(
+    overlayGroups = c(unique(my_history$group)),
+    options = layersControlOptions(collapsed = T))
+
+
+dir.create("leaflet", showWarnings = FALSE)
+setwd("leaflet")
+saveWidget(symposium_map, "symposium_map.html", selfcontained = T)
+setwd("..")
+```
+
 ---
 
 ## 研究
