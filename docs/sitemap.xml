@@ -288,7 +288,7 @@
   </url>
   
   <url>
-    <loc>https://keachmurakami.github.io/symposium_map/</loc>
+    <loc>https://keachmurakami.github.io/leaflet/symposium_map/</loc>
   </url>
   
   <url>
@@ -311,6 +311,11 @@
   
   <url>
     <loc>https://keachmurakami.github.io/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://keachmurakami.github.io/leaflet/</loc>
     <priority>0</priority>
   </url>
   

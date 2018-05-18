@@ -500,15 +500,13 @@ symposium_map <-
     )
 
 # currentWD <- getwd()
-# dir.create("static/leaflet", showWarnings = FALSE)
-# setwd("static/leaflet")
-# cat(getwd())
+dir.create("leaflet", showWarnings = FALSE)
+setwd("leaflet")
 saveWidget(symposium_map, "symposium_map.html", selfcontained = T)
-# setwd(currentWD)
-# print(currentWD)
+setwd("..")
 ```
 
-<iframe seamless src="../symposium_map/index.html" width="100%" height="500"></iframe>
+<iframe seamless src="../leaflet/symposium_map/index.html" width="100%" height="500"></iframe>
 
 <br>
 <sup>○</sup> -> Speaker  
