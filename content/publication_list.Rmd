@@ -5,11 +5,6 @@ title: " "
 <div style="text-align: right; font-size: .7em">
 <FONT color="grey">Last update: `r lubridate::today()`  </FONT>
 </div>
-<div id="example"></div>
-<script type="text/javascript" src="https://pym.nprapps.org/pym.v1.min.js"></script>
-<script>
-    var pymParent = new pym.Parent('example', 'child.html', {});
-</script>
 
 ```{r, message = F, echo = F, warning = F}
 library(fudukue)
@@ -395,7 +390,7 @@ books %>%
 
 ### Presentations
 
-```{r map, echo = F, cache = T, message = F, warning = F, out.width="100%"}
+```{r map, echo = F, message = F, warning = F, out.width="100%"}
 work_location <-
   data.frame(
     name = c("東大環境研", "山口大荊木研"),
@@ -504,13 +499,16 @@ symposium_map <-
       options = layersControlOptions(collapsed = FALSE)
     )
 
-frameWidget(symposium_map)
-
 # currentWD <- getwd()
+# dir.create("static/leaflet", showWarnings = FALSE)
 # setwd("static/leaflet")
-# saveWidget(symposium_map, "symposium_map.html")
+# cat(getwd())
+saveWidget(symposium_map, "symposium_map.html", selfcontained = T)
 # setwd(currentWD)
+# print(currentWD)
 ```
+
+<iframe seamless src="../symposium_map/index.html" width="100%" height="500"></iframe>
 
 <br>
 <sup>○</sup> -> Speaker  
