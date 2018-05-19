@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.40" />
+
+
+<title>htmlwidget x (Hugo &#43; Blogdown &#43; GitHub Page) - A plant researcher</title>
+<meta property="og:title" content="htmlwidget x (Hugo &#43; Blogdown &#43; GitHub Page) - A plant researcher">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="../../../../css/fonts.css" media="all">
+<link rel="stylesheet" href="../../../../css/main.css" media="all">
+
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="../../../../" class="nav-logo">
+    <img src="../../../../images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="../../../../cv_eng/">About (Eng)</a></li>
+    
+    <li><a href="../../../../cv_jpn/">About (Jpn)</a></li>
+    
+    <li><a href="../../../../publication_list/">Publication</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">htmlwidget x (Hugo &#43; Blogdown &#43; GitHub Page)</h1>
+
+    
+    <span class="article-date">2018/05/19</span>
+    
+
+    <div class="article-content">
+      <p><a href="https://leafletjs.com/"><code>{leaflet}</code></a>や<a href="https://plot.ly/"><code>{plotly}</code></a>で作成したインタラクティブなコンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメモ。</p>
+<p><code>{widjetFrame}</code>がいいみたいなことを<code>{knitr}</code>などで有名なYihui氏が書いているが、自分の環境ではなんだかうまくいかなかった。issueで触れられている<code>width = '100%'</code>の問題ではない。 代わりに、<a href="https://owi.usgs.gov/blog/leaflet/">ググって引っかかったページ</a>を参考に、<code>htmlwidgets::saveWidget()</code>でhtmlとして保存する -&gt; htmlのiframeタグ内で書き込むというアプローチを採用する。</p>
+<p>htmlファイルのパスが厄介で、すこし詰まった。 <code>build_site()</code>したときの作業ディレクトリは、それぞれ.Rmdファイルが保存されているパスになるので、そこからの相対パスで考える。 <code>saveWidget()</code>で生成される<code>APPNAME.html</code>は、<code>build_site()</code>により、<code>APPNAME/index.html</code>に変換されるので、<code>serve_site()</code>では確認できないらしい。 leafletフォルダ、plotlyフォルダをcontent以下に作成して個別に管理する。</p>
+<pre class="r"><code>library(htmlwidgets)</code></pre>
+<div id="leaflet" class="section level1">
+<h1>leaflet</h1>
+<pre class="r"><code>library(leaflet)
+library(ggmap) # 地名から緯度経度をとってくる
+library(geosphere) # 球体に直線を引く
+
+geo_syd &lt;- geocode(&quot;Sydney&quot;)
+geo_ist &lt;- geocode(&quot;Istanbul&quot;)
+
+# `ggmap::geocode()`は短時間での使用に制限があるので、ループの力技で解決。
+repeat(
+  if(is.na(geo_syd$lon)){
+    geo_syd &lt;- geocode(&quot;Sydney&quot;)
+  } else {
+    break
+  }
+)
+
+repeat(
+  if(is.na(geo_ist$lon)){
+    geo_ist &lt;- geocode(&quot;Istanbul&quot;)
+  } else {
+    break
+  }
+)
+
+leaflet_demo &lt;- 
+  geosphere::gcIntermediate(p1 = geo_syd, p2 = geo_ist, n = 200, addStartEnd = T) %&gt;%
+  leaflet::leaflet() %&gt;%
+  leaflet::addTiles() %&gt;%
+  leaflet::addPolylines(color = &quot;black&quot;)
+
+# dir.create(&quot;../leaflet&quot;, showWarnings = FALSE)
+setwd(&quot;../leaflet&quot;)
+saveWidget(leaflet_demo, &quot;demo.html&quot;, selfcontained = T)
+setwd(&quot;../post&quot;)</code></pre>
+<iframe seamless src="../leaflet/demo/index.html" width="100%" height="500">
+</iframe>
+</div>
+<div id="plotly" class="section level1">
+<h1>plotly</h1>
+<pre class="r"><code>library(plotly)
+
+if_data &lt;-
+  dir(&quot;../../confident_data/impact_factors/&quot;, full.names = T) %&gt;%
+    map_df(~ read_csv(., skip = 1, col_types = cols()) %&gt;%
+             # na.omit() %&gt;%
+             mutate(year = parse_number(str_sub(..1, -10, -1))) %&gt;%
+             mutate_at(.vars = c(1, 3:5), as.numeric)) %&gt;%
+  janitor::clean_names() %&gt;%
+  mutate(journal = tolower(full_journal_title))
+  
+high_impact_journals &lt;-
+  if_data %&gt;%
+  filter(year == 2016, rank &lt;= 20) %&gt;%
+  transmute(journal, id = factor(1:20))
+  
+
+plotly_demo &lt;-
+  if_data %&gt;%
+  filter(journal %in% high_impact_journals$journal) %&gt;%
+  left_join(., high_impact_journals, by = &quot;journal&quot;) %&gt;%
+  plot_ly(x = ~ journal_impact_factor, y = ~ eigenfactor_score, size = ~ total_cites,
+          color = ~ id, frame = ~ year,
+          hoverinfo = &quot;text&quot;,
+          # text = ~paste(full_journal_title), # 隠し
+          text = ~paste(id),
+          mode = &quot;markers&quot;, type = &quot;scatter&quot;, showlegend = F) 
+
+
+# dir.create(&quot;.//plotly&quot;, showWarnings = FALSE)
+setwd(&quot;../plotly&quot;)
+saveWidget(plotly_demo, &quot;demo.html&quot;, selfcontained = T)
+setwd(&quot;../post&quot;)</code></pre>
+<iframe seamless src="../plotly/demo/index.html" width="100%" height="500">
+</iframe>
+</div>
+<div id="shiny" class="section level1">
+<h1>Shiny</h1>
+<p>Shinyはhtmlで固めることができないので、shinyappsあたりでデプロイして引っ張るのがいいらしい。 以下のchunkを追加すると埋め込みまで完了。</p>
+<pre class="r"><code>knitr::include_app(&quot;https://USER_NAME.shinyapps.io/APP_NAME/&quot;)</code></pre>
+</div>
+<div id="session-info" class="section level1">
+<h1>Session info</h1>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Brisbane          
+##  date     2018-05-19                  
+## 
+##  package      * version  date       source        
+##  assertthat     0.2.0    2017-04-11 CRAN (R 3.5.0)
+##  backports      1.1.2    2017-12-13 CRAN (R 3.5.0)
+##  base         * 3.5.0    2018-04-24 local         
+##  bindr          0.1.1    2018-03-13 CRAN (R 3.5.0)
+##  bindrcpp     * 0.2.2    2018-03-29 CRAN (R 3.5.0)
+##  blogdown       0.6      2018-04-18 CRAN (R 3.5.0)
+##  bookdown       0.7      2018-02-18 CRAN (R 3.5.0)
+##  broom          0.4.4    2018-03-29 CRAN (R 3.5.0)
+##  cellranger     1.1.0    2016-07-27 CRAN (R 3.5.0)
+##  cli            1.0.0    2017-11-05 CRAN (R 3.5.0)
+##  colorspace     1.3-2    2016-12-14 CRAN (R 3.5.0)
+##  compiler       3.5.0    2018-04-24 local         
+##  crayon         1.3.4    2017-09-16 CRAN (R 3.5.0)
+##  crosstalk      1.0.0    2016-12-21 CRAN (R 3.5.0)
+##  data.table     1.10.4-3 2017-10-27 CRAN (R 3.5.0)
+##  datasets     * 3.5.0    2018-04-24 local         
+##  devtools       1.13.5   2018-02-18 CRAN (R 3.5.0)
+##  digest         0.6.15   2018-01-28 CRAN (R 3.5.0)
+##  dplyr        * 0.7.4    2017-09-28 CRAN (R 3.5.0)
+##  evaluate       0.10.1   2017-06-24 CRAN (R 3.5.0)
+##  forcats      * 0.3.0    2018-02-19 CRAN (R 3.5.0)
+##  foreign        0.8-70   2017-11-28 CRAN (R 3.5.0)
+##  geosphere    * 1.5-7    2017-11-05 CRAN (R 3.5.0)
+##  ggmap        * 2.6.1    2016-01-23 CRAN (R 3.5.0)
+##  ggplot2      * 2.2.1    2016-12-30 CRAN (R 3.5.0)
+##  glue           1.2.0    2017-10-29 CRAN (R 3.5.0)
+##  graphics     * 3.5.0    2018-04-24 local         
+##  grDevices    * 3.5.0    2018-04-24 local         
+##  grid           3.5.0    2018-04-24 local         
+##  gtable         0.2.0    2016-02-26 CRAN (R 3.5.0)
+##  haven          1.1.1    2018-01-18 CRAN (R 3.5.0)
+##  hms            0.4.2    2018-03-10 CRAN (R 3.5.0)
+##  htmltools      0.3.6    2017-04-28 CRAN (R 3.5.0)
+##  htmlwidgets  * 1.2      2018-04-19 CRAN (R 3.5.0)
+##  httpuv         1.4.3    2018-05-10 cran (@1.4.3) 
+##  httr           1.3.1    2017-08-20 CRAN (R 3.5.0)
+##  janitor        1.0.0    2018-03-22 CRAN (R 3.5.0)
+##  jpeg           0.1-8    2014-01-23 CRAN (R 3.5.0)
+##  jsonlite       1.5      2017-06-01 CRAN (R 3.5.0)
+##  knitr          1.20     2018-02-20 CRAN (R 3.5.0)
+##  later          0.7.2    2018-05-01 cran (@0.7.2) 
+##  lattice        0.20-35  2017-03-25 CRAN (R 3.5.0)
+##  lazyeval       0.2.1    2017-10-29 CRAN (R 3.5.0)
+##  leaflet      * 2.0.0    2018-04-20 CRAN (R 3.5.0)
+##  lubridate      1.7.4    2018-04-11 CRAN (R 3.5.0)
+##  magrittr       1.5      2014-11-22 CRAN (R 3.5.0)
+##  mapproj        1.2.6    2018-03-29 CRAN (R 3.5.0)
+##  maps           3.3.0    2018-04-03 CRAN (R 3.5.0)
+##  memoise        1.1.0    2017-04-21 CRAN (R 3.5.0)
+##  methods      * 3.5.0    2018-04-24 local         
+##  mime           0.5      2016-07-07 CRAN (R 3.5.0)
+##  mnormt         1.5-5    2016-10-15 CRAN (R 3.5.0)
+##  modelr         0.1.1    2017-07-24 CRAN (R 3.5.0)
+##  munsell        0.4.3    2016-02-13 CRAN (R 3.5.0)
+##  nlme           3.1-137  2018-04-07 CRAN (R 3.5.0)
+##  parallel       3.5.0    2018-04-24 local         
+##  pillar         1.2.1    2018-02-27 CRAN (R 3.5.0)
+##  pkgconfig      2.0.1    2017-03-21 CRAN (R 3.5.0)
+##  plotly       * 4.7.1    2017-07-29 CRAN (R 3.5.0)
+##  plyr           1.8.4    2016-06-08 CRAN (R 3.5.0)
+##  png            0.1-7    2013-12-03 CRAN (R 3.5.0)
+##  promises       1.0.1    2018-04-13 CRAN (R 3.5.0)
+##  proto          1.0.0    2016-10-29 CRAN (R 3.5.0)
+##  psych          1.8.3.3  2018-03-30 CRAN (R 3.5.0)
+##  purrr        * 0.2.4    2017-10-18 CRAN (R 3.5.0)
+##  R6             2.2.2    2017-06-17 CRAN (R 3.5.0)
+##  RColorBrewer   1.1-2    2014-12-07 CRAN (R 3.5.0)
+##  Rcpp           0.12.16  2018-03-13 CRAN (R 3.5.0)
+##  readr        * 1.1.1    2017-05-16 CRAN (R 3.5.0)
+##  readxl         1.1.0    2018-04-20 CRAN (R 3.5.0)
+##  reshape2       1.4.3    2017-12-11 CRAN (R 3.5.0)
+##  RgoogleMaps    1.4.1    2016-09-18 CRAN (R 3.5.0)
+##  rjson          0.2.18   2018-05-05 CRAN (R 3.5.0)
+##  rlang          0.2.0    2018-02-20 CRAN (R 3.5.0)
+##  rmarkdown      1.9      2018-03-01 CRAN (R 3.5.0)
+##  rprojroot      1.3-2    2018-01-03 CRAN (R 3.5.0)
+##  rstudioapi     0.7      2017-09-07 CRAN (R 3.5.0)
+##  rvest          0.3.2    2016-06-17 CRAN (R 3.5.0)
+##  scales         0.5.0    2017-08-24 CRAN (R 3.5.0)
+##  shiny          1.1.0    2018-05-17 cran (@1.1.0) 
+##  snakecase      0.9.1    2018-03-25 CRAN (R 3.5.0)
+##  sp             1.2-7    2018-01-19 CRAN (R 3.5.0)
+##  stats        * 3.5.0    2018-04-24 local         
+##  stringi        1.2.2    2018-05-02 cran (@1.2.2) 
+##  stringr      * 1.3.1    2018-05-10 cran (@1.3.1) 
+##  tibble       * 1.4.2    2018-01-22 CRAN (R 3.5.0)
+##  tidyr        * 0.8.0    2018-01-29 CRAN (R 3.5.0)
+##  tidyverse    * 1.2.1    2017-11-14 CRAN (R 3.5.0)
+##  tools          3.5.0    2018-04-24 local         
+##  utils        * 3.5.0    2018-04-24 local         
+##  viridisLite    0.3.0    2018-02-01 CRAN (R 3.5.0)
+##  withr          2.1.2    2018-03-15 CRAN (R 3.5.0)
+##  xfun           0.1      2018-01-22 CRAN (R 3.5.0)
+##  xml2           1.2.0    2018-01-24 CRAN (R 3.5.0)
+##  xtable         1.8-2    2016-02-05 CRAN (R 3.5.0)
+##  yaml           2.1.18   2018-03-08 CRAN (R 3.5.0)</code></pre>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="../../../../index.xml" type="application/rss+xml" target="_blank"><i class="fas fa-rss"></i></a>
+          </li>
+          <li>
+            <a href="https://github.com/KeachMurakami/page" class="footer-link"><i class="fab fa-github"></i></a>
+          </li>
+          <li>
+            Powered by <a href="https://gohugo.io/" class="footer-link">Hugo</a>, <a href="https://github.com/rstudio/blogdown" class="footer-link">blogdown</a>, and <a href="https://pages.github.com/" class="footer-link">GitHub Pages</a>.
+          </li>
+        </ul>
+        <ul class="footer-links">
+          <li>
+            Except where otherwise noted, content on this site is licensed under a<a href="https://creativecommons.org/licenses/by/4.0/" class="footer-link">Creative Commons Attribution 4.0 International license</a>.
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="../../../../js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
+
