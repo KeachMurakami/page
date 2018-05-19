@@ -64,7 +64,7 @@ saveWidget(leaflet_demo, "demo.html", selfcontained = T)
 setwd("../post")
 ```
 
-<iframe seamless src="~/leaflet/demo/index.html" width="100%" height="500"></iframe>
+<iframe seamless src="../../../../leaflet/demo/index.html" width="100%" height="500"></iframe>
 
 # plotly
 
@@ -104,7 +104,7 @@ saveWidget(plotly_demo, "demo.html", selfcontained = T)
 setwd("../post")
 ```
 
-<iframe seamless src="~/plotly/demo/index.html" width="100%" height="500"></iframe>
+<iframe seamless src="../../../../../plotly/demo/index.html" width="100%" height="500"></iframe>
 
 # Shiny
 
