@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.40" />
+
+
+<title>..1 (R - A plant researcher</title>
+<meta property="og:title" content="..1 (R - A plant researcher">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="../../../../css/fonts.css" media="all">
+<link rel="stylesheet" href="../../../../css/main.css" media="all">
+
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="../../../../" class="nav-logo">
+    <img src="../../../../images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="../../../../cv_eng/">About (Eng)</a></li>
+    
+    <li><a href="../../../../cv_jpn/">About (Jpn)</a></li>
+    
+    <li><a href="../../../../publication_list/">Publication</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">2 min read</span>
+    
+
+    <h1 class="article-title">..1 (R</h1>
+
+    
+    <span class="article-date">2018/05/19</span>
+    
+
+    <div class="article-content">
+      <p>Rstudioで予約語としてハイライトされる<code>..1</code>、<code>..2</code>についてのメモ。</p>
+<p>“double periods”とか“..1”とかでググってもまったく引っかからないが“two dots”だと多少は情報がある。 公式helpは<code>??base::dots</code>で確認できる。</p>
+<p>関数内で使う予約語で、two dotsを含む関数へ渡された引数を取ってくるためにある。 pipeを多用する<code>{purrr}</code>、<code>{dplyr}</code>あたりと相性がいい。</p>
+<p>例えば、<code>..1</code>を使うと<code>purrr::map_XXX()</code>に投げた引数を内部で受け取ることができる。</p>
+<pre class="r"><code>library(purrr)
+library(dplyr)
+
+list_data &lt;- 
+  list(iris, cars)
+
+1:2 %&gt;%
+  map(~ list_data[[.]] %&gt;%
+        mutate(., `index + 5th alphabet` = letters[..1 + 5]) %&gt;%
+        head(3))</code></pre>
+<pre><code>## [[1]]
+##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+##   index + 5th alphabet
+## 1                    f
+## 2                    f
+## 3                    f
+## 
+## [[2]]
+##   speed dist index + 5th alphabet
+## 1     4    2                    g
+## 2     4   10                    g
+## 3     7    4                    g</code></pre>
+<p><code>mutate()</code>内のplaceholderにはpipe直前の<code>list_data[[.]]</code>が渡され、<code>..1</code>には1フレーム上の<code>map</code>に投げ込まれた値が渡されるイメージ。 ファイル名に情報を持つ複数のファイルを読み込むときに便利で、<code>.id</code>よりも汎用性が高い。 ただし可読性が下がるので多用はしないほうがよさそう。</p>
+<p>裸で呼ぶとエラーになるので、括弧をつける。</p>
+<pre class="r"><code>1:2 %&gt;%
+  map(~ list_data[[.]] %&gt;% mutate(., add_index = ..1) %&gt;% head(3))
+# &gt; Error in mutate_impl(.data, dots) : Binding not found: ..1.</code></pre>
+<pre class="r"><code>1:2 %&gt;%
+  map(~ list_data[[.]] %&gt;% mutate(., add_index = (..1)) %&gt;% head(3))</code></pre>
+<pre><code>## [[1]]
+##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species add_index
+## 1          5.1         3.5          1.4         0.2  setosa         1
+## 2          4.9         3.0          1.4         0.2  setosa         1
+## 3          4.7         3.2          1.3         0.2  setosa         1
+## 
+## [[2]]
+##   speed dist add_index
+## 1     4    2         2
+## 2     4   10         2
+## 3     7    4         2</code></pre>
+<p>実際には、<code>readr::parse_number()</code>, <code>stringr::str_sub()</code>あたりと併用するので問題となることはあまりない。</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="../../../../index.xml" type="application/rss+xml" target="_blank"><i class="fas fa-rss"></i></a>
+          </li>
+          <li>
+            <a href="https://github.com/KeachMurakami/page" class="footer-link"><i class="fab fa-github"></i></a>
+          </li>
+          <li>
+            Powered by <a href="https://gohugo.io/" class="footer-link">Hugo</a>, <a href="https://github.com/rstudio/blogdown" class="footer-link">blogdown</a>, and <a href="https://pages.github.com/" class="footer-link">GitHub Pages</a>.
+          </li>
+        </ul>
+        <ul class="footer-links">
+          <li>
+            Except where otherwise noted, content on this site is licensed under a<a href="https://creativecommons.org/licenses/by/4.0/" class="footer-link">Creative Commons Attribution 4.0 International license</a>.
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
+

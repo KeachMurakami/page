@@ -1,0 +1,55 @@
+---
+title: "two-dots ..1 (R"
+date: 2018-05-19
+---
+
+
+
+<p>Rstudioで予約語としてハイライトされる<code>..1</code>、<code>..2</code>についてのメモ。</p>
+<p>“double periods”とか“..1”とかでググってもまったく引っかからないが“two dots”だと多少は情報がある。 公式helpは<code>??base::dots</code>で確認できる。</p>
+<p>関数内で使う予約語で、two dotsを含む関数へ渡された引数を取ってくるためにある。 pipeを多用する<code>{purrr}</code>、<code>{dplyr}</code>あたりと相性がいい。</p>
+<p>例えば、<code>..1</code>を使うと<code>purrr::map_XXX()</code>に投げた引数を内部で受け取ることができる。</p>
+<pre class="r"><code>library(purrr)
+library(dplyr)
+
+list_data &lt;- 
+  list(iris, cars)
+
+1:2 %&gt;%
+  map(~ list_data[[.]] %&gt;%
+        mutate(., `index + 5th alphabet` = letters[..1 + 5]) %&gt;%
+        head(3))</code></pre>
+<pre><code>## [[1]]
+##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+##   index + 5th alphabet
+## 1                    f
+## 2                    f
+## 3                    f
+## 
+## [[2]]
+##   speed dist index + 5th alphabet
+## 1     4    2                    g
+## 2     4   10                    g
+## 3     7    4                    g</code></pre>
+<p><code>mutate()</code>内のplaceholderにはpipe直前の<code>list_data[[.]]</code>が渡され、<code>..1</code>には1フレーム上の<code>map</code>に投げ込まれた値が渡されるイメージ。 ファイル名に情報を持つ複数のファイルを読み込むときに便利で、<code>.id</code>よりも汎用性が高い。 ただし可読性が下がるので多用はしないほうがよさそう。</p>
+<p>裸で呼ぶとエラーになるので、括弧をつける。</p>
+<pre class="r"><code>1:2 %&gt;%
+  map(~ list_data[[.]] %&gt;% mutate(., add_index = ..1) %&gt;% head(3))
+# &gt; Error in mutate_impl(.data, dots) : Binding not found: ..1.</code></pre>
+<pre class="r"><code>1:2 %&gt;%
+  map(~ list_data[[.]] %&gt;% mutate(., add_index = (..1)) %&gt;% head(3))</code></pre>
+<pre><code>## [[1]]
+##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species add_index
+## 1          5.1         3.5          1.4         0.2  setosa         1
+## 2          4.9         3.0          1.4         0.2  setosa         1
+## 3          4.7         3.2          1.3         0.2  setosa         1
+## 
+## [[2]]
+##   speed dist add_index
+## 1     4    2         2
+## 2     4   10         2
+## 3     7    4         2</code></pre>
+<p>実際には、<code>readr::parse_number()</code>, <code>stringr::str_sub()</code>あたりと併用するので問題となることはあまりない。</p>

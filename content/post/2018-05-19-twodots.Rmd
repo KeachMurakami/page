@@ -1,0 +1,47 @@
+---
+title: "two-dots ..1 (R"
+date: 2018-05-19
+---
+
+Rstudioで予約語としてハイライトされる`..1`、`..2`についてのメモ。
+
+
+"double periods"とか"..1"とかでググってもまったく引っかからないが"two dots"だと多少は情報がある。
+公式helpは`??base::dots`で確認できる。
+
+関数内で使う予約語で、two dotsを含む関数へ渡された引数を取ってくるためにある。
+pipeを多用する`{purrr}`、`{dplyr}`あたりと相性がいい。
+
+例えば、`..1`を使うと`purrr::map_XXX()`に投げた引数を内部で受け取ることができる。
+
+```{r warning = F, message = F}
+library(purrr)
+library(dplyr)
+
+list_data <- 
+  list(iris, cars)
+
+1:2 %>%
+  map(~ list_data[[.]] %>%
+        mutate(., `index + 5th alphabet` = letters[..1 + 5]) %>%
+        head(3))
+```
+
+`mutate()`内のplaceholderにはpipe直前の`list_data[[.]]`が渡され、`..1`には1フレーム上の`map`に投げ込まれた値が渡されるイメージ。
+ファイル名に情報を持つ複数のファイルを読み込むときに便利で、`.id`よりも汎用性が高い。
+ただし可読性が下がるので多用はしないほうがよさそう。
+
+裸で呼ぶとエラーになるので、括弧をつける。
+
+```{r eval = F}
+1:2 %>%
+  map(~ list_data[[.]] %>% mutate(., add_index = ..1) %>% head(3))
+# > Error in mutate_impl(.data, dots) : Binding not found: ..1.
+```
+
+```{r}
+1:2 %>%
+  map(~ list_data[[.]] %>% mutate(., add_index = (..1)) %>% head(3))
+```
+
+実際には、`readr::parse_number()`, `stringr::str_sub()`あたりと併用するので問題となることはあまりない。
