@@ -3,7 +3,7 @@ title: "htmlwidget x (Hugo + Blogdown + GitHub Page)"
 date: 2018-05-19
 ---
 
-[`{leaflet}`](https://leafletjs.com/)や[`{plotly}`](https://plot.ly/)で作成したインタラクティブなコンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメモ。
+[`{leaflet}`](https://leafletjs.com/)や[`{plotly}`](https://plot.ly/)で作成したインタラクティブなjavascript系コンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメモ。
 
 ```{r setup, warning = F, message = F, include = F, echo = F}
 library(tidyverse)
@@ -13,7 +13,8 @@ Sys.unsetenv("http_proxy")
 Sys.unsetenv("https_proxy")
 ```
 
-`{widjetFrame}`がいいみたいなことを`{knitr}`などで有名なYihui氏が書いているが、自分の環境ではなんだかうまくいかなかった。issueで触れられている`width = '100%'`の問題ではない。
+`{widjetFrame}`がいいみたいなことを`{blogdown}`作者のYihui氏が書いているが、自分の環境ではなんだかうまくいかなかった。
+issueで触れられている`width = '100%'`の問題ではない。
 代わりに、[ググって引っかかったページ](https://owi.usgs.gov/blog/leaflet/)を参考に、`htmlwidgets::saveWidget()`でhtmlとして保存する -> htmlのiframeタグ内で書き込むというアプローチを採用する。
 
 htmlファイルのパスが厄介で、すこし詰まった。
@@ -26,6 +27,8 @@ library(htmlwidgets)
 ```
 
 # leaflet
+
+今度の学会のフライト経路を表示。
 
 ```{r leaflet_demo}
 library(leaflet)
@@ -68,13 +71,15 @@ setwd("../post")
 
 # plotly
 
+Clarivate analyticsから取ってきたメジャーな雑誌のImpact factorの推移を表示。
+念のため雑誌名は匿名化。
+
 ```{r plotly_demo}
 library(plotly)
 
 if_data <-
-  dir("../../confident_data/impact_factors/", full.names = T) %>%
+  dir("../../confidential_data/impact_factors/", full.names = T) %>%
     map_df(~ read_csv(., skip = 1, col_types = cols()) %>%
-             # na.omit() %>%
              mutate(year = parse_number(str_sub(..1, -10, -1))) %>%
              mutate_at(.vars = c(1, 3:5), as.numeric)) %>%
   janitor::clean_names() %>%
@@ -82,8 +87,8 @@ if_data <-
   
 high_impact_journals <-
   if_data %>%
-  filter(year == 2016, rank <= 20) %>%
-  transmute(journal, id = factor(1:20))
+  filter(year == 2016, rank <= 30) %>%
+  transmute(journal, id = factor(1:30))
   
 
 plotly_demo <-
@@ -104,11 +109,11 @@ saveWidget(plotly_demo, "demo.html", selfcontained = T)
 setwd("../post")
 ```
 
-<iframe seamless src="../../../../plotly/demo/index.html" width="100%" height="500"></iframe>
+<iframe seamless src="../../../../plotly/demo/index.html" width="100%" height="900"></iframe>
 
 # Shiny
 
-Shinyはhtmlで固めることができないので、shinyappsあたりでデプロイして引っ張るのがいいらしい。
+Shinyは独立したhtmlとして出力することができないので、shinyappsあたりでデプロイして引っ張るのがいいらしい。
 以下のchunkを追加すると埋め込みまで完了。
 
 ```{r shiny_demo, warning = F, out.width = "100%", eval = F}

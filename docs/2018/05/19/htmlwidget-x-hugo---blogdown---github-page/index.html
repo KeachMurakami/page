@@ -79,7 +79,7 @@ ga('send', 'pageview');
 
   <article class="article">
     
-    <span class="article-duration">3 min read</span>
+    <span class="article-duration">4 min read</span>
     
 
     <h1 class="article-title">htmlwidget x (Hugo &#43; Blogdown &#43; GitHub Page)</h1>
@@ -89,12 +89,13 @@ ga('send', 'pageview');
     
 
     <div class="article-content">
-      <p><a href="https://leafletjs.com/"><code>{leaflet}</code></a>や<a href="https://plot.ly/"><code>{plotly}</code></a>で作成したインタラクティブなコンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメモ。</p>
-<p><code>{widjetFrame}</code>がいいみたいなことを<code>{knitr}</code>などで有名なYihui氏が書いているが、自分の環境ではなんだかうまくいかなかった。issueで触れられている<code>width = '100%'</code>の問題ではない。 代わりに、<a href="https://owi.usgs.gov/blog/leaflet/">ググって引っかかったページ</a>を参考に、<code>htmlwidgets::saveWidget()</code>でhtmlとして保存する -&gt; htmlのiframeタグ内で書き込むというアプローチを採用する。</p>
+      <p><a href="https://leafletjs.com/"><code>{leaflet}</code></a>や<a href="https://plot.ly/"><code>{plotly}</code></a>で作成したインタラクティブなjavascript系コンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメモ。</p>
+<p><code>{widjetFrame}</code>がいいみたいなことを<code>{blogdown}</code>作者のYihui氏が書いているが、自分の環境ではなんだかうまくいかなかった。 issueで触れられている<code>width = '100%'</code>の問題ではない。 代わりに、<a href="https://owi.usgs.gov/blog/leaflet/">ググって引っかかったページ</a>を参考に、<code>htmlwidgets::saveWidget()</code>でhtmlとして保存する -&gt; htmlのiframeタグ内で書き込むというアプローチを採用する。</p>
 <p>htmlファイルのパスが厄介で、すこし詰まった。 <code>build_site()</code>したときの作業ディレクトリは、それぞれ.Rmdファイルが保存されているパスになるので、そこからの相対パスで考える。 <code>saveWidget()</code>で生成される<code>APPNAME.html</code>は、<code>build_site()</code>により、<code>APPNAME/index.html</code>に変換されるので、<code>serve_site()</code>では確認できないらしい。 leafletフォルダ、plotlyフォルダをcontent以下に作成して個別に管理する。</p>
 <pre class="r"><code>library(htmlwidgets)</code></pre>
 <div id="leaflet" class="section level1">
 <h1>leaflet</h1>
+<p>今度の学会のフライト経路を表示。</p>
 <pre class="r"><code>library(leaflet)
 library(ggmap) # 地名から緯度経度をとってくる
 library(geosphere) # 球体に直線を引く
@@ -134,12 +135,12 @@ setwd(&quot;../post&quot;)</code></pre>
 </div>
 <div id="plotly" class="section level1">
 <h1>plotly</h1>
+<p>Clarivate analyticsから取ってきたメジャーな雑誌のImpact factorの推移を表示。 念のため雑誌名は匿名化。</p>
 <pre class="r"><code>library(plotly)
 
 if_data &lt;-
-  dir(&quot;../../confident_data/impact_factors/&quot;, full.names = T) %&gt;%
+  dir(&quot;../../confidential_data/impact_factors/&quot;, full.names = T) %&gt;%
     map_df(~ read_csv(., skip = 1, col_types = cols()) %&gt;%
-             # na.omit() %&gt;%
              mutate(year = parse_number(str_sub(..1, -10, -1))) %&gt;%
              mutate_at(.vars = c(1, 3:5), as.numeric)) %&gt;%
   janitor::clean_names() %&gt;%
@@ -147,8 +148,8 @@ if_data &lt;-
   
 high_impact_journals &lt;-
   if_data %&gt;%
-  filter(year == 2016, rank &lt;= 20) %&gt;%
-  transmute(journal, id = factor(1:20))
+  filter(year == 2016, rank &lt;= 30) %&gt;%
+  transmute(journal, id = factor(1:30))
   
 
 plotly_demo &lt;-
@@ -167,12 +168,12 @@ plotly_demo &lt;-
 setwd(&quot;../plotly&quot;)
 saveWidget(plotly_demo, &quot;demo.html&quot;, selfcontained = T)
 setwd(&quot;../post&quot;)</code></pre>
-<iframe seamless src="../../../../plotly/demo/index.html" width="100%" height="500">
+<iframe seamless src="../../../../plotly/demo/index.html" width="100%" height="900">
 </iframe>
 </div>
 <div id="shiny" class="section level1">
 <h1>Shiny</h1>
-<p>Shinyはhtmlで固めることができないので、shinyappsあたりでデプロイして引っ張るのがいいらしい。 以下のchunkを追加すると埋め込みまで完了。</p>
+<p>Shinyは独立したhtmlとして出力することができないので、shinyappsあたりでデプロイして引っ張るのがいいらしい。 以下のchunkを追加すると埋め込みまで完了。</p>
 <pre class="r"><code>knitr::include_app(&quot;https://USER_NAME.shinyapps.io/APP_NAME/&quot;)</code></pre>
 </div>
 <div id="session-info" class="section level1">
