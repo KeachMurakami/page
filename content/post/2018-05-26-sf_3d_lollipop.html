@@ -1,14 +1,14 @@
 ---
-title: "3D lollipop x map なアニメーションを (R"
+title: "3D lollipop on map なアニメーション (R"
 date: 2018-05-26
 ---
 
 
 
-<!-- {{< tweet 994845385326809089 >}} -->
+<p>データ可視化系。</p>
 <p><a href="https://www.gizmodo.jp/2018/05/manhattan-graph.html">コレ</a>の2番煎じ。 Rで東京版に挑戦。 簡単に統計データがみつかった<a href="http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm">東京都の昼夜人工の過去実測データと将来予測データ</a>から、昼夜人口の3Dロリポップを経年で表示する可視化。</p>
 <p>結果はコレ。</p>
-<iframe seamless src="../../../../plotly/lollipop_on_map4/index.html" width="100%" height="900">
+<iframe seamless src="../../../../plotly/lollipop_on_map/index.html" width="100%" height="900">
 </iframe>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## ── Attaching packages ───────────────── tidyverse 1.2.1 ──</code></pre>
@@ -158,14 +158,11 @@ for(i in 1:500){
 
 head(region_geo)
 
+# 人口データと座標データをマージして、図示用に昼夜で軽度を少しだけずらす
 pop_geo_data &lt;-
   left_join(population_data, region_geo, by = &quot;region&quot;) %&gt;%
-  {
-    # 図示用に昼夜をずらす
-    day_data = mutate(., day_night = &quot;day&quot;, lng = lng - 0.01)
-    night_data = mutate(., day_night = &quot;night&quot;, lng = lng + 0.01)
-    bind_rows(day_data, night_data)
-  }</code></pre>
+  split(.$day_night) %&gt;%
+  map2_df(.x = ., .y = c(-.01, +0.01), ~ mutate(.x, lng = lng + .y))</code></pre>
 <pre><code>## # A tibble: 6 x 3
 ##   region       lat   lng
 ##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;
@@ -181,28 +178,16 @@ pop_geo_data &lt;-
 fig_scat &lt;-
   plot_ly(x = ~ lng, y = ~ lat, z = ~ pop, color = ~ day_night, frame = ~ year) %&gt;%
   add_markers(data = pop_geo_data, type = &quot;scatter3d&quot;, marker = list(size = 3, opacity = .5),
-              text = ~paste(&quot;City: &quot;, region, &#39;&lt;br&gt;Population:&#39;, pop), hoverinfo = &quot;text&quot;)
-
-setwd(&quot;../plotly&quot;)
-htmlwidgets::saveWidget(fig_scat, &quot;lollipop_on_map1.html&quot;, selfcontained = T)
-setwd(&quot;../post&quot;)</code></pre>
-<iframe seamless src="../../../../plotly/lollipop_on_map1/index.html" width="100%" height="900">
-</iframe>
+              text = ~paste(&quot;City: &quot;, region, &#39;&lt;br&gt;Population:&#39;, pop), hoverinfo = &quot;text&quot;)</code></pre>
 <p>ロリポップチャート (<a href="https://www.google.com.au/search?q=lollipop+chart+image&amp;tbm=isch&amp;tbo=u&amp;source=univ&amp;sa=X&amp;ved=0ahUKEwixucOgnKLbAhUHu7wKHQFTDycQsAQIJg&amp;biw=1440&amp;bih=799">イメージ検索</a>) 化するべく、各ポイントから<code>z = 0</code>までの足を作成。 <a href="https://community.plot.ly/t/droplines-from-points-in-3d-scatterplot/4113/3">このページ</a>を流用。</p>
 <pre class="r"><code>for_droplines &lt;- 
-  replicate(2, pop_geo_data, simplify = F) %&gt;%
+  list(pop_geo_data, pop_geo_data) %&gt;%
   map2_df(.x = ., .y = c(1, 0), ~ mutate(.x, pop = pop * .y)) %&gt;%
   group2NA(groupNames = c(&quot;year&quot;, &quot;region&quot;, &quot;day_night&quot;, &quot;lat&quot;, &quot;lng&quot;))
 
 fig_lollipop &lt;-
   fig_scat %&gt;%
-  add_paths(data = for_droplines, x = ~ lng, y = ~lat, z = ~ pop, showlegend = FALSE, hoverinfo = &quot;none&quot;)
-
-setwd(&quot;../plotly&quot;)
-htmlwidgets::saveWidget(fig_lollipop, &quot;lollipop_on_map2.html&quot;, selfcontained = T)
-setwd(&quot;../post&quot;)</code></pre>
-<iframe seamless src="../../../../plotly/lollipop_on_map2/index.html" width="100%" height="900">
-</iframe>
+  add_paths(data = for_droplines, x = ~ lng, y = ~lat, z = ~ pop, showlegend = FALSE, hoverinfo = &quot;none&quot;)</code></pre>
 </div>
 <div class="section level3">
 <h3>地図データの下準備</h3>
@@ -223,28 +208,33 @@ sf_tokyo %&gt;%
 <p>ただ、<code>geom_sf()</code>だと、z軸方向へのプロットができなさそうなので、sfデータから座標を取り出して、z=0の面にプロットしていく。</p>
 <pre class="r"><code>## sf_tokyo$geometryに座標データが入っている
 ## sf_tokyo$geometryの1層目の要素の構成異なる
-## (閉じた区画ごとの座標データがnestしている？; documentにあたるべし) ので、
+## (島などの閉じた区画ごとに分けられた子座標データが区の下にネスト) ので、
 ## map用に場合わけで対処する関数を作成
 
 sf_mapping &lt;-
   function(.lst){
     if(length(.lst) == 1){
       as_tibble(.lst[[1]]) %&gt;%
-        bind_rows(., head(., 1)) # pathを閉じるために最初の座標を足す (なくてもあまり変わらなかった)
+        bind_rows(., head(., 1)) %&gt;% # pathを閉じるために最初の座標を足す (なくてもあまり変わらなかった)
+        list
     } else {
-      as_tibble(.lst[[1]][[1]]) %&gt;%
-        bind_rows(., head(., 1))
+      .lst %&gt;%
+        flatten %&gt;%
+        map( ~ as_tibble(.) %&gt;%
+               bind_rows(., head(., 1)))
     }
   }
 
 sf_data &lt;-
-  map(sf_tokyo$geometry, sf_mapping)</code></pre>
-<pre class="r"><code>add_sf &lt;-
+  map(sf_tokyo$geometry, sf_mapping) %&gt;%
+  flatten
+  
+
+add_sf &lt;-
   function(p, i){
     df &lt;-
-      tidyr::crossing(sf_data[[i]], year = pop_geo_data$year) %&gt;%
-      filter(between(V1, 138.85, 140), between(V2, 35.3, 36))
-    if(nrow(df) == 0){
+      tidyr::crossing(sf_data[[i]], year = pop_geo_data$year) 
+    if(names(df) != c(&quot;V1&quot;, &quot;V2&quot;, &quot;year&quot;)){
       return(p)
     } else {
       add_paths(p, data = df, x = ~ V1, y = ~V2, z = 0, color = &quot;&quot;, frame = ~ year,
@@ -255,22 +245,17 @@ sf_data &lt;-
 
 fig_lollipop_on_map &lt;- fig_lollipop
 
+
 for(i in seq_along(sf_data)){
   fig_lollipop_on_map &lt;-
     fig_lollipop_on_map %&gt;% add_sf(i)
-}
-
-setwd(&quot;../plotly&quot;)
-htmlwidgets::saveWidget(fig_lollipop_on_map, &quot;lollipop_on_map3.html&quot;, selfcontained = T)
-setwd(&quot;../post&quot;)</code></pre>
+}</code></pre>
 <p>一通り完成。</p>
-<iframe seamless src="../../../../plotly/lollipop_on_map3/index.html" width="100%" height="900">
-</iframe>
 </div>
 </div>
 <div class="section level2">
 <h2>グラフの微調整</h2>
-<p>layout(scene = …)で見た目をいじる</p>
+<p>layout(scene = …)で見た目をいじって、冒頭のhtmlwidjetが完成。</p>
 <ul>
 <li>軸の設定 (axis)</li>
 <li>初期視点の調整 (camera)</li>
@@ -288,7 +273,9 @@ setwd(&quot;../post&quot;)</code></pre>
 
 scene &lt;-
   list(
-    xaxis = axis_set, yaxis = axis_set, zaxis = c(axis_set, backgroundcolor=&quot;rgb(100, 100, 100)&quot;, showbackground = T, range = list(c(0, 1200000))),
+    xaxis = c(axis_set, range = list(c(138.85, 140))),
+    yaxis = c(axis_set, range = list(c(35.3, 36))),
+    zaxis = c(axis_set, backgroundcolor=&quot;rgb(100, 100, 100)&quot;, showbackground = T, range = list(c(0, 1200000))),
     camera = list(center=list(x = 0, y = 0, z = -.2),
                   eye=list(x = -.1, y = -1.25, z = .3))
   )
@@ -297,12 +284,9 @@ fig_lollipop_on_map_final &lt;-
   fig_lollipop_on_map %&gt;%
   layout(scene = scene)
 
-
 setwd(&quot;../plotly&quot;)
-htmlwidgets::saveWidget(fig_lollipop_on_map_final, &quot;lollipop_on_map4.html&quot;, selfcontained = T)
+htmlwidgets::saveWidget(fig_lollipop_on_map_final, &quot;lollipop_on_map.html&quot;, selfcontained = T)
 setwd(&quot;../post&quot;)</code></pre>
-<iframe seamless src="../../../../plotly/lollipop_on_map4/index.html" width="100%" height="900">
-</iframe>
 </div>
 <div class="section level2">
 <h2>参考ページ</h2>
