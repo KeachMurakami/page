@@ -1,0 +1,297 @@
+---
+title: "3D lollipop x map なアニメーションを (R"
+date: 2018-05-26
+---
+
+```{r include = F, eval = F}
+setwd("~/Dropbox/page/content/post/")
+```
+
+```{r include = F}
+Sys.unsetenv("https_proxy")
+Sys.unsetenv("http_proxy")
+Sys.unsetenv("ftp_proxy")
+```
+
+`r htmltools::HTML("{{< tweet 994845385326809089 >}}")`
+
+[コレ](https://www.gizmodo.jp/2018/05/manhattan-graph.html)の2番煎じ。
+Rで東京版に挑戦。
+簡単に統計データがみつかった[東京都の昼夜人工の過去実測データと将来予測データ](http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm)から、昼夜人口の3Dロリポップを経年で表示する可視化。
+
+結果はコレ。
+
+<iframe seamless src="../../../../plotly/lollipop_on_map4/index.html" width="100%" height="900"></iframe>
+
+
+```{r setup}
+library(tidyverse)
+knitr::opts_chunk$set(echo = T, warning = F, message = F, results = "hold")
+```
+
+## tl;dr
+
+### 人口データの下準備
+
+```{r}
+library(readxl)
+
+messy_data <-
+  dir("../../data/tokyo_population/", pattern = ".xls", full.names = T) %>%
+  map(read_xls)
+
+messy_data %>%
+  map(head)
+```
+
+まだましな方ではあるが、いわゆる神エクセル。
+2010以降は、夜間人口データはなくなり、代わりに‘夜間人口100人あたりの昼間人口数’という謎の指標が追加されている。
+`{janitor}`など駆使すればtidyな整形はできるが、今回はぽちぽちフォーマットしてcsv化して保存 ([csvデータ](https://github.com/KeachMurakami/page/tree/master/data/tokyo_population))。
+図示しづらいので島嶼部は省略。
+
+```{r}
+tidy_data <-
+  dir("../../data/tokyo_population/", pattern = ".csv", full.names = T) %>%
+  map(read_csv)
+  
+tidy_long <-
+  tidy_data %>%
+  map(gather, year, pop, -region) %>%
+  map(mutate, year = parse_number(year))
+
+pop_2010_2035 <-
+  full_join(tidy_long[[1]], tidy_long[[2]],
+            by = c("region", "year"), suffix = c("_day", "_dayx100_night")) %>%
+  transmute(region, year, day =pop_day,
+            night = day / pop_dayx100_night *100)
+
+pop_1955_2010 <-
+  full_join(tidy_long[[3]], tidy_long[[4]],
+            by = c("region", "year"), suffix = c("_day", "_night")) %>%
+  rename(day = pop_day, night = pop_night) %>%
+  filter(year != 2010) # 2010年は重複するので削除
+
+population_data <-
+  bind_rows(pop_1955_2010, pop_2010_2035) %>%
+  gather(day_night, pop, -year, -region)
+
+head(population_data)
+
+population_data %>%
+  ggplot(aes(x = year, y = pop, group = region, color = region)) +
+  geom_point() + 
+  geom_line() +
+  facet_grid(day_night ~ .) +
+  guides(color = F)
+```
+
+次に地図とマージするために、緯度経度情報を足していく。
+`{ggmap}`で地名から緯度経度を取得し、昼夜人口データとjoinする。
+
+```{r}
+library(ggmap)
+
+region_geo <-
+  population_data$region %>%
+  unique %>%
+  tibble(region = ., lat = NA, lng = NA)
+
+# 連続取得するとしばしばNAを返すので、ループでゴリ押し
+
+fill_na <-
+  function(.tbl){
+    if(is.na(.tbl$lat)){
+      geo <- geocode(.tbl$region)
+      mutate(.tbl, lat = geo$lat, lng = geo$lon)
+    } else {
+      .tbl
+    }
+  }
+
+for(i in 1:500){
+  region_geo <-
+    region_geo %>%
+    split(.$region) %>%
+    map_df(fill_na)
+
+  if(sum(is.na(region_geo$lat)) == 0) break
+}
+
+head(region_geo)
+
+pop_geo_data <-
+  left_join(population_data, region_geo, by = "region") %>%
+  {
+    # 図示用に昼夜をずらす
+    day_data = mutate(., day_night = "day", lng = lng - 0.01)
+    night_data = mutate(., day_night = "night", lng = lng + 0.01)
+    bind_rows(day_data, night_data)
+  }
+```
+
+`{plotly}`で3次元散布図を作成。
+
+```{r}
+library(plotly)
+
+fig_scat <-
+  plot_ly(x = ~ lng, y = ~ lat, z = ~ pop, color = ~ day_night, frame = ~ year) %>%
+  add_markers(data = pop_geo_data, type = "scatter3d", marker = list(size = 3, opacity = .5),
+              text = ~paste("City: ", region, '<br>Population:', pop), hoverinfo = "text")
+
+setwd("../plotly")
+htmlwidgets::saveWidget(fig_scat, "lollipop_on_map1.html", selfcontained = T)
+setwd("../post")
+```
+
+<iframe seamless src="../../../../plotly/lollipop_on_map1/index.html" width="100%" height="900"></iframe>
+
+ロリポップチャート ([イメージ検索](https://www.google.com.au/search?q=lollipop+chart+image&tbm=isch&tbo=u&source=univ&sa=X&ved=0ahUKEwixucOgnKLbAhUHu7wKHQFTDycQsAQIJg&biw=1440&bih=799)) 化するべく、各ポイントから`z = 0`までの足を作成。
+[このページ](https://community.plot.ly/t/droplines-from-points-in-3d-scatterplot/4113/3)を流用。
+
+```{r}
+for_droplines <- 
+  replicate(2, pop_geo_data, simplify = F) %>%
+  map2_df(.x = ., .y = c(1, 0), ~ mutate(.x, pop = pop * .y)) %>%
+  group2NA(groupNames = c("year", "region", "day_night", "lat", "lng"))
+
+fig_lollipop <-
+  fig_scat %>%
+  add_paths(data = for_droplines, x = ~ lng, y = ~lat, z = ~ pop, showlegend = FALSE, hoverinfo = "none")
+
+setwd("../plotly")
+htmlwidgets::saveWidget(fig_lollipop, "lollipop_on_map2.html", selfcontained = T)
+setwd("../post")
+```
+
+<iframe seamless src="../../../../plotly/lollipop_on_map2/index.html" width="100%" height="900"></iframe>
+
+### 地図データの下準備
+
+3次元ロリポップをマッピングする地図データを作る。
+昨今の流れとして、R x GISだと日本のデータ取得は`{kokudosuuchi}`または`{jpndistrict}`、解析は`{sf}`がよさそう。
+今回は[このページ](http://uribo.hatenablog.com/entry/2017/12/08/144549)を参考に、`{jpndistrict}`を使用した。
+最新版の{`ggplot2`}はsfに対応したので、2Dだと簡単に描画できる。
+
+```{r}
+library(jpndistrict)
+library(sf)
+
+sf_tokyo <-
+  jpn_pref(pref_code = 13, district = TRUE) %>%
+  st_simplify(dTolerance = 0.001)
+
+sf_tokyo %>%
+  ggplot() +
+  geom_sf(fill = "white", z = 0, aes(type = "point")) +
+  geom_point(data = region_geo, aes(x = lng, y = lat)) +
+  xlim(138.85, 140) + ylim(35.4, 36)
+```
+
+ただ、`geom_sf()`だと、z軸方向へのプロットができなさそうなので、sfデータから座標を取り出して、z=0の面にプロットしていく。
+
+```{r}
+
+## sf_tokyo$geometryに座標データが入っている
+## sf_tokyo$geometryの1層目の要素の構成異なる
+## (閉じた区画ごとの座標データがnestしている？; documentにあたるべし) ので、
+## map用に場合わけで対処する関数を作成
+
+sf_mapping <-
+  function(.lst){
+    if(length(.lst) == 1){
+      as_tibble(.lst[[1]]) %>%
+        bind_rows(., head(., 1)) # pathを閉じるために最初の座標を足す (なくてもあまり変わらなかった)
+    } else {
+      as_tibble(.lst[[1]][[1]]) %>%
+        bind_rows(., head(., 1))
+    }
+  }
+
+sf_data <-
+  map(sf_tokyo$geometry, sf_mapping)
+```
+
+```{r}
+
+add_sf <-
+  function(p, i){
+    df <-
+      tidyr::crossing(sf_data[[i]], year = pop_geo_data$year) %>%
+      filter(between(V1, 138.85, 140), between(V2, 35.4, 36))
+    if(nrow(df) == 0){
+      return(p)
+    } else {
+      add_paths(p, data = df, x = ~ V1, y = ~V2, z = 0, color = "", frame = ~ year,
+                line = list(color = "white"), showlegend = F, hoverinfo = "none")
+    }
+  }
+
+
+fig_lollipop_on_map <- fig_lollipop
+
+for(i in seq_along(sf_data)){
+  fig_lollipop_on_map <-
+    fig_lollipop_on_map %>% add_sf(i)
+}
+
+setwd("../plotly")
+htmlwidgets::saveWidget(fig_lollipop_on_map, "lollipop_on_map3.html", selfcontained = T)
+setwd("../post")
+```
+
+一通り完成。
+
+<iframe seamless src="../../../../plotly/lollipop_on_map3/index.html" width="100%" height="900"></iframe>    
+
+## グラフの微調整
+
+layout(scene = ...)で見た目をいじる
+
+- 軸の設定 (axis)
+- 初期視点の調整 (camera)
+  - eyeは視点がある場所 (default (1.25, 1.25, 1.25))
+    - z = 0だと真横から、z = Infだと真上から
+    - normが小さいと寄り、大きいと引き
+  - centerは表示の中心 (default (0, 0, 0))
+    - z = -.2だと、全体が少し持ち上がるイメージ
+
+```{r}
+
+axis_set <- list(zeroline = F, showline = F, showticklabels = F, title = "")
+
+scene <-
+  list(
+    xaxis = axis_set, yaxis = axis_set, zaxis = c(axis_set, backgroundcolor="rgb(100, 100, 100)", showbackground = T, range = list(c(0, 1200000))),
+    camera = list(center=list(x = 0, y = 0, z = -.2),
+                  eye=list(x = -.1, y = -1.25, z = .3))
+  )
+
+fig_lollipop_on_map_final <-
+  fig_lollipop_on_map %>%
+  layout(scene = scene)
+
+
+setwd("../plotly")
+htmlwidgets::saveWidget(fig_lollipop_on_map_final, "lollipop_on_map4.html", selfcontained = T)
+setwd("../post")
+```
+
+<iframe seamless src="../../../../plotly/lollipop_on_map4/index.html" width="100%" height="900"></iframe>
+
+## 参考ページ
+
+[東京都昼間人口の予測 | 東京都の統計](http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm)  
+[Droplines from points in 3D scatterplot? | plotly community ](https://community.plot.ly/t/droplines-from-points-in-3d-scatterplot/4113/3)  
+[yutannihilation/kokudosuuchi | github](https://github.com/yutannihilation/kokudosuuchi)  
+[uribo/jpndistrict | github](https://github.com/uribo/jpndistrict)  
+[r-spatial/sf | github](https://github.com/r-spatial/sf)  
+[中級者向けggplot2でこんな図が描きたい - 地図編 | cucumber flesh ](http://uribo.hatenablog.com/entry/2017/12/08/144549)  
+[Axes in R | plotly](https://plot.ly/r/axes/)  
+[Keeping a consistent perspective for 3D plots | plotly community](https://community.plot.ly/t/keeping-a-consistent-perspective-for-3d-plots/5692)
+
+## Session info
+
+```{r}
+devtools::session_info()
+```

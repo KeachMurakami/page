@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://keachmurakami.github.io/2018/05/26/3d-lollipop-x-map-%E3%81%AA%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%92-r/</loc>
+    <lastmod>2018-05-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</loc>
     <lastmod>2018-05-19T00:00:00+00:00</lastmod>
   </url>
@@ -310,6 +315,22 @@
   </url>
   
   <url>
+    <loc>https://keachmurakami.github.io/plotly/lollipop_on_map1/</loc>
+  </url>
+  
+  <url>
+    <loc>https://keachmurakami.github.io/plotly/lollipop_on_map2/</loc>
+  </url>
+  
+  <url>
+    <loc>https://keachmurakami.github.io/plotly/lollipop_on_map3/</loc>
+  </url>
+  
+  <url>
+    <loc>https://keachmurakami.github.io/plotly/lollipop_on_map4/</loc>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/cv_eng/</loc>
   </url>
   
@@ -323,7 +344,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/</loc>
-    <lastmod>2018-05-19T00:00:00+00:00</lastmod>
+    <lastmod>2018-05-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -344,7 +365,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/post/</loc>
-    <lastmod>2018-05-19T00:00:00+00:00</lastmod>
+    <lastmod>2018-05-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

@@ -1,0 +1,439 @@
+---
+title: "3D lollipop x map なアニメーションを (R"
+date: 2018-05-26
+---
+
+
+
+{{< tweet 994845385326809089 >}}
+<p><a href="https://www.gizmodo.jp/2018/05/manhattan-graph.html">コレ</a>の2番煎じ。 Rで東京版に挑戦。 簡単に統計データがみつかった<a href="http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm">東京都の昼夜人工の過去実測データと将来予測データ</a>から、昼夜人口の3Dロリポップを経年で表示する可視化。</p>
+<p>結果はコレ。</p>
+<iframe seamless src="../../../../plotly/lollipop_on_map4/index.html" width="100%" height="900">
+</iframe>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ───────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 2.2.1.9000     ✔ purrr   0.2.4     
+## ✔ tibble  1.4.2          ✔ dplyr   0.7.5     
+## ✔ tidyr   0.8.1          ✔ stringr 1.3.1     
+## ✔ readr   1.1.1          ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>knitr::opts_chunk$set(echo = T, warning = F, message = F, results = &quot;hold&quot;)</code></pre>
+<div id="tldr" class="section level2">
+<h2>tl;dr</h2>
+<div class="section level3">
+<h3>人口データの下準備</h3>
+<pre class="r"><code>library(readxl)
+
+messy_data &lt;-
+  dir(&quot;../../data/tokyo_population/&quot;, pattern = &quot;.xls&quot;, full.names = T) %&gt;%
+  map(read_xls)
+
+messy_data %&gt;%
+  map(head)</code></pre>
+<pre><code>## [[1]]
+## # A tibble: 6 x 11
+##   `第１表　　　区市町村別昼間人口… X__1  X__2  X__3  X__4  X__5   X__6  X__7  X__8  X__9 
+##   &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;lgl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 &lt;NA&gt;              &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 2 区市町村          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    平成22年… 平成27… 平成32… 平成37… 平成42…
+## 3 &lt;NA&gt;              &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    （2010… （201… （202… （202… （203…
+## 4 &lt;NA&gt;              &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 5 東京都            &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    15576… 1573… 1573… 1560… 1537…
+## 6 &lt;NA&gt;              区部  &lt;NA&gt;  &lt;NA&gt;  NA    11711… 1183… 1186… 1178… 1164…
+## # ... with 1 more variable: X__10 &lt;chr&gt;
+## 
+## [[2]]
+## # A tibble: 6 x 11
+##   `第２表　　　区市町村別昼夜間人… X__1  X__2  X__3  X__4  X__5   X__6  X__7  X__8  X__9 
+##   &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;lgl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 &lt;NA&gt;              &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 2 区市町村          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    平成22年… 平成27… 平成32… 平成37… 平成42…
+## 3 &lt;NA&gt;              &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    （2010… （201… （202… （202… （203…
+## 4 &lt;NA&gt;              &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 5 東京都            &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    118.4… 117.… 117.2 116.… 116.…
+## 6 &lt;NA&gt;              区部  &lt;NA&gt;  &lt;NA&gt;  NA    130.9… 129.… 128.… 128   127.8
+## # ... with 1 more variable: X__10 &lt;chr&gt;
+## 
+## [[3]]
+## # A tibble: 6 x 15
+##   X__1   X__2   X__3  `付表 第１表 区市町村別昼間人口（昭和… X__4   X__5  X__6  X__7  X__8 
+##   &lt;chr&gt;  &lt;chr&gt;  &lt;lgl&gt; &lt;chr&gt;                 &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 &lt;NA&gt;   &lt;NA&gt;   NA    &lt;NA&gt;                  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  （単位　…
+## 2 &lt;NA&gt;   地　　域… NA    昭和30年              昭和35年… 昭和40… 昭和45… 昭和50… 昭和55…
+## 3 &lt;NA&gt;   &lt;NA&gt;   NA    (1955)                (1960) (196… (197… (197… (198…
+## 4 東京都 &lt;NA&gt;   NA    8291012               10199… 1175… 1266… 1335… 1349…
+## 5 区部   &lt;NA&gt;   NA    7323010               89709… 1003… 1044… 1072… 1061…
+## 6 &lt;NA&gt;   千代田区… NA    494673                645377 7718… 8549… 9344… 9365…
+## # ... with 6 more variables: `付表 第１表
+## #   区市町村別昼間人口（昭和30年～平成22年）（続）` &lt;chr&gt;, X__9 &lt;chr&gt;,
+## #   X__10 &lt;chr&gt;, X__11 &lt;chr&gt;, X__12 &lt;chr&gt;, X__13 &lt;chr&gt;
+## 
+## [[4]]
+## # A tibble: 6 x 17
+##   X__1  X__2  X__3  X__4  X__5  `付表 第２表 区市町村別常住（夜… X__6  X__7  X__8  X__9 
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;lgl&gt; &lt;chr&gt;              &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    &lt;NA&gt;               &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 2 &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    &lt;NA&gt;               &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 3 &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    &lt;NA&gt;               &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 4 &lt;NA&gt;  &lt;NA&gt;  地域  &lt;NA&gt;  NA    昭和30年           昭和35… 昭和40… 昭和45… 昭和50…
+## 5 &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    (1955)             (196… (196… (197… (197…
+## 6 &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  NA    &lt;NA&gt;               &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## # ... with 7 more variables: X__10 &lt;chr&gt;, `付表 第２表
+## #   区市町村別常住（夜間）人口（昭和30年～平成22年）（続）` &lt;chr&gt;,
+## #   X__11 &lt;chr&gt;, X__12 &lt;chr&gt;, X__13 &lt;chr&gt;, X__14 &lt;chr&gt;, X__15 &lt;chr&gt;</code></pre>
+<p>まだましな方ではあるが、いわゆる神エクセル。 2010以降は、夜間人口データはなくなり、代わりに‘夜間人口100人あたりの昼間人口数’という謎の指標が追加されている。 <code>{janitor}</code>など駆使すればtidyな整形はできるが、今回はぽちぽちフォーマットしてcsv化して保存 (<a href="https://github.com/KeachMurakami/page/tree/master/data/tokyo_population">csvデータ</a>)。 図示しづらいので島嶼部は省略。</p>
+<pre class="r"><code>tidy_data &lt;-
+  dir(&quot;../../data/tokyo_population/&quot;, pattern = &quot;.csv&quot;, full.names = T) %&gt;%
+  map(read_csv)
+  
+tidy_long &lt;-
+  tidy_data %&gt;%
+  map(gather, year, pop, -region) %&gt;%
+  map(mutate, year = parse_number(year))
+
+pop_2010_2035 &lt;-
+  full_join(tidy_long[[1]], tidy_long[[2]],
+            by = c(&quot;region&quot;, &quot;year&quot;), suffix = c(&quot;_day&quot;, &quot;_dayx100_night&quot;)) %&gt;%
+  transmute(region, year, day =pop_day,
+            night = day / pop_dayx100_night *100)
+
+pop_1955_2010 &lt;-
+  full_join(tidy_long[[3]], tidy_long[[4]],
+            by = c(&quot;region&quot;, &quot;year&quot;), suffix = c(&quot;_day&quot;, &quot;_night&quot;)) %&gt;%
+  rename(day = pop_day, night = pop_night) %&gt;%
+  filter(year != 2010) # 2010年は重複するので削除
+
+population_data &lt;-
+  bind_rows(pop_1955_2010, pop_2010_2035) %&gt;%
+  gather(day_night, pop, -year, -region)
+
+head(population_data)
+
+population_data %&gt;%
+  ggplot(aes(x = year, y = pop, group = region, color = region)) +
+  geom_point() + 
+  geom_line() +
+  facet_grid(day_night ~ .) +
+  guides(color = F)</code></pre>
+<p><img src="/post/2018-05-26-sf_3d_lollipop_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre><code>## # A tibble: 6 x 4
+##   region    year day_night     pop
+##   &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;
+## 1 千代田区 1955. day       494673.
+## 2 中央区   1955. day       448510.
+## 3 港区     1955. day       380542.
+## 4 新宿区   1955. day       377346.
+## 5 文京区   1955. day       266682.
+## 6 台東区   1955. day       358604.</code></pre>
+<p>次に地図とマージするために、緯度経度情報を足していく。 <code>{ggmap}</code>で地名から緯度経度を取得し、昼夜人口データとjoinする。</p>
+<pre class="r"><code>library(ggmap)
+
+region_geo &lt;-
+  population_data$region %&gt;%
+  unique %&gt;%
+  tibble(region = ., lat = NA, lng = NA)
+
+# 連続取得するとしばしばNAを返すので、ループでゴリ押し
+
+fill_na &lt;-
+  function(.tbl){
+    if(is.na(.tbl$lat)){
+      geo &lt;- geocode(.tbl$region)
+      mutate(.tbl, lat = geo$lat, lng = geo$lon)
+    } else {
+      .tbl
+    }
+  }
+
+for(i in 1:500){
+  region_geo &lt;-
+    region_geo %&gt;%
+    split(.$region) %&gt;%
+    map_df(fill_na)
+
+  if(sum(is.na(region_geo$lat)) == 0) break
+}
+
+head(region_geo)
+
+pop_geo_data &lt;-
+  left_join(population_data, region_geo, by = &quot;region&quot;) %&gt;%
+  {
+    # 図示用に昼夜をずらす
+    day_data = mutate(., day_night = &quot;day&quot;, lng = lng - 0.01)
+    night_data = mutate(., day_night = &quot;night&quot;, lng = lng + 0.01)
+    bind_rows(day_data, night_data)
+  }</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   region       lat   lng
+##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;
+## 1 あきる野市  35.7  139.
+## 2 三鷹市      35.7  140.
+## 3 世田谷区    35.6  140.
+## 4 中央区      35.7  140.
+## 5 中野区      35.7  140.
+## 6 八王子市    35.7  139.</code></pre>
+<p><code>{plotly}</code>で3次元散布図を作成。</p>
+<pre class="r"><code>library(plotly)
+
+fig_scat &lt;-
+  plot_ly(x = ~ lng, y = ~ lat, z = ~ pop, color = ~ day_night, frame = ~ year) %&gt;%
+  add_markers(data = pop_geo_data, type = &quot;scatter3d&quot;, marker = list(size = 3, opacity = .5),
+              text = ~paste(&quot;City: &quot;, region, &#39;&lt;br&gt;Population:&#39;, pop), hoverinfo = &quot;text&quot;)
+
+setwd(&quot;../plotly&quot;)
+htmlwidgets::saveWidget(fig_scat, &quot;lollipop_on_map1.html&quot;, selfcontained = T)
+setwd(&quot;../post&quot;)</code></pre>
+<iframe seamless src="../../../../plotly/lollipop_on_map1/index.html" width="100%" height="900">
+</iframe>
+<p>ロリポップチャート (<a href="https://www.google.com.au/search?q=lollipop+chart+image&amp;tbm=isch&amp;tbo=u&amp;source=univ&amp;sa=X&amp;ved=0ahUKEwixucOgnKLbAhUHu7wKHQFTDycQsAQIJg&amp;biw=1440&amp;bih=799">イメージ検索</a>) 化するべく、各ポイントから<code>z = 0</code>までの足を作成。 <a href="https://community.plot.ly/t/droplines-from-points-in-3d-scatterplot/4113/3">このページ</a>を流用。</p>
+<pre class="r"><code>for_droplines &lt;- 
+  replicate(2, pop_geo_data, simplify = F) %&gt;%
+  map2_df(.x = ., .y = c(1, 0), ~ mutate(.x, pop = pop * .y)) %&gt;%
+  group2NA(groupNames = c(&quot;year&quot;, &quot;region&quot;, &quot;day_night&quot;, &quot;lat&quot;, &quot;lng&quot;))
+
+fig_lollipop &lt;-
+  fig_scat %&gt;%
+  add_paths(data = for_droplines, x = ~ lng, y = ~lat, z = ~ pop, showlegend = FALSE, hoverinfo = &quot;none&quot;)
+
+setwd(&quot;../plotly&quot;)
+htmlwidgets::saveWidget(fig_lollipop, &quot;lollipop_on_map2.html&quot;, selfcontained = T)
+setwd(&quot;../post&quot;)</code></pre>
+<iframe seamless src="../../../../plotly/lollipop_on_map2/index.html" width="100%" height="900">
+</iframe>
+</div>
+<div class="section level3">
+<h3>地図データの下準備</h3>
+<p>3次元ロリポップをマッピングする地図データを作る。 昨今の流れとして、R x GISだと日本のデータ取得は<code>{kokudosuuchi}</code>または<code>{jpndistrict}</code>、解析は<code>{sf}</code>がよさそう。 今回は<a href="http://uribo.hatenablog.com/entry/2017/12/08/144549">このページ</a>を参考に、<code>{jpndistrict}</code>を使用した。 最新版の{<code>ggplot2</code>}はsfに対応したので、2Dだと簡単に描画できる。</p>
+<pre class="r"><code>library(jpndistrict)
+library(sf)
+
+sf_tokyo &lt;-
+  jpn_pref(pref_code = 13, district = TRUE) %&gt;%
+  st_simplify(dTolerance = 0.001)
+
+sf_tokyo %&gt;%
+  ggplot() +
+  geom_sf(fill = &quot;white&quot;, z = 0, aes(type = &quot;point&quot;)) +
+  geom_point(data = region_geo, aes(x = lng, y = lat)) +
+  xlim(138.85, 140) + ylim(35.4, 36)</code></pre>
+<p><img src="/post/2018-05-26-sf_3d_lollipop_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>ただ、<code>geom_sf()</code>だと、z軸方向へのプロットができなさそうなので、sfデータから座標を取り出して、z=0の面にプロットしていく。</p>
+<pre class="r"><code>## sf_tokyo$geometryに座標データが入っている
+## sf_tokyo$geometryの1層目の要素の構成異なる
+## (閉じた区画ごとの座標データがnestしている？; documentにあたるべし) ので、
+## map用に場合わけで対処する関数を作成
+
+sf_mapping &lt;-
+  function(.lst){
+    if(length(.lst) == 1){
+      as_tibble(.lst[[1]]) %&gt;%
+        bind_rows(., head(., 1)) # pathを閉じるために最初の座標を足す (なくてもあまり変わらなかった)
+    } else {
+      as_tibble(.lst[[1]][[1]]) %&gt;%
+        bind_rows(., head(., 1))
+    }
+  }
+
+sf_data &lt;-
+  map(sf_tokyo$geometry, sf_mapping)</code></pre>
+<pre class="r"><code>add_sf &lt;-
+  function(p, i){
+    df &lt;-
+      tidyr::crossing(sf_data[[i]], year = pop_geo_data$year) %&gt;%
+      filter(between(V1, 138.85, 140), between(V2, 35.4, 36))
+    if(nrow(df) == 0){
+      return(p)
+    } else {
+      add_paths(p, data = df, x = ~ V1, y = ~V2, z = 0, color = &quot;&quot;, frame = ~ year,
+                line = list(color = &quot;white&quot;), showlegend = F, hoverinfo = &quot;none&quot;)
+    }
+  }
+
+
+fig_lollipop_on_map &lt;- fig_lollipop
+
+for(i in seq_along(sf_data)){
+  fig_lollipop_on_map &lt;-
+    fig_lollipop_on_map %&gt;% add_sf(i)
+}
+
+setwd(&quot;../plotly&quot;)
+htmlwidgets::saveWidget(fig_lollipop_on_map, &quot;lollipop_on_map3.html&quot;, selfcontained = T)
+setwd(&quot;../post&quot;)</code></pre>
+<p>一通り完成。</p>
+<iframe seamless src="../../../../plotly/lollipop_on_map3/index.html" width="100%" height="900">
+</iframe>
+</div>
+</div>
+<div class="section level2">
+<h2>グラフの微調整</h2>
+<p>layout(scene = …)で見た目をいじる</p>
+<ul>
+<li>軸の設定 (axis)</li>
+<li>初期視点の調整 (camera)</li>
+<li>eyeは視点がある場所 (default (1.25, 1.25, 1.25))
+<ul>
+<li>z = 0だと真横から、z = Infだと真上から</li>
+<li>normが小さいと寄り、大きいと引き</li>
+</ul></li>
+<li>centerは表示の中心 (default (0, 0, 0))
+<ul>
+<li>z = -.2だと、全体が少し持ち上がるイメージ</li>
+</ul></li>
+</ul>
+<pre class="r"><code>axis_set &lt;- list(zeroline = F, showline = F, showticklabels = F, title = &quot;&quot;)
+
+scene &lt;-
+  list(
+    xaxis = axis_set, yaxis = axis_set, zaxis = c(axis_set, backgroundcolor=&quot;rgb(100, 100, 100)&quot;, showbackground = T, range = list(c(0, 1200000))),
+    camera = list(center=list(x = 0, y = 0, z = -.2),
+                  eye=list(x = -.1, y = -1.25, z = .3))
+  )
+
+fig_lollipop_on_map_final &lt;-
+  fig_lollipop_on_map %&gt;%
+  layout(scene = scene)
+
+
+setwd(&quot;../plotly&quot;)
+htmlwidgets::saveWidget(fig_lollipop_on_map_final, &quot;lollipop_on_map4.html&quot;, selfcontained = T)
+setwd(&quot;../post&quot;)</code></pre>
+<iframe seamless src="../../../../plotly/lollipop_on_map4/index.html" width="100%" height="900">
+</iframe>
+</div>
+<div class="section level2">
+<h2>参考ページ</h2>
+<p><a href="http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm">東京都昼間人口の予測 | 東京都の統計</a><br />
+<a href="https://community.plot.ly/t/droplines-from-points-in-3d-scatterplot/4113/3">Droplines from points in 3D scatterplot? | plotly community</a><br />
+<a href="https://github.com/yutannihilation/kokudosuuchi">yutannihilation/kokudosuuchi | github</a><br />
+<a href="https://github.com/uribo/jpndistrict">uribo/jpndistrict | github</a><br />
+<a href="https://github.com/r-spatial/sf">r-spatial/sf | github</a><br />
+<a href="http://uribo.hatenablog.com/entry/2017/12/08/144549">中級者向けggplot2でこんな図が描きたい - 地図編 | cucumber flesh</a><br />
+<a href="https://plot.ly/r/axes/">Axes in R | plotly</a><br />
+<a href="https://community.plot.ly/t/keeping-a-consistent-perspective-for-3d-plots/5692">Keeping a consistent perspective for 3D plots | plotly community</a></p>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session info</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Brisbane          
+##  date     2018-05-26                  
+## 
+##  package      * version    date       source                            
+##  assertthat     0.2.0      2017-04-11 CRAN (R 3.5.0)                    
+##  backports      1.1.2      2017-12-13 CRAN (R 3.5.0)                    
+##  base         * 3.5.0      2018-04-24 local                             
+##  bindr          0.1.1      2018-03-13 CRAN (R 3.5.0)                    
+##  bindrcpp     * 0.2.2      2018-03-29 CRAN (R 3.5.0)                    
+##  blogdown       0.6        2018-04-18 CRAN (R 3.5.0)                    
+##  bookdown       0.7        2018-02-18 CRAN (R 3.5.0)                    
+##  broom          0.4.4      2018-05-24 Github (tidyverse/broom@570b25a)  
+##  cellranger     1.1.0      2016-07-27 CRAN (R 3.5.0)                    
+##  class          7.3-14     2015-08-30 CRAN (R 3.5.0)                    
+##  classInt       0.2-3      2018-04-16 CRAN (R 3.5.0)                    
+##  cli            1.0.0      2017-11-05 CRAN (R 3.5.0)                    
+##  colorspace     1.3-2      2016-12-14 CRAN (R 3.5.0)                    
+##  compiler       3.5.0      2018-04-24 local                             
+##  crayon         1.3.4      2017-09-16 CRAN (R 3.5.0)                    
+##  crosstalk      1.0.0      2016-12-21 CRAN (R 3.5.0)                    
+##  data.table     1.10.4-3   2017-10-27 CRAN (R 3.5.0)                    
+##  datasets     * 3.5.0      2018-04-24 local                             
+##  DBI            0.8        2018-03-02 CRAN (R 3.5.0)                    
+##  devtools       1.13.5     2018-02-18 CRAN (R 3.5.0)                    
+##  digest         0.6.15     2018-01-28 CRAN (R 3.5.0)                    
+##  dplyr        * 0.7.5      2018-05-19 cran (@0.7.5)                     
+##  e1071          1.6-8      2017-02-02 CRAN (R 3.5.0)                    
+##  evaluate       0.10.1     2017-06-24 CRAN (R 3.5.0)                    
+##  forcats      * 0.3.0      2018-02-19 CRAN (R 3.5.0)                    
+##  foreign        0.8-70     2017-11-28 CRAN (R 3.5.0)                    
+##  geosphere      1.5-7      2017-11-05 CRAN (R 3.5.0)                    
+##  ggmap        * 2.6.1      2016-01-23 CRAN (R 3.5.0)                    
+##  ggplot2      * 2.2.1.9000 2018-05-22 Github (tidyverse/ggplot2@eecc450)
+##  glue           1.2.0      2017-10-29 CRAN (R 3.5.0)                    
+##  graphics     * 3.5.0      2018-04-24 local                             
+##  grDevices    * 3.5.0      2018-04-24 local                             
+##  grid           3.5.0      2018-04-24 local                             
+##  gtable         0.2.0      2016-02-26 CRAN (R 3.5.0)                    
+##  haven          1.1.1      2018-01-18 CRAN (R 3.5.0)                    
+##  hms            0.4.2      2018-03-10 CRAN (R 3.5.0)                    
+##  htmltools      0.3.6      2017-04-28 CRAN (R 3.5.0)                    
+##  htmlwidgets    1.2        2018-04-19 CRAN (R 3.5.0)                    
+##  httpuv         1.4.3      2018-05-10 cran (@1.4.3)                     
+##  httr           1.3.1      2017-08-20 CRAN (R 3.5.0)                    
+##  jpeg           0.1-8      2014-01-23 CRAN (R 3.5.0)                    
+##  jpmesh       * 1.1.0      2018-02-25 CRAN (R 3.5.0)                    
+##  jpndistrict  * 0.3.1      2018-05-02 CRAN (R 3.5.0)                    
+##  jsonlite       1.5        2017-06-01 CRAN (R 3.5.0)                    
+##  knitr          1.20       2018-02-20 CRAN (R 3.5.0)                    
+##  labeling       0.3        2014-08-23 CRAN (R 3.5.0)                    
+##  later          0.7.2      2018-05-01 cran (@0.7.2)                     
+##  lattice        0.20-35    2017-03-25 CRAN (R 3.5.0)                    
+##  lazyeval       0.2.1      2017-10-29 CRAN (R 3.5.0)                    
+##  leaflet        2.0.0      2018-04-20 CRAN (R 3.5.0)                    
+##  lubridate      1.7.4      2018-04-11 CRAN (R 3.5.0)                    
+##  magrittr       1.5        2014-11-22 CRAN (R 3.5.0)                    
+##  mapproj        1.2.6      2018-03-29 CRAN (R 3.5.0)                    
+##  maps           3.3.0      2018-04-03 CRAN (R 3.5.0)                    
+##  memoise        1.1.0      2017-04-21 CRAN (R 3.5.0)                    
+##  methods      * 3.5.0      2018-04-24 local                             
+##  mime           0.5        2016-07-07 CRAN (R 3.5.0)                    
+##  miniUI         0.1.1      2016-01-15 CRAN (R 3.5.0)                    
+##  mnormt         1.5-5      2016-10-15 CRAN (R 3.5.0)                    
+##  modelr         0.1.1      2017-07-24 CRAN (R 3.5.0)                    
+##  munsell        0.4.3      2016-02-13 CRAN (R 3.5.0)                    
+##  nlme           3.1-137    2018-04-07 CRAN (R 3.5.0)                    
+##  parallel       3.5.0      2018-04-24 local                             
+##  pillar         1.2.1      2018-02-27 CRAN (R 3.5.0)                    
+##  pkgconfig      2.0.1      2017-03-21 CRAN (R 3.5.0)                    
+##  plotly       * 4.7.1      2017-07-29 CRAN (R 3.5.0)                    
+##  plyr           1.8.4      2016-06-08 CRAN (R 3.5.0)                    
+##  png            0.1-7      2013-12-03 CRAN (R 3.5.0)                    
+##  promises       1.0.1      2018-04-13 CRAN (R 3.5.0)                    
+##  proto          1.0.0      2016-10-29 CRAN (R 3.5.0)                    
+##  psych          1.8.4      2018-05-06 cran (@1.8.4)                     
+##  purrr        * 0.2.4      2017-10-18 CRAN (R 3.5.0)                    
+##  R6             2.2.2      2017-06-17 CRAN (R 3.5.0)                    
+##  RColorBrewer   1.1-2      2014-12-07 CRAN (R 3.5.0)                    
+##  Rcpp           0.12.17    2018-05-18 cran (@0.12.17)                   
+##  readr        * 1.1.1      2017-05-16 CRAN (R 3.5.0)                    
+##  readxl       * 1.1.0      2018-04-20 CRAN (R 3.5.0)                    
+##  reshape2       1.4.3      2017-12-11 CRAN (R 3.5.0)                    
+##  RgoogleMaps    1.4.1      2016-09-18 CRAN (R 3.5.0)                    
+##  rjson          0.2.18     2018-05-05 CRAN (R 3.5.0)                    
+##  rlang          0.2.0      2018-02-20 CRAN (R 3.5.0)                    
+##  rmarkdown      1.9        2018-03-01 CRAN (R 3.5.0)                    
+##  rprojroot      1.3-2      2018-01-03 CRAN (R 3.5.0)                    
+##  rstudioapi     0.7        2017-09-07 CRAN (R 3.5.0)                    
+##  rvest          0.3.2      2016-06-17 CRAN (R 3.5.0)                    
+##  scales         0.5.0      2017-08-24 CRAN (R 3.5.0)                    
+##  sf           * 0.6-3      2018-05-17 CRAN (R 3.5.0)                    
+##  shiny          1.1.0      2018-05-17 cran (@1.1.0)                     
+##  sp             1.2-7      2018-01-19 CRAN (R 3.5.0)                    
+##  spData         0.2.8.3    2018-03-25 CRAN (R 3.5.0)                    
+##  stats        * 3.5.0      2018-04-24 local                             
+##  stringi        1.2.2      2018-05-02 cran (@1.2.2)                     
+##  stringr      * 1.3.1      2018-05-10 cran (@1.3.1)                     
+##  tibble       * 1.4.2      2018-01-22 CRAN (R 3.5.0)                    
+##  tidyr        * 0.8.1      2018-05-18 cran (@0.8.1)                     
+##  tidyselect     0.2.4      2018-02-26 CRAN (R 3.5.0)                    
+##  tidyverse    * 1.2.1      2017-11-14 CRAN (R 3.5.0)                    
+##  tools          3.5.0      2018-04-24 local                             
+##  udunits2       0.13       2016-11-17 CRAN (R 3.5.0)                    
+##  units          0.5-1      2018-01-08 CRAN (R 3.5.0)                    
+##  utf8           1.1.3      2018-01-03 CRAN (R 3.5.0)                    
+##  utils        * 3.5.0      2018-04-24 local                             
+##  viridisLite    0.3.0      2018-02-01 CRAN (R 3.5.0)                    
+##  withr          2.1.2      2018-03-15 CRAN (R 3.5.0)                    
+##  xfun           0.1        2018-01-22 CRAN (R 3.5.0)                    
+##  xml2           1.2.0      2018-01-24 CRAN (R 3.5.0)                    
+##  xtable         1.8-2      2016-02-05 CRAN (R 3.5.0)                    
+##  yaml           2.1.18     2018-03-08 CRAN (R 3.5.0)</code></pre>
+</div>
