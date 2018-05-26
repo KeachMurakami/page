@@ -5,7 +5,7 @@ date: 2018-05-26
 
 
 
-{{< tweet 994845385326809089 >}}
+<!-- {{< tweet 994845385326809089 >}} -->
 <p><a href="https://www.gizmodo.jp/2018/05/manhattan-graph.html">コレ</a>の2番煎じ。 Rで東京版に挑戦。 簡単に統計データがみつかった<a href="http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm">東京都の昼夜人工の過去実測データと将来予測データ</a>から、昼夜人口の3Dロリポップを経年で表示する可視化。</p>
 <p>結果はコレ。</p>
 <iframe seamless src="../../../../plotly/lollipop_on_map4/index.html" width="100%" height="900">
@@ -243,7 +243,7 @@ sf_data &lt;-
   function(p, i){
     df &lt;-
       tidyr::crossing(sf_data[[i]], year = pop_geo_data$year) %&gt;%
-      filter(between(V1, 138.85, 140), between(V2, 35.4, 36))
+      filter(between(V1, 138.85, 140), between(V2, 35.3, 36))
     if(nrow(df) == 0){
       return(p)
     } else {
@@ -306,7 +306,8 @@ setwd(&quot;../post&quot;)</code></pre>
 </div>
 <div class="section level2">
 <h2>参考ページ</h2>
-<p><a href="http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm">東京都昼間人口の予測 | 東京都の統計</a><br />
+<p><a href="https://www.gizmodo.jp/2018/05/manhattan-graph.html">時間によって激変するマンハッタンの人口を表す、インタラクティブな3Dグラフ | GIZMODE</a><br />
+<a href="http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm">東京都昼間人口の予測 | 東京都の統計</a><br />
 <a href="https://community.plot.ly/t/droplines-from-points-in-3d-scatterplot/4113/3">Droplines from points in 3D scatterplot? | plotly community</a><br />
 <a href="https://github.com/yutannihilation/kokudosuuchi">yutannihilation/kokudosuuchi | github</a><br />
 <a href="https://github.com/uribo/jpndistrict">uribo/jpndistrict | github</a><br />
