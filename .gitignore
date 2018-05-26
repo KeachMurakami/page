@@ -2,5 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-/prep
+prep
 .DS_Store
+confidential_data
