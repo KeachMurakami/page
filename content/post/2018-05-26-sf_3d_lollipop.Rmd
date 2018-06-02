@@ -264,7 +264,7 @@ setwd("../post")
 
 ## 参考ページ
 
-[時間によって激変するマンハッタンの人口を表す、インタラクティブな3Dグラフ | GIZMODE](https://www.gizmodo.jp/2018/05/manhattan-graph.html)  
+[時間によって激変するマンハッタンの人口を表す、インタラクティブな3Dグラフ | GIZMODO](https://www.gizmodo.jp/2018/05/manhattan-graph.html)  
 [東京都昼間人口の予測 | 東京都の統計](http://www.toukei.metro.tokyo.jp/tyosoku/ty-data.htm)  
 [Droplines from points in 3D scatterplot? | plotly community ](https://community.plot.ly/t/droplines-from-points-in-3d-scatterplot/4113/3)  
 [yutannihilation/kokudosuuchi | github](https://github.com/yutannihilation/kokudosuuchi)  
