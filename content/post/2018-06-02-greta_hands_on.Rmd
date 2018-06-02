@@ -1,0 +1,391 @@
+---
+title: "TensorFlow系のHMCパッケージ{greta}に触れる"
+date: 2018-06-02
+---
+
+```{r setup, warning = F, message = F, include = F, echo = F}
+knitr::opts_chunk$set(warning = F, message = F, echo = T, results = "hold")
+```
+
+タイトルの通り、[greta](https://github.com/greta-dev/greta)に少し触れてみたメモ。
+[公式](https://greta-dev.github.io/greta/)曰く、‘gretaはモデルをRに直書きできるから他言語を学ぶ必要はないし、TensorFlowを使っていて大規模データに対してもGPUを使った高速推定が可能’とのこと。
+
+Stanの勉強も兼ねて、一次線形回帰モデルの係数の推定を`stats::lm`、[`{rstan}`](http://mc-stan.org/users/interfaces/rstan)、`{greta}`で比べる。
+サンプルデータとしてmtcarsを用い、$hp$ (horsepower; 馬力) を$mpg$ (miles per gallon; 燃費) で回帰する。
+
+### 準備
+
+```{r, eval = T}
+# install.packages("DiagrammeR") # install required package
+# install.packages("greta") # CRAN version
+# devtools::install_github("greta-dev/greta") # github version
+# greta::install_tensorflow() # install tensorflow 
+
+packageVersion("greta")
+```
+
+ある程度使ってから気づいたが、CRAN版のgreta (ver. 0.2.3) ではMCMCのchainが設定できない。
+github版 (ver. 0.2.4) にはchain機能が実装済みなのでそっちの方がよさそう。
+
+## lm
+
+通常の`stats::lm`。
+
+```{r}
+library(tidyverse)
+library(magrittr)
+library(broom)
+library(knitr)
+
+lm_result <-
+  mtcars %>%
+  lm(data =., hp ~ mpg)
+
+mtcars %>%
+  modelr::add_predictions(model = lm_result) %>%
+  ggplot(aes(mpg, hp)) +
+  geom_segment(aes(xend = mpg, yend = pred), col = "grey") +
+  geom_smooth(method = "lm", fill = NA) +
+  geom_point()
+
+lm_coefs <-
+  lm_result %>%
+  tidy %>%
+  transmute(method = "lm", parameter = c("intercept", "slope"), mean = estimate, sigma = std.error) %>%
+  add_row(method = "lm", parameter = "sigma", mean = summary(lm_result)$sigma)
+
+summary(lm_result)
+kable(lm_coefs)
+```
+
+回帰係数とy切片はおよそ-8.8と324。
+燃費のいい車ほど馬力は低く、1単位の$mpg$上昇は8.8単位の$hp$低下と対応するという関係。
+
+## Stan
+
+次に`{rstan}`。
+
+```{r, eval = F}
+library(rstan)
+
+model_stan <-'
+data{
+  int N;
+  vector[N] X;
+  vector[N] Y;
+}
+
+parameters{
+  real intercept;
+  real slope;
+  real<lower=0> sigma;
+}
+
+model{
+  Y ~ normal(X * slope + intercept, sigma);
+}
+'
+
+stan_data <-
+  list(N = nrow(mtcars),
+       X = mtcars$mpg,
+       Y = mtcars$hp)
+
+stan_result <-
+  stan(model_code = model_stan, data = stan_data,
+       iter = 2000, warmup = 500, chains = 4, seed = 1)
+
+# stanの結果を保存
+write_rds(stan_result, path = "~/Dropbox/page/data/greta_hands_on/stan.rdata")
+```
+
+トレースと事後分布を可視化し、summaryを確認する。
+```{r}
+library(rstan)
+library(bayesplot)
+theme_set(theme_grey())
+
+stan_result <- read_rds("../../data/greta_hands_on/stan.rdata")
+stan_result_array <- as.array(stan_result)
+
+mcmc_trace(stan_result_array, pars = c("intercept", "slope", "sigma")) + guides(color = F)
+mcmc_dens_overlay(stan_result_array, pars = c("intercept", "slope", "sigma")) + guides(color = F)
+```
+
+収束確認のために、`Rhat`を見る。
+[アヒル本](http://www.kyoritsu-pub.co.jp/bookdetail/9784320112421)では[文献](https://www.crcpress.com/Bayesian-Data-Analysis-Third-Edition/Gelman-Carlin-Stern-Dunson-Vehtari-Rubin/p/book/9781439840955)を引用して「chain数が3以上ですべてのパラメータで$\hat{R} < 1.1$」であることを収束の判断基準に挙げている (孫引き)。
+`mean`および`sd`はそれぞれMCMCサンプルの平均値 (事後平均) および標準偏差。
+```{r}
+stan_result %>%
+  summary %$%
+  summary %>%
+  kable
+```
+
+あとで比較しやすいように整形する。
+```{r}
+stan_coefs <-
+  stan_result %>%
+  tidy %>%
+  transmute(method = "stan", parameter = term, mean = estimate, sigma = std.error)
+
+kable(stan_coefs)
+```
+
+`stanfit`オブジェクト (stan_result) に`broom::tidy()`すると元は`sd`記載だったカラムが`std.error`になるのは仕様でいいのだろうか？
+```{r}
+stan_result %>%
+  tidy %>%
+  kable
+```
+
+## greta
+
+最後に`{greta}`。
+ほぼ[get started](https://greta-dev.github.io/greta/get_started.html)の写経。
+
+- 曖昧な理解メモ
+    - [Greta package?](http://discourse.mc-stan.org/t/greta-package/4366/3)より
+        - TensorFlowはleap-frogでhamilton方程式を解くときに上限回数を設けている。
+        - stanは複雑なモデル (確率分布の裾が広いモデル) では裾までgreedyに評価してしまうため、相対的にgretaが有利になる。
+
+
+### modeling
+
+```{r}
+library(greta)
+
+# 説明変数と被説明変数を指定 = stanのdata
+X <- greta::as_data(mtcars$mpg)
+Y <- greta::as_data(mtcars$hp)
+
+# 事前分布を指定 = stanのparameters
+# Stanと違って指定必須
+intercept <- greta::uniform(-1000, 1000)
+slope <- greta::uniform(-1000, 1000)
+sigma <- greta::uniform(0, 2000)
+
+# 数式で計算 = stanのtransform
+mean <- intercept + slope * X
+
+# 尤度計算 = stanのmodel
+# Yを平均・標準偏差で記述する
+distribution(Y) <- greta::normal(mean, sigma)
+
+# モデルを作成
+greta_model <- greta::model(intercept, slope, sigma)
+```
+
+モデルのほとんどRネイティブな文法で記述できるので、馴染みやすい。
+また、作成したmodeをplotに投げると、`{DiagrammeR}`でいい感じにモデル構造を図示してくれる。
+```{r}
+# plot(greta_model) # localではこれでOK
+DiagrammeR::render_graph(plot(greta_model)) # knitする場合はこっち
+```
+
+モデル図示だけは`{greta}`で出して、実際は`{rstan}`でもよさそう。
+
+### fitting
+
+まずは1 chainでMCMCを実行して、結果を確認。
+そこそこ時間がかかる (~ 500 samples / min)。
+```{r}
+# 時間がかかるのでknit時には非実行
+if(F){
+  set.seed(2018060001)
+  greta_result_short <- greta::mcmc(greta_model, n_samples = 1000, warmup = 50, chains = 1)
+  write_rds(greta_result_short, path = "~/Dropbox/page/data/greta_hands_on/1chain_short.rdata")
+}
+
+greta_result_short <- read_rds("../../data/greta_hands_on/1chain_short.rdata")
+mcmc_trace(greta_result_short)
+```
+
+warmupが短いとsamplingを伸ばしても、遷移の進みが悪い。
+
+warmupを伸ばしてみると、きちんと収束した。
+warmup期間でのサンプルからHMCのステップサイズやステップ数を決めているのだろうか。
+```{r}
+if(F){
+  set.seed(2018060001)
+  greta_result_long <- greta::mcmc(greta_model, n_samples = 1000, warmup = 1000, chains = 1)
+  write_rds(greta_result_long, path = "~/Dropbox/page/data/greta_hands_on/1chain_long.rdata")
+}
+
+greta_result_long <- read_rds(path = "../../data/greta_hands_on/1chain_long.rdata")
+mcmc_trace(greta_result_long)
+```
+
+4 chainにして再度MCMC、trace plotなどを確認。
+```{r}
+if(F){
+  set.seed(2018060001)
+  greta_result <- greta::mcmc(greta_model, n_samples = 1000, warmup = 1000, chains = 4)
+  write_rds(greta_result, path = "~/Dropbox/page/data/greta_hands_on/4chain.rdata")
+}
+
+greta_result <- read_rds(path = "../../data/greta_hands_on/4chain.rdata")
+mcmc_trace(greta_result) + guides(color = F)
+mcmc_dens_overlay(greta_result) + guides(color = F)
+mcmc_intervals(greta_result)
+```
+
+よさそう。
+
+要約統計量などを確認し、係数を整形する。
+```{r}
+summary(greta_result)
+
+# 比較用に整形。
+greta_coefs <-
+  greta_result %>%
+  summary %>%
+  .[[1]] %>%
+  data.frame() %>%
+  rownames_to_column() %>%
+  transmute(method = "greta", parameter = rowname, mean = Mean, sigma = SD)
+
+kable(greta_coefs)
+```
+
+Bayesianにもそうでない人にも優しいJAGS系の出力で、$\hat{R}$は表示されない。
+
+Empiricalな統計量の解釈について理解が浅い。
+[ここ](http://sbfnk.github.io/mfiidd/mcmc_diagnostics.html)を参照すると、
+
+> `Naive SE`はそのままMCMCサンプルから計算した標準誤差。
+> `Time-series SE`は`Naive SE`から自己相関を補正したもの。
+
+とある。
+Stanでは、自己相関から判断して算出した有効なサンプルサイズ n (`n_eff`) を計算して、`se_mean = sd / sqrt(n_eff)`としている。
+
+### $\hat{R}$の計算
+
+MCMCの勉強も兼ねて、手を動かす。
+
+$\hat{R}$ (potential scale reduction統計量) でやることは分散分析と概ね一緒。
+長さ$N$の$M$本のマルコフ連鎖の$\theta{m}^{(n)}$について、サンプル (= 連鎖) 間の分散$B$は以下の式で計算される ([Stanマニュアル](https://stan-ja.github.io/gh-pages-html/))。
+
+$$
+B = \dfrac{N}{M-1}\sum_{m = 1}^{M}(\overline{\theta}_m^{(•)} - \overline{\theta}_{•}^{(•)})^2
+$$
+ただし、
+$$
+\overline{\theta}_{m}^{(•)} = \dfrac{1}{N}\sum_{n=1}^{N}\theta_m^{(n)},
+$$
+$$
+\overline{\theta}_{•}^{(•)} = \dfrac{1}{M}\sum_{m=1}^{M}\theta_m^{(•)} 
+$$
+
+サンプル内分散$W$は以下の式で計算される。
+$$
+W = \dfrac{1}{M}\sum_{m = 1}^{M}s_m^2
+$$
+ただし、
+$$
+  s_m^2 = \dfrac{1}{N-1}\sum_{n = 1}^{N}(\theta_m^{(n)} - \overline{\theta}_{m}^{(•)})^2
+$$
+分散の推定量$\widehat{var}^+(\theta|y)$および$\hat{R}$は、それぞれ以下の式で計算される。
+$$
+  \widehat{var}^+(\theta|y) = \dfrac{N-1}{N}W + \dfrac{1}{N}B
+$$
+$$
+  \hat{R} = \sqrt{\dfrac{\widehat{var}^+(\theta|y)}{W}}
+$$
+
+以下、$\hat{R}$を地道に計算する。
+配列計算だとapplyが活きる。
+
+```{r}
+calc_rhat <-
+  function(greta_result){
+    
+    # 下準備
+    M <- length(greta_result) # chain数
+    N <- nrow(greta_result[[1]]) # chain長さ
+    param <- greta_result[[1]] %>% attributes %$% dimnames %>% .[[2]] # parameter名
+    
+    # greta出力を配列化
+    greta_array <-
+      greta_result %>%
+      map(function(x){
+        dim(x) <- c(dim(x), 1) # abind用に次元を1つ増やす
+        return(x)
+      }) %>%
+      abind::abind()
+    
+    # Rhat計算
+    mean_theta <- apply(greta_array, 2, mean) # 標本平均
+    mean_theta_m <- apply(greta_array, 2:3, mean) # 各chainの平均
+    
+    residual_inter_chains <- mean_theta_m - mean_theta # chain平均の標本平均からの偏差
+    residual_intra_chains <- (greta_array - rep(mean_theta_m, each = N)) # 各サンプルのchain平均からの偏差
+    s_m_2 <- apply(residual_intra_chains^2, 2:3, sum) / (N - 1) 
+    
+    B <- N / (M - 1) * apply(residual_inter_chains^2, 1, sum)
+    W <- apply(s_m_2, 1, mean)
+      
+    var_hat <- (N - 1) * W / N + B / N
+    r_hat <- sqrt(var_hat / W)
+      
+    # 出力
+    set_names(r_hat, param) %>%
+      data.frame(Rhat = .) %>%
+      return()
+  }
+
+calc_rhat(greta_result) %>%
+  kable
+```
+
+3パラメータの$\hat{R}$ < 1.1を確認。
+ただし、log posterior (Stanの$lp\_\_$) は取り出せていないので、収束したと言い切るのはよろしくない。
+
+## `stats::lm` / `{rstan}` / `{greta}`による回帰係数の点推定値の比較
+
+```{r}
+bind_rows(lm_coefs,
+          stan_coefs,
+          greta_coefs) %>%
+  ggplot(aes(parameter, mean, ymin = mean - sigma, ymax = mean + sigma, fill = method)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_errorbar(position = position_dodge(.9)) +
+  facet_wrap(~ parameter, scale = "free")
+```
+
+概ねよさそう。
+`sigma` (回帰残差の標準偏差) が`{rstan}`、`{greta}`で過大評価気味？
+
+## 雑感
+
+`{greta}`のいいところ  
+
+- モデルの書き方が直感的で使いやすい
+- モデル構造の可視化が便利
+
+`{greta}`のだめなところ
+
+- 情報が充実していない (これからに期待？)
+- 今回のような簡単なモデルだと、stanのほうが圧倒的に早い
+- デフォルトで$\hat{R}$が出ない
+    - *P*値 & 有意差みたいなもので、これだけ見ればOKというものでもないのだろうけれども不便
+- ~~chain機能がない？~~
+    - CRAN版 (ver. 0.2.3) にないだけでgithub版 (ver. 0.2.4) には実装済み
+
+## 参考
+
+[greta](https://greta-dev.github.io/greta/)  
+[greta-dev/greta | github](https://greta-dev.github.io/greta)  
+[RStan](http://mc-stan.org/users/interfaces/rstan)  
+[StanとRでベイズ統計モデリング](http://www.kyoritsu-pub.co.jp/bookdetail/9784320112421)  
+[Bayesian Data Analysis | Gelman et al. (2013)](https://www.crcpress.com/Bayesian-Data-Analysis-Third-Edition/Gelman-Carlin-Stern-Dunson-Vehtari-Rubin/p/book/9781439840955)  
+[Stanモデリング言語: ユーザーガイド・リファレンスマニュアル](https://stan-ja.github.io/gh-pages-html/)  
+[Greta package?](http://discourse.mc-stan.org/t/greta-package/4366/3) 
+[Practical session: MCMC diagnostics](http://sbfnk.github.io/mfiidd/mcmc_diagnostics.html)
+
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```

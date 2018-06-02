@@ -1,0 +1,690 @@
+---
+title: "TensorFlow系のHMCパッケージ{greta}に触れる"
+date: 2018-06-02
+---
+
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/viz/viz.js"></script>
+<link href="/rmarkdown-libs/DiagrammeR-styles/styles.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/grViz-binding/grViz.js"></script>
+
+
+<p>タイトルの通り、<a href="https://github.com/greta-dev/greta">greta</a>に少し触れてみたメモ。 <a href="https://greta-dev.github.io/greta/">公式</a>曰く、‘gretaはモデルをRに直書きできるから他言語を学ぶ必要はないし、TensorFlowを使っていて大規模データに対してもGPUを使った高速推定が可能’とのこと。</p>
+<p>Stanの勉強も兼ねて、一次線形回帰モデルの係数の推定を<code>stats::lm</code>、<a href="http://mc-stan.org/users/interfaces/rstan"><code>{rstan}</code></a>、<code>{greta}</code>で比べる。 サンプルデータとしてmtcarsを用い、<span class="math inline">\(hp\)</span> (horsepower; 馬力) を<span class="math inline">\(mpg\)</span> (miles per gallon; 燃費) で回帰する。</p>
+<div class="section level3">
+<h3>準備</h3>
+<pre class="r"><code># install.packages(&quot;DiagrammeR&quot;) # install required package
+# install.packages(&quot;greta&quot;) # CRAN version
+# devtools::install_github(&quot;greta-dev/greta&quot;) # github version
+# greta::install_tensorflow() # install tensorflow 
+
+packageVersion(&quot;greta&quot;)</code></pre>
+<pre><code>## [1] &#39;0.2.4&#39;</code></pre>
+<p>ある程度使ってから気づいたが、CRAN版のgreta (ver. 0.2.3) ではMCMCのchainが設定できない。 github版 (ver. 0.2.4) にはchain機能が実装済みなのでそっちの方がよさそう。</p>
+</div>
+<div id="lm" class="section level2">
+<h2>lm</h2>
+<p>通常の<code>stats::lm</code>。</p>
+<pre class="r"><code>library(tidyverse)
+library(magrittr)
+library(broom)
+library(knitr)
+
+lm_result &lt;-
+  mtcars %&gt;%
+  lm(data =., hp ~ mpg)
+
+mtcars %&gt;%
+  modelr::add_predictions(model = lm_result) %&gt;%
+  ggplot(aes(mpg, hp)) +
+  geom_segment(aes(xend = mpg, yend = pred), col = &quot;grey&quot;) +
+  geom_smooth(method = &quot;lm&quot;, fill = NA) +
+  geom_point()</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>lm_coefs &lt;-
+  lm_result %&gt;%
+  tidy %&gt;%
+  transmute(method = &quot;lm&quot;, parameter = c(&quot;intercept&quot;, &quot;slope&quot;), mean = estimate, sigma = std.error) %&gt;%
+  add_row(method = &quot;lm&quot;, parameter = &quot;sigma&quot;, mean = summary(lm_result)$sigma)
+
+summary(lm_result)
+kable(lm_coefs)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = hp ~ mpg, data = .)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -59.26 -28.93 -13.45  25.65 143.36 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   324.08      27.43  11.813 8.25e-13 ***
+## mpg            -8.83       1.31  -6.742 1.79e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 43.95 on 30 degrees of freedom
+## Multiple R-squared:  0.6024, Adjusted R-squared:  0.5892 
+## F-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">method</th>
+<th align="left">parameter</th>
+<th align="right">mean</th>
+<th align="right">sigma</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">lm</td>
+<td align="left">intercept</td>
+<td align="right">324.082314</td>
+<td align="right">27.433296</td>
+</tr>
+<tr class="even">
+<td align="left">lm</td>
+<td align="left">slope</td>
+<td align="right">-8.829731</td>
+<td align="right">1.309585</td>
+</tr>
+<tr class="odd">
+<td align="left">lm</td>
+<td align="left">sigma</td>
+<td align="right">43.945255</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<p>回帰係数とy切片はおよそ-8.8と324。 燃費のいい車ほど馬力は低く、1単位の<span class="math inline">\(mpg\)</span>上昇は8.8単位の<span class="math inline">\(hp\)</span>低下と対応するという関係。</p>
+</div>
+<div id="stan" class="section level2">
+<h2>Stan</h2>
+<p>次に<code>{rstan}</code>。</p>
+<pre class="r"><code>library(rstan)
+
+model_stan &lt;-&#39;
+data{
+  int N;
+  vector[N] X;
+  vector[N] Y;
+}
+
+parameters{
+  real intercept;
+  real slope;
+  real&lt;lower=0&gt; sigma;
+}
+
+model{
+  Y ~ normal(X * slope + intercept, sigma);
+}
+&#39;
+
+stan_data &lt;-
+  list(N = nrow(mtcars),
+       X = mtcars$mpg,
+       Y = mtcars$hp)
+
+stan_result &lt;-
+  stan(model_code = model_stan, data = stan_data,
+       iter = 2000, warmup = 500, chains = 4, seed = 1)
+
+# stanの結果を保存
+write_rds(stan_result, path = &quot;~/Dropbox/page/data/greta_hands_on/stan.rdata&quot;)</code></pre>
+<p>トレースと事後分布を可視化し、summaryを確認する。</p>
+<pre class="r"><code>library(rstan)
+library(bayesplot)
+theme_set(theme_grey())
+
+stan_result &lt;- read_rds(&quot;../../data/greta_hands_on/stan.rdata&quot;)
+stan_result_array &lt;- as.array(stan_result)
+
+mcmc_trace(stan_result_array, pars = c(&quot;intercept&quot;, &quot;slope&quot;, &quot;sigma&quot;)) + guides(color = F)</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>mcmc_dens_overlay(stan_result_array, pars = c(&quot;intercept&quot;, &quot;slope&quot;, &quot;sigma&quot;)) + guides(color = F)</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<p>収束確認のために、<code>Rhat</code>を見る。 <a href="http://www.kyoritsu-pub.co.jp/bookdetail/9784320112421">アヒル本</a>では<a href="https://www.crcpress.com/Bayesian-Data-Analysis-Third-Edition/Gelman-Carlin-Stern-Dunson-Vehtari-Rubin/p/book/9781439840955">文献</a>を引用して「chain数が3以上ですべてのパラメータで<span class="math inline">\(\hat{R} &lt; 1.1\)</span>」であることを収束の判断基準に挙げている (孫引き)。 <code>mean</code>および<code>sd</code>はそれぞれMCMCサンプルの平均値 (事後平均) および標準偏差。</p>
+<pre class="r"><code>stan_result %&gt;%
+  summary %$%
+  summary %&gt;%
+  kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">mean</th>
+<th align="right">se_mean</th>
+<th align="right">sd</th>
+<th align="right">2.5%</th>
+<th align="right">25%</th>
+<th align="right">50%</th>
+<th align="right">75%</th>
+<th align="right">97.5%</th>
+<th align="right">n_eff</th>
+<th align="right">Rhat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>intercept</td>
+<td align="right">324.188768</td>
+<td align="right">0.6765359</td>
+<td align="right">29.022715</td>
+<td align="right">266.79422</td>
+<td align="right">304.811821</td>
+<td align="right">324.408970</td>
+<td align="right">343.774542</td>
+<td align="right">379.951778</td>
+<td align="right">1840.324</td>
+<td align="right">1.001825</td>
+</tr>
+<tr class="even">
+<td>slope</td>
+<td align="right">-8.834848</td>
+<td align="right">0.0325862</td>
+<td align="right">1.391464</td>
+<td align="right">-11.55225</td>
+<td align="right">-9.763364</td>
+<td align="right">-8.856368</td>
+<td align="right">-7.906442</td>
+<td align="right">-6.095332</td>
+<td align="right">1823.378</td>
+<td align="right">1.001173</td>
+</tr>
+<tr class="odd">
+<td>sigma</td>
+<td align="right">45.950392</td>
+<td align="right">0.1216145</td>
+<td align="right">6.283672</td>
+<td align="right">35.51531</td>
+<td align="right">41.617182</td>
+<td align="right">45.334334</td>
+<td align="right">49.554094</td>
+<td align="right">60.315368</td>
+<td align="right">2669.662</td>
+<td align="right">1.000769</td>
+</tr>
+<tr class="even">
+<td>lp__</td>
+<td align="right">-133.872277</td>
+<td align="right">0.0313486</td>
+<td align="right">1.303514</td>
+<td align="right">-137.17302</td>
+<td align="right">-134.484347</td>
+<td align="right">-133.539319</td>
+<td align="right">-132.923267</td>
+<td align="right">-132.388403</td>
+<td align="right">1728.997</td>
+<td align="right">1.001453</td>
+</tr>
+</tbody>
+</table>
+<p>あとで比較しやすいように整形する。</p>
+<pre class="r"><code>stan_coefs &lt;-
+  stan_result %&gt;%
+  tidy %&gt;%
+  transmute(method = &quot;stan&quot;, parameter = term, mean = estimate, sigma = std.error)
+
+kable(stan_coefs)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">method</th>
+<th align="left">parameter</th>
+<th align="right">mean</th>
+<th align="right">sigma</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">stan</td>
+<td align="left">intercept</td>
+<td align="right">324.188768</td>
+<td align="right">29.022715</td>
+</tr>
+<tr class="even">
+<td align="left">stan</td>
+<td align="left">slope</td>
+<td align="right">-8.834848</td>
+<td align="right">1.391464</td>
+</tr>
+<tr class="odd">
+<td align="left">stan</td>
+<td align="left">sigma</td>
+<td align="right">45.950392</td>
+<td align="right">6.283672</td>
+</tr>
+</tbody>
+</table>
+<p><code>stanfit</code>オブジェクト (stan_result) に<code>broom::tidy()</code>すると元は<code>sd</code>記載だったカラムが<code>std.error</code>になるのは仕様でいいのだろうか？</p>
+<pre class="r"><code>stan_result %&gt;%
+  tidy %&gt;%
+  kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">intercept</td>
+<td align="right">324.188768</td>
+<td align="right">29.022715</td>
+</tr>
+<tr class="even">
+<td align="left">slope</td>
+<td align="right">-8.834848</td>
+<td align="right">1.391464</td>
+</tr>
+<tr class="odd">
+<td align="left">sigma</td>
+<td align="right">45.950392</td>
+<td align="right">6.283672</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="greta" class="section level2">
+<h2>greta</h2>
+<p>最後に<code>{greta}</code>。 ほぼ<a href="https://greta-dev.github.io/greta/get_started.html">get started</a>の写経。</p>
+<ul>
+<li>曖昧な理解メモ
+<ul>
+<li><a href="http://discourse.mc-stan.org/t/greta-package/4366/3">Greta package?</a>より
+<ul>
+<li>TensorFlowはleap-frogでhamilton方程式を解くときに上限回数を設けている。</li>
+<li>stanは複雑なモデル (確率分布の裾が広いモデル) では裾までgreedyに評価してしまうため、相対的にgretaが有利になる。</li>
+</ul></li>
+</ul></li>
+</ul>
+<div id="modeling" class="section level3">
+<h3>modeling</h3>
+<pre class="r"><code>library(greta)
+
+# 説明変数と被説明変数を指定 = stanのdata
+X &lt;- greta::as_data(mtcars$mpg)
+Y &lt;- greta::as_data(mtcars$hp)
+
+# 事前分布を指定 = stanのparameters
+# Stanと違って指定必須
+intercept &lt;- greta::uniform(-1000, 1000)
+slope &lt;- greta::uniform(-1000, 1000)
+sigma &lt;- greta::uniform(0, 2000)
+
+# 数式で計算 = stanのtransform
+mean &lt;- intercept + slope * X
+
+# 尤度計算 = stanのmodel
+# Yを平均・標準偏差で記述する
+distribution(Y) &lt;- greta::normal(mean, sigma)
+
+# モデルを作成
+greta_model &lt;- greta::model(intercept, slope, sigma)</code></pre>
+<p>モデルのほとんどRネイティブな文法で記述できるので、馴染みやすい。 また、作成したmodeをplotに投げると、<code>{DiagrammeR}</code>でいい感じにモデル構造を図示してくれる。</p>
+<pre class="r"><code># plot(greta_model) # localではこれでOK
+DiagrammeR::render_graph(plot(greta_model)) # knitする場合はこっち</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"diagram":"digraph {\n\ngraph [layout = \"dot\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       rankdir = \"LR\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"intercept\n\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"circle\", color = \"#E0D2EE\", width = \"0.6\", height = \"0.48\", fillcolor = \"#F4F0F9\"] \n  \"2\" [label = \"uniform\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"diamond\", color = \"#B797D7\", width = \"1\", height = \"0.8\", fillcolor = \"#E0D2EE\"] \n  \"3\" [label = \"-1000\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"square\", color = \"#E0D2EE\", width = \"0.5\", height = \"0.4\", fillcolor = \"#FFFFFF\"] \n  \"4\" [label = \"1000\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"square\", color = \"#E0D2EE\", width = \"0.5\", height = \"0.4\", fillcolor = \"#FFFFFF\"] \n  \"5\" [label = \"mean\n\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"circle\", color = \"lightgray\", width = \"0.2\", height = \"0.16\", fillcolor = \"#D3D3D3\"] \n  \"6\" [label = \"normal\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"diamond\", color = \"#B797D7\", width = \"1\", height = \"0.8\", fillcolor = \"#E0D2EE\"] \n  \"7\" [label = \"sigma\n\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"circle\", color = \"#E0D2EE\", width = \"0.6\", height = \"0.48\", fillcolor = \"#F4F0F9\"] \n  \"8\" [label = \"uniform\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"diamond\", color = \"#B797D7\", width = \"1\", height = \"0.8\", fillcolor = \"#E0D2EE\"] \n  \"9\" [label = \"0\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"square\", color = \"#E0D2EE\", width = \"0.5\", height = \"0.4\", fillcolor = \"#FFFFFF\"] \n  \"10\" [label = \"2000\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"square\", color = \"#E0D2EE\", width = \"0.5\", height = \"0.4\", fillcolor = \"#FFFFFF\"] \n  \"11\" [label = \"Y\n\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"square\", color = \"#E0D2EE\", width = \"0.5\", height = \"0.4\", fillcolor = \"#FFFFFF\"] \n  \"12\" [label = \"\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"circle\", color = \"lightgray\", width = \"0.2\", height = \"0.16\", fillcolor = \"#D3D3D3\"] \n  \"13\" [label = \"slope\n\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"circle\", color = \"#E0D2EE\", width = \"0.6\", height = \"0.48\", fillcolor = \"#F4F0F9\"] \n  \"14\" [label = \"uniform\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"diamond\", color = \"#B797D7\", width = \"1\", height = \"0.8\", fillcolor = \"#E0D2EE\"] \n  \"15\" [label = \"-1000\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"square\", color = \"#E0D2EE\", width = \"0.5\", height = \"0.4\", fillcolor = \"#FFFFFF\"] \n  \"16\" [label = \"1000\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"square\", color = \"#E0D2EE\", width = \"0.5\", height = \"0.4\", fillcolor = \"#FFFFFF\"] \n  \"17\" [label = \"X\n\", fontcolor = \"#8960B3\", fontsize = \"12\", penwidth = \"2\", shape = \"square\", color = \"#E0D2EE\", width = \"0.5\", height = \"0.4\", fillcolor = \"#FFFFFF\"] \n\"1\"->\"5\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"add\", style = \"solid\"] \n\"2\"->\"1\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", penwidth = \"3\", style = \"dashed\"] \n\"3\"->\"2\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"min\", style = \"solid\"] \n\"4\"->\"2\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"max\", style = \"solid\"] \n\"5\"->\"6\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"mean\", style = \"solid\"] \n\"6\"->\"11\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", penwidth = \"3\", style = \"dashed\"] \n\"7\"->\"6\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"sd\", style = \"solid\"] \n\"8\"->\"7\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", penwidth = \"3\", style = \"dashed\"] \n\"9\"->\"8\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"min\", style = \"solid\"] \n\"10\"->\"8\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"max\", style = \"solid\"] \n\"12\"->\"5\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"add\", style = \"solid\"] \n\"13\"->\"12\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"multiply\", style = \"solid\"] \n\"14\"->\"13\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", penwidth = \"3\", style = \"dashed\"] \n\"15\"->\"14\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"min\", style = \"solid\"] \n\"16\"->\"14\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"max\", style = \"solid\"] \n\"17\"->\"12\" [color = \"Gainsboro\", fontname = \"Helvetica\", fontcolor = \"gray\", fontsize = \"11\", penwidth = \"3\", label = \"multiply\", style = \"solid\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p>モデル図示だけは<code>{greta}</code>で出して、実際は<code>{rstan}</code>でもよさそう。</p>
+</div>
+<div id="fitting" class="section level3">
+<h3>fitting</h3>
+<p>まずは1 chainでMCMCを実行して、結果を確認。 そこそこ時間がかかる (~ 500 samples / min)。</p>
+<pre class="r"><code># 時間がかかるのでknit時には非実行
+if(F){
+  set.seed(2018060001)
+  greta_result_short &lt;- greta::mcmc(greta_model, n_samples = 1000, warmup = 50, chains = 1)
+  write_rds(greta_result_short, path = &quot;~/Dropbox/page/data/greta_hands_on/1chain_short.rdata&quot;)
+}
+
+greta_result_short &lt;- read_rds(&quot;../../data/greta_hands_on/1chain_short.rdata&quot;)
+mcmc_trace(greta_result_short)</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>warmupが短いとsamplingを伸ばしても、遷移の進みが悪い。</p>
+<p>warmupを伸ばしてみると、きちんと収束した。 warmup期間でのサンプルからHMCのステップサイズやステップ数を決めているのだろうか。</p>
+<pre class="r"><code>if(F){
+  set.seed(2018060001)
+  greta_result_long &lt;- greta::mcmc(greta_model, n_samples = 1000, warmup = 1000, chains = 1)
+  write_rds(greta_result_long, path = &quot;~/Dropbox/page/data/greta_hands_on/1chain_long.rdata&quot;)
+}
+
+greta_result_long &lt;- read_rds(path = &quot;../../data/greta_hands_on/1chain_long.rdata&quot;)
+mcmc_trace(greta_result_long)</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>4 chainにして再度MCMC、trace plotなどを確認。</p>
+<pre class="r"><code>if(F){
+  set.seed(2018060001)
+  greta_result &lt;- greta::mcmc(greta_model, n_samples = 1000, warmup = 1000, chains = 4)
+  write_rds(greta_result, path = &quot;~/Dropbox/page/data/greta_hands_on/4chain.rdata&quot;)
+}
+
+greta_result &lt;- read_rds(path = &quot;../../data/greta_hands_on/4chain.rdata&quot;)
+mcmc_trace(greta_result) + guides(color = F)</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>mcmc_dens_overlay(greta_result) + guides(color = F)</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
+<pre class="r"><code>mcmc_intervals(greta_result)</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-12-3.png" width="672" /></p>
+<p>よさそう。</p>
+<p>要約統計量などを確認し、係数を整形する。</p>
+<pre class="r"><code>summary(greta_result)
+
+# 比較用に整形。
+greta_coefs &lt;-
+  greta_result %&gt;%
+  summary %&gt;%
+  .[[1]] %&gt;%
+  data.frame() %&gt;%
+  rownames_to_column() %&gt;%
+  transmute(method = &quot;greta&quot;, parameter = rowname, mean = Mean, sigma = SD)
+
+kable(greta_coefs)</code></pre>
+<pre><code>## 
+## Iterations = 1:1000
+## Thinning interval = 1 
+## Number of chains = 4 
+## Sample size per chain = 1000 
+## 
+## 1. Empirical mean and standard deviation for each variable,
+##    plus standard error of the mean:
+## 
+##              Mean     SD Naive SE Time-series SE
+## intercept 323.984 28.505  0.45071         0.5560
+## slope      -8.828  1.367  0.02161         0.0275
+## sigma      45.792  6.162  0.09743         0.1427
+## 
+## 2. Quantiles for each variable:
+## 
+##             2.5%     25%     50%     75%   97.5%
+## intercept 268.93 304.145 323.844 344.085 380.487
+## slope     -11.45  -9.753  -8.823  -7.911  -6.175
+## sigma      36.03  41.456  44.968  49.339  59.934</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">method</th>
+<th align="left">parameter</th>
+<th align="right">mean</th>
+<th align="right">sigma</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">greta</td>
+<td align="left">intercept</td>
+<td align="right">323.984153</td>
+<td align="right">28.505132</td>
+</tr>
+<tr class="even">
+<td align="left">greta</td>
+<td align="left">slope</td>
+<td align="right">-8.827826</td>
+<td align="right">1.366599</td>
+</tr>
+<tr class="odd">
+<td align="left">greta</td>
+<td align="left">sigma</td>
+<td align="right">45.791866</td>
+<td align="right">6.161938</td>
+</tr>
+</tbody>
+</table>
+<p>Bayesianにもそうでない人にも優しいJAGS系の出力で、<span class="math inline">\(\hat{R}\)</span>は表示されない。</p>
+<p>Empiricalな統計量の解釈について理解が浅い。 <a href="http://sbfnk.github.io/mfiidd/mcmc_diagnostics.html">ここ</a>を参照すると、</p>
+<blockquote>
+<p><code>Naive SE</code>はそのままMCMCサンプルから計算した標準誤差。 <code>Time-series SE</code>は<code>Naive SE</code>から自己相関を補正したもの。</p>
+</blockquote>
+<p>とある。 Stanでは、自己相関から判断して算出した有効なサンプルサイズ n (<code>n_eff</code>) を計算して、<code>se_mean = sd / sqrt(n_eff)</code>としている。</p>
+</div>
+<div id="hatr" class="section level3">
+<h3><span class="math inline">\(\hat{R}\)</span>の計算</h3>
+<p>MCMCの勉強も兼ねて、手を動かす。</p>
+<p><span class="math inline">\(\hat{R}\)</span> (potential scale reduction統計量) でやることは分散分析と概ね一緒。 長さ<span class="math inline">\(N\)</span>の<span class="math inline">\(M\)</span>本のマルコフ連鎖の<span class="math inline">\(\theta{m}^{(n)}\)</span>について、サンプル (= 連鎖) 間の分散<span class="math inline">\(B\)</span>は以下の式で計算される (<a href="https://stan-ja.github.io/gh-pages-html/">Stanマニュアル</a>)。</p>
+<p><span class="math display">\[
+B = \dfrac{N}{M-1}\sum_{m = 1}^{M}(\overline{\theta}_m^{(•)} - \overline{\theta}_{•}^{(•)})^2
+\]</span> ただし、 <span class="math display">\[
+\overline{\theta}_{m}^{(•)} = \dfrac{1}{N}\sum_{n=1}^{N}\theta_m^{(n)},
+\]</span> <span class="math display">\[
+\overline{\theta}_{•}^{(•)} = \dfrac{1}{M}\sum_{m=1}^{M}\theta_m^{(•)} 
+\]</span></p>
+<p>サンプル内分散<span class="math inline">\(W\)</span>は以下の式で計算される。 <span class="math display">\[
+W = \dfrac{1}{M}\sum_{m = 1}^{M}s_m^2
+\]</span> ただし、 <span class="math display">\[
+  s_m^2 = \dfrac{1}{N-1}\sum_{n = 1}^{N}(\theta_m^{(n)} - \overline{\theta}_{m}^{(•)})^2
+\]</span> 分散の推定量<span class="math inline">\(\widehat{var}^+(\theta|y)\)</span>および<span class="math inline">\(\hat{R}\)</span>は、それぞれ以下の式で計算される。 <span class="math display">\[
+  \widehat{var}^+(\theta|y) = \dfrac{N-1}{N}W + \dfrac{1}{N}B
+\]</span> <span class="math display">\[
+  \hat{R} = \sqrt{\dfrac{\widehat{var}^+(\theta|y)}{W}}
+\]</span></p>
+<p>以下、<span class="math inline">\(\hat{R}\)</span>を地道に計算する。 配列計算だとapplyが活きる。</p>
+<pre class="r"><code>calc_rhat &lt;-
+  function(greta_result){
+    
+    # 下準備
+    M &lt;- length(greta_result) # chain数
+    N &lt;- nrow(greta_result[[1]]) # chain長さ
+    param &lt;- greta_result[[1]] %&gt;% attributes %$% dimnames %&gt;% .[[2]] # parameter名
+    
+    # greta出力を配列化
+    greta_array &lt;-
+      greta_result %&gt;%
+      map(function(x){
+        dim(x) &lt;- c(dim(x), 1) # abind用に次元を1つ増やす
+        return(x)
+      }) %&gt;%
+      abind::abind()
+    
+    # Rhat計算
+    mean_theta &lt;- apply(greta_array, 2, mean) # 標本平均
+    mean_theta_m &lt;- apply(greta_array, 2:3, mean) # 各chainの平均
+    
+    residual_inter_chains &lt;- mean_theta_m - mean_theta # chain平均の標本平均からの偏差
+    residual_intra_chains &lt;- (greta_array - rep(mean_theta_m, each = N)) # 各サンプルのchain平均からの偏差
+    s_m_2 &lt;- apply(residual_intra_chains^2, 2:3, sum) / (N - 1) 
+    
+    B &lt;- N / (M - 1) * apply(residual_inter_chains^2, 1, sum)
+    W &lt;- apply(s_m_2, 1, mean)
+      
+    var_hat &lt;- (N - 1) * W / N + B / N
+    r_hat &lt;- sqrt(var_hat / W)
+      
+    # 出力
+    set_names(r_hat, param) %&gt;%
+      data.frame(Rhat = .) %&gt;%
+      return()
+  }
+
+calc_rhat(greta_result) %&gt;%
+  kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Rhat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>intercept</td>
+<td align="right">1.0002076</td>
+</tr>
+<tr class="even">
+<td>slope</td>
+<td align="right">0.9999344</td>
+</tr>
+<tr class="odd">
+<td>sigma</td>
+<td align="right">1.0039574</td>
+</tr>
+</tbody>
+</table>
+<p>3パラメータの<span class="math inline">\(\hat{R}\)</span> &lt; 1.1を確認。 ただし、log posterior (Stanの<span class="math inline">\(lp\_\_\)</span>) は取り出せていないので、収束したと言い切るのはよろしくない。</p>
+</div>
+</div>
+<div id="statslm-rstan-greta" class="section level2">
+<h2><code>stats::lm</code> / <code>{rstan}</code> / <code>{greta}</code>による回帰係数の点推定値の比較</h2>
+<pre class="r"><code>bind_rows(lm_coefs,
+          stan_coefs,
+          greta_coefs) %&gt;%
+  ggplot(aes(parameter, mean, ymin = mean - sigma, ymax = mean + sigma, fill = method)) +
+  geom_bar(stat = &quot;identity&quot;, position = position_dodge()) +
+  geom_errorbar(position = position_dodge(.9)) +
+  facet_wrap(~ parameter, scale = &quot;free&quot;)</code></pre>
+<p><img src="/post/2018-06-02-greta_hands_on_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>概ねよさそう。 <code>sigma</code> (回帰残差の標準偏差) が<code>{rstan}</code>、<code>{greta}</code>で過大評価気味？</p>
+</div>
+<div class="section level2">
+<h2>雑感</h2>
+<p><code>{greta}</code>のいいところ</p>
+<ul>
+<li>モデルの書き方が直感的で使いやすい</li>
+<li>モデル構造の可視化が便利</li>
+</ul>
+<p><code>{greta}</code>のだめなところ</p>
+<ul>
+<li>情報が充実していない (これからに期待？)</li>
+<li>今回のような簡単なモデルだと、stanのほうが圧倒的に早い</li>
+<li>デフォルトで<span class="math inline">\(\hat{R}\)</span>が出ない
+<ul>
+<li><em>P</em>値 &amp; 有意差みたいなもので、これだけ見ればOKというものでもないのだろうけれども不便</li>
+</ul></li>
+<li><del>chain機能がない？</del>
+<ul>
+<li>CRAN版 (ver. 0.2.3) にないだけでgithub版 (ver. 0.2.4) には実装済み</li>
+</ul></li>
+</ul>
+</div>
+<div class="section level2">
+<h2>参考</h2>
+<p><a href="https://greta-dev.github.io/greta/">greta</a><br />
+<a href="https://greta-dev.github.io/greta">greta-dev/greta | github</a><br />
+<a href="http://mc-stan.org/users/interfaces/rstan">RStan</a><br />
+<a href="http://www.kyoritsu-pub.co.jp/bookdetail/9784320112421">StanとRでベイズ統計モデリング</a><br />
+<a href="https://www.crcpress.com/Bayesian-Data-Analysis-Third-Edition/Gelman-Carlin-Stern-Dunson-Vehtari-Rubin/p/book/9781439840955">Bayesian Data Analysis | Gelman et al. (2013)</a><br />
+<a href="https://stan-ja.github.io/gh-pages-html/">Stanモデリング言語: ユーザーガイド・リファレンスマニュアル</a><br />
+<a href="http://discourse.mc-stan.org/t/greta-package/4366/3">Greta package?</a> <a href="http://sbfnk.github.io/mfiidd/mcmc_diagnostics.html">Practical session: MCMC diagnostics</a></p>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Brisbane          
+##  date     2018-06-02                  
+## 
+##  package      * version    date       source                            
+##  abind          1.4-5      2016-07-21 CRAN (R 3.5.0)                    
+##  assertthat     0.2.0      2017-04-11 CRAN (R 3.5.0)                    
+##  backports      1.1.2      2017-12-13 CRAN (R 3.5.0)                    
+##  base         * 3.5.0      2018-04-24 local                             
+##  base64enc      0.1-3      2015-07-28 CRAN (R 3.5.0)                    
+##  bayesplot    * 1.5.0      2018-03-30 CRAN (R 3.5.0)                    
+##  bindr          0.1.1      2018-03-13 CRAN (R 3.5.0)                    
+##  bindrcpp     * 0.2.2      2018-03-29 CRAN (R 3.5.0)                    
+##  blogdown       0.6        2018-04-18 CRAN (R 3.5.0)                    
+##  bookdown       0.7        2018-02-18 CRAN (R 3.5.0)                    
+##  brew           1.0-6      2011-04-13 CRAN (R 3.5.0)                    
+##  broom        * 0.4.4      2018-05-24 Github (tidyverse/broom@570b25a)  
+##  cellranger     1.1.0      2016-07-27 CRAN (R 3.5.0)                    
+##  cli            1.0.0      2017-11-05 CRAN (R 3.5.0)                    
+##  coda           0.19-1     2016-12-08 CRAN (R 3.5.0)                    
+##  colorspace     1.3-2      2016-12-14 CRAN (R 3.5.0)                    
+##  compiler       3.5.0      2018-04-24 local                             
+##  crayon         1.3.4      2017-09-16 CRAN (R 3.5.0)                    
+##  datasets     * 3.5.0      2018-04-24 local                             
+##  devtools       1.13.5     2018-02-18 CRAN (R 3.5.0)                    
+##  DiagrammeR     1.0.0      2018-03-01 CRAN (R 3.5.0)                    
+##  digest         0.6.15     2018-01-28 CRAN (R 3.5.0)                    
+##  downloader     0.4        2015-07-09 CRAN (R 3.5.0)                    
+##  dplyr        * 0.7.5      2018-05-19 cran (@0.7.5)                     
+##  evaluate       0.10.1     2017-06-24 CRAN (R 3.5.0)                    
+##  forcats      * 0.3.0      2018-02-19 CRAN (R 3.5.0)                    
+##  foreign        0.8-70     2017-11-28 CRAN (R 3.5.0)                    
+##  ggplot2      * 2.2.1.9000 2018-05-22 Github (tidyverse/ggplot2@eecc450)
+##  ggridges       0.5.0      2018-04-05 CRAN (R 3.5.0)                    
+##  glue           1.2.0      2017-10-29 CRAN (R 3.5.0)                    
+##  graphics     * 3.5.0      2018-04-24 local                             
+##  grDevices    * 3.5.0      2018-04-24 local                             
+##  greta        * 0.2.4      2018-06-01 Github (greta-dev/greta@7f79a5c)  
+##  grid           3.5.0      2018-04-24 local                             
+##  gridExtra      2.3        2017-09-09 CRAN (R 3.5.0)                    
+##  gtable         0.2.0      2016-02-26 CRAN (R 3.5.0)                    
+##  haven          1.1.1      2018-01-18 CRAN (R 3.5.0)                    
+##  highr          0.6        2016-05-09 CRAN (R 3.5.0)                    
+##  hms            0.4.2      2018-03-10 CRAN (R 3.5.0)                    
+##  htmltools      0.3.6      2017-04-28 CRAN (R 3.5.0)                    
+##  htmlwidgets    1.2        2018-04-19 CRAN (R 3.5.0)                    
+##  httr           1.3.1      2017-08-20 CRAN (R 3.5.0)                    
+##  igraph         1.2.1      2018-03-10 CRAN (R 3.5.0)                    
+##  influenceR     0.1.0      2015-09-03 CRAN (R 3.5.0)                    
+##  inline         0.3.14     2015-04-13 CRAN (R 3.5.0)                    
+##  jsonlite       1.5        2017-06-01 CRAN (R 3.5.0)                    
+##  knitr        * 1.20       2018-02-20 CRAN (R 3.5.0)                    
+##  labeling       0.3        2014-08-23 CRAN (R 3.5.0)                    
+##  lattice        0.20-35    2017-03-25 CRAN (R 3.5.0)                    
+##  lazyeval       0.2.1      2017-10-29 CRAN (R 3.5.0)                    
+##  lubridate      1.7.4      2018-04-11 CRAN (R 3.5.0)                    
+##  magrittr     * 1.5        2014-11-22 CRAN (R 3.5.0)                    
+##  Matrix         1.2-14     2018-04-09 CRAN (R 3.5.0)                    
+##  memoise        1.1.0      2017-04-21 CRAN (R 3.5.0)                    
+##  methods      * 3.5.0      2018-04-24 local                             
+##  mnormt         1.5-5      2016-10-15 CRAN (R 3.5.0)                    
+##  modelr         0.1.1      2017-07-24 CRAN (R 3.5.0)                    
+##  munsell        0.4.3      2016-02-13 CRAN (R 3.5.0)                    
+##  nlme           3.1-137    2018-04-07 CRAN (R 3.5.0)                    
+##  parallel       3.5.0      2018-04-24 local                             
+##  pillar         1.2.1      2018-02-27 CRAN (R 3.5.0)                    
+##  pkgconfig      2.0.1      2017-03-21 CRAN (R 3.5.0)                    
+##  plyr           1.8.4      2016-06-08 CRAN (R 3.5.0)                    
+##  prettyunits    1.0.2      2015-07-13 CRAN (R 3.5.0)                    
+##  progress       1.1.2      2016-12-14 CRAN (R 3.5.0)                    
+##  psych          1.8.4      2018-05-06 cran (@1.8.4)                     
+##  purrr        * 0.2.4      2017-10-18 CRAN (R 3.5.0)                    
+##  R6             2.2.2      2017-06-17 CRAN (R 3.5.0)                    
+##  RColorBrewer   1.1-2      2014-12-07 CRAN (R 3.5.0)                    
+##  Rcpp           0.12.17    2018-05-18 cran (@0.12.17)                   
+##  readr        * 1.1.1      2017-05-16 CRAN (R 3.5.0)                    
+##  readxl         1.1.0      2018-04-20 CRAN (R 3.5.0)                    
+##  reshape2       1.4.3      2017-12-11 CRAN (R 3.5.0)                    
+##  reticulate     1.7        2018-04-28 CRAN (R 3.5.0)                    
+##  rgexf          0.15.3     2015-03-24 CRAN (R 3.5.0)                    
+##  rlang          0.2.0      2018-02-20 CRAN (R 3.5.0)                    
+##  rmarkdown      1.9        2018-03-01 CRAN (R 3.5.0)                    
+##  Rook           1.1-1      2014-10-20 CRAN (R 3.5.0)                    
+##  rprojroot      1.3-2      2018-01-03 CRAN (R 3.5.0)                    
+##  rstan        * 2.17.3     2018-01-20 CRAN (R 3.5.0)                    
+##  rstudioapi     0.7        2017-09-07 CRAN (R 3.5.0)                    
+##  rvest          0.3.2      2016-06-17 CRAN (R 3.5.0)                    
+##  scales         0.5.0      2017-08-24 CRAN (R 3.5.0)                    
+##  StanHeaders  * 2.17.2     2018-01-20 CRAN (R 3.5.0)                    
+##  stats        * 3.5.0      2018-04-24 local                             
+##  stats4         3.5.0      2018-04-24 local                             
+##  stringi        1.2.2      2018-05-02 cran (@1.2.2)                     
+##  stringr      * 1.3.1      2018-05-10 cran (@1.3.1)                     
+##  tensorflow     1.5        2018-01-17 CRAN (R 3.5.0)                    
+##  tfruns         1.3        2018-02-18 CRAN (R 3.5.0)                    
+##  tibble       * 1.4.2      2018-01-22 CRAN (R 3.5.0)                    
+##  tidyr        * 0.8.1      2018-05-18 cran (@0.8.1)                     
+##  tidyselect     0.2.4      2018-02-26 CRAN (R 3.5.0)                    
+##  tidyverse    * 1.2.1      2017-11-14 CRAN (R 3.5.0)                    
+##  tools          3.5.0      2018-04-24 local                             
+##  utils        * 3.5.0      2018-04-24 local                             
+##  viridis        0.5.1      2018-03-29 CRAN (R 3.5.0)                    
+##  viridisLite    0.3.0      2018-02-01 CRAN (R 3.5.0)                    
+##  visNetwork     2.0.3      2018-01-09 CRAN (R 3.5.0)                    
+##  whisker        0.3-2      2013-04-28 CRAN (R 3.5.0)                    
+##  withr          2.1.2      2018-03-15 CRAN (R 3.5.0)                    
+##  xfun           0.1        2018-01-22 CRAN (R 3.5.0)                    
+##  XML            3.98-1.11  2018-04-16 cran (@3.98-1.)                   
+##  xml2           1.2.0      2018-01-24 CRAN (R 3.5.0)                    
+##  yaml           2.1.18     2018-03-08 CRAN (R 3.5.0)</code></pre>
+</div>

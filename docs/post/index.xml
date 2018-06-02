@@ -6,10 +6,19 @@
     <description>Recent content in Posts on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sat, 26 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 02 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://keachmurakami.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>TensorFlow系のHMCパッケージ{greta}に触れる</title>
+      <link>https://keachmurakami.github.io/2018/06/02/tensorflow%E7%B3%BB%E3%81%AEhmc%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8greta%E3%81%AB%E8%A7%A6%E3%82%8C%E3%82%8B/</link>
+      <pubDate>Sat, 02 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/06/02/tensorflow%E7%B3%BB%E3%81%AEhmc%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8greta%E3%81%AB%E8%A7%A6%E3%82%8C%E3%82%8B/</guid>
+      <description>タイトルの通り、gretaに少し触れてみたメモ。 公式曰く、‘gretaはモデルをRに直書きできるから他言語を学ぶ必要はないし、TensorF</description>
+    </item>
     
     <item>
       <title>3D lollipop on map なアニメーション (R</title>
