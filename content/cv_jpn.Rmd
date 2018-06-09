@@ -24,7 +24,7 @@ opts_chunk$set(echo = FALSE, warning = F, message = F)
 ### 所属
 
 2018.05--2019.01  
-Australian National UniversityのChow laboratoryで客員研究員をしています
+The Australian National UniversityのChow laboratoryで客員研究員をしています
 
 2017.04--2020.03  
 山口大学大学院創成科学研究科の生物環境情報工学研究室で博士研究員をしています  
@@ -166,7 +166,9 @@ data.frame(
   kable
 ```
 
+<div style="text-align: right; font-size: .7em">
 \* <FONT color="grey">リンク先は国立情報学研究所運営のKAKENページ</FONT>
+</div>
 
 ### 学会活動
 

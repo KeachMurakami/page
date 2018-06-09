@@ -23,7 +23,7 @@ opts_chunk$set(echo = FALSE, warning = F, message = F)
 ### Affiliation
 
 2018.05--2019.01  
-Chow laboratory, Research School of Biology, Australian National University, Australia
+Chow laboratory, Research School of Biology, The Australian National University, Australia
 
 2017.04--2020.03  
 Graduate School of Sciences and Technology for Innovation, Yamaguchi University, Japan
@@ -88,7 +88,9 @@ data.frame(
   kable
 ```
 
+<div style="text-align: right; font-size: .7em">
 \* <FONT color="grey">linked to KAKEN pages maintained by National Institute of Informatics (NII) of JAPAN.</FONT>
+</div>
 
 ### Academic Society Membership
 
