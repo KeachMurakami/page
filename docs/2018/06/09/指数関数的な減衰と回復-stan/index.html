@@ -124,14 +124,13 @@ theme_set(theme_grey())
 color_scheme_set()</code></pre>
 <div class="section level2">
 <h2>元データ作成</h2>
-<pre class="r"><code>add_noise &lt;-
-  function(x, sd) x + rnorm(length(x), 0, sd)
-
+<p>Stanでパラメータを推定する対象となる既知データセットを作成。 減衰が生じないnegative control (NC)、減衰が生じるpositive control (PC)、減衰中に回復処理をしたrecovery treatment (RT) を準備。</p>
+<pre class="r"><code># 真のパラメータを与える
 time &lt;- seq(0, 15, length.out = 60)
-sigma &lt;- .05 # common sd
+sigma &lt;- .05
 y_max &lt;- 1
 y_min &lt;- .3
-t_cp &lt;- 3.3 # changing point
+t_cp &lt;- 3.3
 k_dec &lt;- .41
 k_inc &lt;- .23
 amp_inc &lt;- .45
@@ -143,8 +142,10 @@ RT_dec &lt;- # gross decrease
 RT_inc &lt;- # gross incrase
   c(numeric(sum(time &lt; t_cp)), # before the changing point
     amp_inc * (1 - exp(-k_inc * (time[time &gt; t_cp] - t_cp)))) # after the changing point
-RT &lt;- RT_dec + RT_inc
+RT &lt;- RT_dec + RT_inc # net change
 
+add_noise &lt;-
+  function(x, sd) x + rnorm(length(x), 0, sd)
 
 set.seed(2018060002)
 
@@ -152,83 +153,19 @@ ddd &lt;-
   tibble(NC, PC, RT, t = time) %&gt;%
   gather(treatment, value, -t) %&gt;%
   bind_rows(., ., ., .) %&gt;% # N = 4にしておく
-  mutate(value = add_noise(value, sigma))</code></pre>
+  mutate(value = add_noise(value, sigma)) # ノイズを足す</code></pre>
 <p>元データを図示。 破線が真の処理効果。</p>
 <pre class="r"><code>ddd %&gt;%
   ggplot(aes(t, value, col = treatment)) +
   geom_point() +
-  geom_smooth() +
+  geom_smooth(method = &quot;loess&quot;) +
   geom_line(data = tibble(t = time, value = RT_inc), col = &quot;blue&quot;, linetype = 2)</code></pre>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="../../../../post/2018-06-09-stan_two_phase_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<pre class="r"><code>ddd %&gt;%
-  head(10) %&gt;%
-  kable</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="right">t</th>
-<th align="left">treatment</th>
-<th align="right">value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0.0000000</td>
-<td align="left">NC</td>
-<td align="right">1.0000169</td>
-</tr>
-<tr class="even">
-<td align="right">0.2542373</td>
-<td align="left">NC</td>
-<td align="right">0.9478038</td>
-</tr>
-<tr class="odd">
-<td align="right">0.5084746</td>
-<td align="left">NC</td>
-<td align="right">1.0699400</td>
-</tr>
-<tr class="even">
-<td align="right">0.7627119</td>
-<td align="left">NC</td>
-<td align="right">1.0007643</td>
-</tr>
-<tr class="odd">
-<td align="right">1.0169492</td>
-<td align="left">NC</td>
-<td align="right">1.0046035</td>
-</tr>
-<tr class="even">
-<td align="right">1.2711864</td>
-<td align="left">NC</td>
-<td align="right">0.9579308</td>
-</tr>
-<tr class="odd">
-<td align="right">1.5254237</td>
-<td align="left">NC</td>
-<td align="right">0.9951655</td>
-</tr>
-<tr class="even">
-<td align="right">1.7796610</td>
-<td align="left">NC</td>
-<td align="right">1.0205968</td>
-</tr>
-<tr class="odd">
-<td align="right">2.0338983</td>
-<td align="left">NC</td>
-<td align="right">0.9985774</td>
-</tr>
-<tr class="even">
-<td align="right">2.2881356</td>
-<td align="left">NC</td>
-<td align="right">1.0345304</td>
-</tr>
-</tbody>
-</table>
+<p>当然ながらloess回帰だと、効果の現れはじめはわからない。</p>
 </div>
 <div class="section level2">
 <h2>モデル作成</h2>
-<p>Stanコードを書く。 <code>treatment</code>で場合わけし、回復処理区 (RT) では<code>t1</code>以前か以降かでもう一度場合わけして対数尤度を加算する。 generated quantitiesブロックで1単位時間ごとの事後分布を作成する。</p>
+<p>Stanコードを書く。 <code>treatment</code>で場合わけし、回復処理区 (RT) では<code>t_cp</code>以前か以降かでもう一度場合わけして対数尤度を加算する。 generated quantitiesブロックで1単位時間ごとの事後分布を作成する。</p>
 <pre><code>data{
   int N;
   vector[N] t;
@@ -589,7 +526,7 @@ quantiles %&gt;%
 <div class="section level2">
 <h2>雑感</h2>
 <ul>
-<li>処理を始点にsigmoidで組むほうが素直かもしれない</li>
+<li>処理時を始点にsigmoidで組むほうが素直かもしれない</li>
 <li>今回のターゲットはタンパク質なので、分解と合成に分けて微分方程式から解くべき</li>
 <li><code>t_cp</code>が小さいと2カーブの分離がうまくいかず、<code>t_cp</code>と<code>k_inc</code>が不正確になる</li>
 </ul>

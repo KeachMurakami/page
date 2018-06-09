@@ -34,15 +34,16 @@ color_scheme_set()
 
 ## 元データ作成
 
-```{r}
-add_noise <-
-  function(x, sd) x + rnorm(length(x), 0, sd)
+Stanでパラメータを推定する対象となる既知データセットを作成。
+減衰が生じないnegative control (NC)、減衰が生じるpositive control (PC)、減衰中に回復処理をしたrecovery treatment (RT) を準備。
 
+```{r}
+# 真のパラメータを与える
 time <- seq(0, 15, length.out = 60)
-sigma <- .05 # common sd
+sigma <- .05
 y_max <- 1
 y_min <- .3
-t_cp <- 3.3 # changing point
+t_cp <- 3.3
 k_dec <- .41
 k_inc <- .23
 amp_inc <- .45
@@ -54,8 +55,10 @@ RT_dec <- # gross decrease
 RT_inc <- # gross incrase
   c(numeric(sum(time < t_cp)), # before the changing point
     amp_inc * (1 - exp(-k_inc * (time[time > t_cp] - t_cp)))) # after the changing point
-RT <- RT_dec + RT_inc
+RT <- RT_dec + RT_inc # net change
 
+add_noise <-
+  function(x, sd) x + rnorm(length(x), 0, sd)
 
 set.seed(2018060002)
 
@@ -63,7 +66,7 @@ ddd <-
   tibble(NC, PC, RT, t = time) %>%
   gather(treatment, value, -t) %>%
   bind_rows(., ., ., .) %>% # N = 4にしておく
-  mutate(value = add_noise(value, sigma))
+  mutate(value = add_noise(value, sigma)) # ノイズを足す
 ```
 
 元データを図示。
@@ -73,18 +76,16 @@ ddd <-
 ddd %>%
   ggplot(aes(t, value, col = treatment)) +
   geom_point() +
-  geom_smooth() +
+  geom_smooth(method = "loess") +
   geom_line(data = tibble(t = time, value = RT_inc), col = "blue", linetype = 2)
-
-ddd %>%
-  head(10) %>%
-  kable
 ```
+
+当然ながらloess回帰だと、効果の現れはじめはわからない。
 
 ## モデル作成
 
 Stanコードを書く。
-`treatment`で場合わけし、回復処理区 (RT) では`t1`以前か以降かでもう一度場合わけして対数尤度を加算する。
+`treatment`で場合わけし、回復処理区 (RT) では`t_cp`以前か以降かでもう一度場合わけして対数尤度を加算する。
 generated quantitiesブロックで1単位時間ごとの事後分布を作成する。
 
 ```
@@ -211,7 +212,7 @@ ddd %>%
 
 ## 雑感
 
-- 処理を始点にsigmoidで組むほうが素直かもしれない
+- 処理時を始点にsigmoidで組むほうが素直かもしれない
 - 今回のターゲットはタンパク質なので、分解と合成に分けて微分方程式から解くべき
 - `t_cp`が小さいと2カーブの分離がうまくいかず、`t_cp`と`k_inc`が不正確になる
 
