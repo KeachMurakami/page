@@ -1,0 +1,753 @@
+---
+title: "指数関数的な減衰と回復 (Stan)"
+date: 2018-06-09
+categories: ["Stan"]
+---
+
+
+
+<p>Stanの練習</p>
+<p>指数減衰中に処理をすることで回復過程に切り替わる経時パターン。 おもに知りたいのは、</p>
+<ul>
+<li>処理の効果が生じる時点: <code>t_cp</code></li>
+<li>減衰・回復の時定数: <code>k_dec</code>・<code>k_inc</code></li>
+</ul>
+<p>実験上では<code>t_cp</code>以前に処理を行っており、‘時間遅れののちに効果が見られたのだろう’という想定。</p>
+<pre class="r"><code>library(tidyverse)
+library(knitr)
+library(rstan)</code></pre>
+<pre><code>## Loading required package: StanHeaders</code></pre>
+<pre><code>## rstan (Version 2.17.3, GitRev: 2e1f913d3ca3)</code></pre>
+<pre><code>## For execution on a local, multicore CPU with excess RAM we recommend calling
+## options(mc.cores = parallel::detectCores()).
+## To avoid recompilation of unchanged Stan programs, we recommend calling
+## rstan_options(auto_write = TRUE)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rstan&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:magrittr&#39;:
+## 
+##     extract</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     extract</code></pre>
+<pre class="r"><code>library(bayesplot)</code></pre>
+<pre><code>## This is bayesplot version 1.5.0</code></pre>
+<pre><code>## - Plotting theme set to bayesplot::theme_default()</code></pre>
+<pre><code>## - Online documentation at mc-stan.org/bayesplot</code></pre>
+<pre class="r"><code>rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+theme_set(theme_grey())
+color_scheme_set()</code></pre>
+<div class="section level2">
+<h2>元データ作成</h2>
+<pre class="r"><code>add_noise &lt;-
+  function(x, sd) x + rnorm(length(x), 0, sd)
+
+time &lt;- seq(0, 15, length.out = 60)
+sigma &lt;- .05 # common sd
+y_max &lt;- 1
+y_min &lt;- .3
+t_cp &lt;- 3.3 # changing point
+k_dec &lt;- .41
+k_inc &lt;- .23
+amp_inc &lt;- .45
+
+NC &lt;- rep(y_max, length(time))
+PC &lt;- y_min + (y_max - y_min) * exp(- k_dec * time)
+RT_dec &lt;- # gross decrease
+  c(y_min + (y_max - y_min) * exp(- k_dec * time))
+RT_inc &lt;- # gross incrase
+  c(numeric(sum(time &lt; t_cp)), # before the changing point
+    amp_inc * (1 - exp(-k_inc * (time[time &gt; t_cp] - t_cp)))) # after the changing point
+RT &lt;- RT_dec + RT_inc
+
+
+set.seed(2018060002)
+
+ddd &lt;- 
+  tibble(NC, PC, RT, t = time) %&gt;%
+  gather(treatment, value, -t) %&gt;%
+  bind_rows(., ., ., .) %&gt;% # N = 4にしておく
+  mutate(value = add_noise(value, sigma))</code></pre>
+<p>元データを図示。 破線が真の処理効果。</p>
+<pre class="r"><code>ddd %&gt;%
+  ggplot(aes(t, value, col = treatment)) +
+  geom_point() +
+  geom_smooth() +
+  geom_line(data = tibble(t = time, value = RT_inc), col = &quot;blue&quot;, linetype = 2)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/post/2018-06-09-stan_two_phase_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>ddd %&gt;%
+  head(10) %&gt;%
+  kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">t</th>
+<th align="left">treatment</th>
+<th align="right">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.0000000</td>
+<td align="left">NC</td>
+<td align="right">1.0000169</td>
+</tr>
+<tr class="even">
+<td align="right">0.2542373</td>
+<td align="left">NC</td>
+<td align="right">0.9478038</td>
+</tr>
+<tr class="odd">
+<td align="right">0.5084746</td>
+<td align="left">NC</td>
+<td align="right">1.0699400</td>
+</tr>
+<tr class="even">
+<td align="right">0.7627119</td>
+<td align="left">NC</td>
+<td align="right">1.0007643</td>
+</tr>
+<tr class="odd">
+<td align="right">1.0169492</td>
+<td align="left">NC</td>
+<td align="right">1.0046035</td>
+</tr>
+<tr class="even">
+<td align="right">1.2711864</td>
+<td align="left">NC</td>
+<td align="right">0.9579308</td>
+</tr>
+<tr class="odd">
+<td align="right">1.5254237</td>
+<td align="left">NC</td>
+<td align="right">0.9951655</td>
+</tr>
+<tr class="even">
+<td align="right">1.7796610</td>
+<td align="left">NC</td>
+<td align="right">1.0205968</td>
+</tr>
+<tr class="odd">
+<td align="right">2.0338983</td>
+<td align="left">NC</td>
+<td align="right">0.9985774</td>
+</tr>
+<tr class="even">
+<td align="right">2.2881356</td>
+<td align="left">NC</td>
+<td align="right">1.0345304</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level2">
+<h2>モデル作成</h2>
+<p>Stanコードを書く。 <code>treatment</code>で場合わけし、回復処理区 (RT) では<code>t1</code>以前か以降かでもう一度場合わけして対数尤度を加算する。 generated quantitiesブロックで1単位時間ごとの事後分布を作成する。</p>
+<pre><code>data{
+  int N;
+  vector[N] t;
+  vector[N] y; 
+  vector[N] trtm; // 1: Negative ctrl, 2: Positive ctrl, 3: Recovery treatment
+}
+
+parameters{
+  real&lt;lower=0,upper=1&gt; sigma; // common sd
+  real&lt;lower=0,upper=2&gt; k_dec; // time-constant for decrease
+  real&lt;lower=0,upper=2&gt; k_inc; // time-constant for recovery
+  real&lt;lower=0&gt; y_max; // upper 
+  real&lt;lower=0&gt; y_min; // lower
+  real&lt;lower=0&gt; amp_inc; // amplitude of the recovery
+  real&lt;lower=0&gt; t_cp; // time at the changing point
+}
+
+model{
+  for(i in 1:N){
+    if(trtm[i] == 1){ // for NC 
+      target += normal_lpdf(y[i] | y_max, sigma);
+    } else if(trtm[i] == 2){ // for PC
+      target += normal_lpdf(y[i] | y_min + (y_max - y_min) * exp(-k_dec * t[i]), sigma);
+    } else { // for RT
+      if(t[i] &lt;= t_cp){ // before the changing point
+        target += normal_lpdf(y[i] | y_min + (y_max - y_min) * exp(-k_dec * t[i]), sigma);
+      } else { // before the changing point
+        target += normal_lpdf(y[i] | y_min + (y_max - y_min) * exp(-k_dec * t[i]) + amp_inc * (1 - exp(-k_inc * (t[i] - t_cp))), sigma);
+      }
+    }
+  }
+}
+
+generated quantities{
+  vector[16] PC;
+  vector[16] NC;
+  vector[16] RT;
+  
+  for(i in 1:16){
+    NC[i] = normal_rng(y_max, sigma);
+    PC[i] = normal_rng(y_min + (y_max - y_min) * exp(-k_dec * (i - 1)), sigma);
+    RT[i] = normal_rng(y_min + (y_max - y_min) * exp(-k_dec * (i - 1)), sigma);
+    if((i - 1) &gt; t_cp)
+      RT[i] += amp_inc * (1 - exp(-k_inc * ((i - 1) - t_cp)));
+  }
+}</code></pre>
+</div>
+<div id="mcmc" class="section level2">
+<h2>MCMC</h2>
+<p>Rからキックする。</p>
+<pre class="r"><code>fit_exp &lt;-
+  ddd %&gt;%
+  mutate(treatment = as.numeric(as.factor(treatment))) %&gt;% # treatmentを数値に変換
+  list(N = nrow(.), t = .$t, y = .$value, trtm = .$treatment) %&gt;%
+  stan(file = &quot;~/Dropbox/page/data/stan_code/down_up/changing_exponential.stan&quot;, data = .)</code></pre>
+<p>数値を確認する。</p>
+<pre class="r"><code>summary(fit_exp)$summary %&gt;%
+  data.frame %&gt;%
+  head(10) %&gt;%
+  kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">mean</th>
+<th align="right">se_mean</th>
+<th align="right">sd</th>
+<th align="right">X2.5.</th>
+<th align="right">X25.</th>
+<th align="right">X50.</th>
+<th align="right">X75.</th>
+<th align="right">X97.5.</th>
+<th align="right">n_eff</th>
+<th align="right">Rhat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sigma</td>
+<td align="right">0.0516255</td>
+<td align="right">0.0000227</td>
+<td align="right">0.0013334</td>
+<td align="right">0.0490849</td>
+<td align="right">0.0507127</td>
+<td align="right">0.0516118</td>
+<td align="right">0.0525068</td>
+<td align="right">0.0542605</td>
+<td align="right">3458.780</td>
+<td align="right">1.0001335</td>
+</tr>
+<tr class="even">
+<td>k_dec</td>
+<td align="right">0.4223187</td>
+<td align="right">0.0002589</td>
+<td align="right">0.0113305</td>
+<td align="right">0.4003830</td>
+<td align="right">0.4147646</td>
+<td align="right">0.4219940</td>
+<td align="right">0.4298440</td>
+<td align="right">0.4446218</td>
+<td align="right">1915.992</td>
+<td align="right">1.0001087</td>
+</tr>
+<tr class="odd">
+<td>k_inc</td>
+<td align="right">0.2392567</td>
+<td align="right">0.0005629</td>
+<td align="right">0.0236947</td>
+<td align="right">0.1945554</td>
+<td align="right">0.2229001</td>
+<td align="right">0.2383920</td>
+<td align="right">0.2548892</td>
+<td align="right">0.2867336</td>
+<td align="right">1771.598</td>
+<td align="right">1.0012761</td>
+</tr>
+<tr class="even">
+<td>y_max</td>
+<td align="right">1.0014021</td>
+<td align="right">0.0000508</td>
+<td align="right">0.0032154</td>
+<td align="right">0.9950068</td>
+<td align="right">0.9993042</td>
+<td align="right">1.0014212</td>
+<td align="right">1.0035591</td>
+<td align="right">1.0077586</td>
+<td align="right">4000.000</td>
+<td align="right">1.0000981</td>
+</tr>
+<tr class="odd">
+<td>y_min</td>
+<td align="right">0.2994225</td>
+<td align="right">0.0001076</td>
+<td align="right">0.0049624</td>
+<td align="right">0.2896631</td>
+<td align="right">0.2961762</td>
+<td align="right">0.2992971</td>
+<td align="right">0.3027477</td>
+<td align="right">0.3094699</td>
+<td align="right">2125.777</td>
+<td align="right">0.9995200</td>
+</tr>
+<tr class="even">
+<td>amp_inc</td>
+<td align="right">0.4496617</td>
+<td align="right">0.0003892</td>
+<td align="right">0.0161762</td>
+<td align="right">0.4198372</td>
+<td align="right">0.4382901</td>
+<td align="right">0.4490005</td>
+<td align="right">0.4599044</td>
+<td align="right">0.4836770</td>
+<td align="right">1727.394</td>
+<td align="right">1.0022566</td>
+</tr>
+<tr class="odd">
+<td>t_cp</td>
+<td align="right">3.3069069</td>
+<td align="right">0.0025848</td>
+<td align="right">0.1243521</td>
+<td align="right">3.0570757</td>
+<td align="right">3.2305581</td>
+<td align="right">3.3061561</td>
+<td align="right">3.3838614</td>
+<td align="right">3.5562398</td>
+<td align="right">2314.511</td>
+<td align="right">0.9999284</td>
+</tr>
+<tr class="even">
+<td>PC[1]</td>
+<td align="right">1.0014871</td>
+<td align="right">0.0008321</td>
+<td align="right">0.0526292</td>
+<td align="right">0.8985033</td>
+<td align="right">0.9668704</td>
+<td align="right">1.0004478</td>
+<td align="right">1.0368860</td>
+<td align="right">1.1033348</td>
+<td align="right">4000.000</td>
+<td align="right">0.9999345</td>
+</tr>
+<tr class="odd">
+<td>PC[2]</td>
+<td align="right">0.7592965</td>
+<td align="right">0.0008263</td>
+<td align="right">0.0522601</td>
+<td align="right">0.6590342</td>
+<td align="right">0.7231079</td>
+<td align="right">0.7585143</td>
+<td align="right">0.7945006</td>
+<td align="right">0.8598463</td>
+<td align="right">4000.000</td>
+<td align="right">1.0003241</td>
+</tr>
+<tr class="even">
+<td>PC[3]</td>
+<td align="right">0.6007656</td>
+<td align="right">0.0008221</td>
+<td align="right">0.0508590</td>
+<td align="right">0.5034519</td>
+<td align="right">0.5663434</td>
+<td align="right">0.6010756</td>
+<td align="right">0.6344523</td>
+<td align="right">0.7012205</td>
+<td align="right">3826.970</td>
+<td align="right">0.9999686</td>
+</tr>
+</tbody>
+</table>
+<p>traceも目視で確認する。</p>
+<pre class="r"><code>pars_shown &lt;-
+  c(&quot;sigma&quot;, &quot;k_dec&quot;, &quot;k_inc&quot;, &quot;y_min&quot;, &quot;y_max&quot;, &quot;t_cp&quot;, &quot;amp_inc&quot;)
+
+fit_exp %&gt;%
+  as.array %&gt;%
+  {
+    print(mcmc_trace(., pars = pars_shown) + guides(col = F))
+    print(mcmc_dens_overlay(., pars = pars_shown) + guides(col = F))
+  }</code></pre>
+<p><img src="/post/2018-06-09-stan_two_phase_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="/post/2018-06-09-stan_two_phase_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+</div>
+<div class="section level2">
+<h2>プロット</h2>
+<p>ベイズ信頼区間を元データに足して表示する。 経時プロットに区間を追加するのがそこそこ面倒。</p>
+<pre class="r"><code>mcmc_sample &lt;- rstan::extract(fit_exp)
+
+quantile_mcmc &lt;- 
+  function(mcmc_sample, probs = c(.025, .25, .50, .75, .975), ...){
+    apply(mcmc_sample, 2, quantile, probs = probs) %&gt;%
+      t %&gt;%
+      as_tibble %&gt;%
+      set_names(paste0(&quot;qt&quot;, seq_along(probs)))
+  }
+
+quantiles &lt;-
+  mcmc_sample[c(&quot;PC&quot;, &quot;NC&quot;, &quot;RT&quot;)] %&gt;%
+  map_df(~ quantile_mcmc(.) %&gt;% mutate(t = 0:15), .id = &quot;treatment&quot;)
+
+quantiles %&gt;%
+  head(10) %&gt;%
+  kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">treatment</th>
+<th align="right">qt1</th>
+<th align="right">qt2</th>
+<th align="right">qt3</th>
+<th align="right">qt4</th>
+<th align="right">qt5</th>
+<th align="right">t</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">PC</td>
+<td align="right">0.8985033</td>
+<td align="right">0.9668704</td>
+<td align="right">1.0004478</td>
+<td align="right">1.0368860</td>
+<td align="right">1.1033348</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">PC</td>
+<td align="right">0.6590342</td>
+<td align="right">0.7231079</td>
+<td align="right">0.7585143</td>
+<td align="right">0.7945006</td>
+<td align="right">0.8598463</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">PC</td>
+<td align="right">0.5034519</td>
+<td align="right">0.5663434</td>
+<td align="right">0.6010756</td>
+<td align="right">0.6344523</td>
+<td align="right">0.7012205</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">PC</td>
+<td align="right">0.3968506</td>
+<td align="right">0.4645301</td>
+<td align="right">0.4982749</td>
+<td align="right">0.5329208</td>
+<td align="right">0.6011273</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">PC</td>
+<td align="right">0.3271828</td>
+<td align="right">0.3950691</td>
+<td align="right">0.4289129</td>
+<td align="right">0.4649939</td>
+<td align="right">0.5350154</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">PC</td>
+<td align="right">0.2819760</td>
+<td align="right">0.3495985</td>
+<td align="right">0.3851846</td>
+<td align="right">0.4205591</td>
+<td align="right">0.4815312</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">PC</td>
+<td align="right">0.2527515</td>
+<td align="right">0.3197507</td>
+<td align="right">0.3556679</td>
+<td align="right">0.3891363</td>
+<td align="right">0.4569490</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">PC</td>
+<td align="right">0.2333478</td>
+<td align="right">0.3029713</td>
+<td align="right">0.3369205</td>
+<td align="right">0.3726222</td>
+<td align="right">0.4391237</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">PC</td>
+<td align="right">0.2202949</td>
+<td align="right">0.2881550</td>
+<td align="right">0.3230193</td>
+<td align="right">0.3572774</td>
+<td align="right">0.4249347</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">PC</td>
+<td align="right">0.2109327</td>
+<td align="right">0.2782835</td>
+<td align="right">0.3147267</td>
+<td align="right">0.3498628</td>
+<td align="right">0.4180030</td>
+<td align="right">9</td>
+</tr>
+</tbody>
+</table>
+<p>50%、95%ベイズ信頼区間を表示したプロット。</p>
+<pre class="r"><code>ddd %&gt;%
+  ggplot(aes(x = t, group = treatment, fill = treatment)) +
+  geom_vline(xintercept = t_cp, linetype = 2) +
+  geom_ribbon(data = quantiles, aes(ymin = qt1, ymax = qt5), alpha = .25) +
+  geom_ribbon(data = quantiles, aes(ymin = qt2, ymax = qt4), alpha = .75) +
+  geom_line(data = quantiles, aes(y = qt3), col = &quot;white&quot;) +
+  geom_point(aes(y = value, col = treatment), alpha = .25) +
+  labs(x = &quot;Time [hour]&quot;, y = &quot;Parameter [unit]&quot;)</code></pre>
+<p><img src="/post/2018-06-09-stan_two_phase_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div class="section level2">
+<h2>雑感</h2>
+<ul>
+<li>処理を始点にsigmoidで組むほうが素直かもしれない</li>
+<li>今回のターゲットはタンパク質なので、分解と合成に分けて微分方程式から解くべき</li>
+<li><code>t_cp</code>が小さいと2カーブの分離がうまくいかず、<code>t_cp</code>と<code>k_inc</code>が不正確になる</li>
+</ul>
+<pre class="r"><code>t_cp_short &lt;- 2.3 # changing point
+
+RT_inc2 &lt;- # gross incrase
+  c(numeric(sum(time &lt; t_cp_short)), # before the changing point
+    amp_inc * (1 - exp(-k_inc * (time[time &gt; t_cp_short] - t_cp_short)))) # after the changing point
+
+RT2 &lt;- RT_dec + RT_inc2
+
+set.seed(2018060002)
+
+ddd2 &lt;- 
+  tibble(NC, PC, RT2, t = time) %&gt;%
+  gather(treatment, value, -t) %&gt;%
+  bind_rows(., ., ., .) %&gt;% # N = 4にしておく
+  mutate(value = add_noise(value, sigma))
+
+fit_exp2 &lt;-
+  ddd2 %&gt;%
+  mutate(treatment = as.numeric(as.factor(treatment))) %&gt;% # treatmentを数値に変換
+  list(N = nrow(.), t = .$t, y = .$value, trtm = .$treatment) %&gt;%
+  stan(file = &quot;~/Dropbox/page/data/stan_code/down_up/changing_exponential.stan&quot;, data = .)
+
+fit_exp2 %&gt;%
+  as.array %&gt;%
+  .[, , c(3, 7)] %&gt;%
+  mcmc_areas() +
+  geom_vline(xintercept = c(t_cp_short, k_inc), linetype = 2)</code></pre>
+<p><img src="/post/2018-06-09-stan_two_phase_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>summary(fit_exp2)$summary %&gt;%
+  data.frame %&gt;%
+  head(7) %&gt;%
+  kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">mean</th>
+<th align="right">se_mean</th>
+<th align="right">sd</th>
+<th align="right">X2.5.</th>
+<th align="right">X25.</th>
+<th align="right">X50.</th>
+<th align="right">X75.</th>
+<th align="right">X97.5.</th>
+<th align="right">n_eff</th>
+<th align="right">Rhat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sigma</td>
+<td align="right">0.0514300</td>
+<td align="right">0.0000217</td>
+<td align="right">0.0013720</td>
+<td align="right">0.0487630</td>
+<td align="right">0.0504732</td>
+<td align="right">0.0514218</td>
+<td align="right">0.0523452</td>
+<td align="right">0.0541451</td>
+<td align="right">4000.000</td>
+<td align="right">0.9998950</td>
+</tr>
+<tr class="even">
+<td>k_dec</td>
+<td align="right">0.4141135</td>
+<td align="right">0.0002412</td>
+<td align="right">0.0115770</td>
+<td align="right">0.3916072</td>
+<td align="right">0.4064488</td>
+<td align="right">0.4140401</td>
+<td align="right">0.4214355</td>
+<td align="right">0.4376592</td>
+<td align="right">2303.264</td>
+<td align="right">0.9998820</td>
+</tr>
+<tr class="odd">
+<td>k_inc</td>
+<td align="right">0.2627310</td>
+<td align="right">0.0004925</td>
+<td align="right">0.0236050</td>
+<td align="right">0.2193719</td>
+<td align="right">0.2466110</td>
+<td align="right">0.2615057</td>
+<td align="right">0.2778788</td>
+<td align="right">0.3123580</td>
+<td align="right">2296.930</td>
+<td align="right">1.0020398</td>
+</tr>
+<tr class="even">
+<td>y_max</td>
+<td align="right">1.0011547</td>
+<td align="right">0.0000484</td>
+<td align="right">0.0030635</td>
+<td align="right">0.9951582</td>
+<td align="right">0.9990823</td>
+<td align="right">1.0011367</td>
+<td align="right">1.0032297</td>
+<td align="right">1.0070377</td>
+<td align="right">4000.000</td>
+<td align="right">1.0000442</td>
+</tr>
+<tr class="odd">
+<td>y_min</td>
+<td align="right">0.2985971</td>
+<td align="right">0.0001041</td>
+<td align="right">0.0050462</td>
+<td align="right">0.2889588</td>
+<td align="right">0.2951308</td>
+<td align="right">0.2986399</td>
+<td align="right">0.3019374</td>
+<td align="right">0.3085458</td>
+<td align="right">2348.037</td>
+<td align="right">0.9997601</td>
+</tr>
+<tr class="even">
+<td>amp_inc</td>
+<td align="right">0.4433657</td>
+<td align="right">0.0002750</td>
+<td align="right">0.0129659</td>
+<td align="right">0.4198119</td>
+<td align="right">0.4345339</td>
+<td align="right">0.4428186</td>
+<td align="right">0.4517651</td>
+<td align="right">0.4706756</td>
+<td align="right">2223.558</td>
+<td align="right">1.0017751</td>
+</tr>
+<tr class="odd">
+<td>t_cp</td>
+<td align="right">2.5975310</td>
+<td align="right">0.0023971</td>
+<td align="right">0.1246814</td>
+<td align="right">2.3561790</td>
+<td align="right">2.5156997</td>
+<td align="right">2.5941793</td>
+<td align="right">2.6756592</td>
+<td align="right">2.8620800</td>
+<td align="right">2705.288</td>
+<td align="right">1.0010649</td>
+</tr>
+</tbody>
+</table>
+<p><code>t_cp</code>と<code>k_inc</code>の真値はそれぞれ、2.3と0.23。</p>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>## Session info -------------------------------------------------------------</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Brisbane          
+##  date     2018-06-09</code></pre>
+<pre><code>## Packages -----------------------------------------------------------------</code></pre>
+<pre><code>##  package     * version    date       source                            
+##  assertthat    0.2.0      2017-04-11 CRAN (R 3.5.0)                    
+##  backports     1.1.2      2017-12-13 CRAN (R 3.5.0)                    
+##  base        * 3.5.0      2018-04-24 local                             
+##  bayesplot   * 1.5.0      2018-03-30 CRAN (R 3.5.0)                    
+##  bindr         0.1.1      2018-03-13 CRAN (R 3.5.0)                    
+##  bindrcpp    * 0.2.2      2018-03-29 CRAN (R 3.5.0)                    
+##  blogdown      0.6        2018-04-18 CRAN (R 3.5.0)                    
+##  bookdown      0.7        2018-02-18 CRAN (R 3.5.0)                    
+##  broom         0.4.4      2018-05-24 Github (tidyverse/broom@570b25a)  
+##  cellranger    1.1.0      2016-07-27 CRAN (R 3.5.0)                    
+##  cli           1.0.0      2017-11-05 CRAN (R 3.5.0)                    
+##  codetools     0.2-15     2016-10-05 CRAN (R 3.5.0)                    
+##  colorspace    1.3-2      2016-12-14 CRAN (R 3.5.0)                    
+##  compiler      3.5.0      2018-04-24 local                             
+##  crayon        1.3.4      2017-09-16 CRAN (R 3.5.0)                    
+##  datasets    * 3.5.0      2018-04-24 local                             
+##  devtools      1.13.5     2018-02-18 CRAN (R 3.5.0)                    
+##  digest        0.6.15     2018-01-28 CRAN (R 3.5.0)                    
+##  dplyr       * 0.7.5      2018-05-19 cran (@0.7.5)                     
+##  evaluate      0.10.1     2017-06-24 CRAN (R 3.5.0)                    
+##  forcats     * 0.3.0      2018-02-19 CRAN (R 3.5.0)                    
+##  foreign       0.8-70     2017-11-28 CRAN (R 3.5.0)                    
+##  ggplot2     * 2.2.1.9000 2018-05-22 Github (tidyverse/ggplot2@eecc450)
+##  ggridges      0.5.0      2018-04-05 CRAN (R 3.5.0)                    
+##  glue          1.2.0      2017-10-29 CRAN (R 3.5.0)                    
+##  graphics    * 3.5.0      2018-04-24 local                             
+##  grDevices   * 3.5.0      2018-04-24 local                             
+##  grid          3.5.0      2018-04-24 local                             
+##  gridExtra     2.3        2017-09-09 CRAN (R 3.5.0)                    
+##  gtable        0.2.0      2016-02-26 CRAN (R 3.5.0)                    
+##  haven         1.1.1      2018-01-18 CRAN (R 3.5.0)                    
+##  highr         0.6        2016-05-09 CRAN (R 3.5.0)                    
+##  hms           0.4.2      2018-03-10 CRAN (R 3.5.0)                    
+##  htmltools     0.3.6      2017-04-28 CRAN (R 3.5.0)                    
+##  httr          1.3.1      2017-08-20 CRAN (R 3.5.0)                    
+##  inline        0.3.14     2015-04-13 CRAN (R 3.5.0)                    
+##  jsonlite      1.5        2017-06-01 CRAN (R 3.5.0)                    
+##  knitr       * 1.20       2018-02-20 CRAN (R 3.5.0)                    
+##  labeling      0.3        2014-08-23 CRAN (R 3.5.0)                    
+##  lattice       0.20-35    2017-03-25 CRAN (R 3.5.0)                    
+##  lazyeval      0.2.1      2017-10-29 CRAN (R 3.5.0)                    
+##  lubridate     1.7.4      2018-04-11 CRAN (R 3.5.0)                    
+##  magrittr    * 1.5        2014-11-22 CRAN (R 3.5.0)                    
+##  memoise       1.1.0      2017-04-21 CRAN (R 3.5.0)                    
+##  methods     * 3.5.0      2018-04-24 local                             
+##  mnormt        1.5-5      2016-10-15 CRAN (R 3.5.0)                    
+##  modelr        0.1.1      2017-07-24 CRAN (R 3.5.0)                    
+##  munsell       0.4.3      2016-02-13 CRAN (R 3.5.0)                    
+##  nlme          3.1-137    2018-04-07 CRAN (R 3.5.0)                    
+##  parallel      3.5.0      2018-04-24 local                             
+##  pillar        1.2.1      2018-02-27 CRAN (R 3.5.0)                    
+##  pkgconfig     2.0.1      2017-03-21 CRAN (R 3.5.0)                    
+##  plyr          1.8.4      2016-06-08 CRAN (R 3.5.0)                    
+##  psych         1.8.4      2018-05-06 cran (@1.8.4)                     
+##  purrr       * 0.2.4      2017-10-18 CRAN (R 3.5.0)                    
+##  R6            2.2.2      2017-06-17 CRAN (R 3.5.0)                    
+##  Rcpp          0.12.17    2018-05-18 cran (@0.12.17)                   
+##  readr       * 1.1.1      2017-05-16 CRAN (R 3.5.0)                    
+##  readxl        1.1.0      2018-04-20 CRAN (R 3.5.0)                    
+##  reshape2      1.4.3      2017-12-11 CRAN (R 3.5.0)                    
+##  rlang         0.2.0      2018-02-20 CRAN (R 3.5.0)                    
+##  rmarkdown     1.9        2018-03-01 CRAN (R 3.5.0)                    
+##  rprojroot     1.3-2      2018-01-03 CRAN (R 3.5.0)                    
+##  rstan       * 2.17.3     2018-01-20 CRAN (R 3.5.0)                    
+##  rstudioapi    0.7        2017-09-07 CRAN (R 3.5.0)                    
+##  rvest         0.3.2      2016-06-17 CRAN (R 3.5.0)                    
+##  scales        0.5.0      2017-08-24 CRAN (R 3.5.0)                    
+##  StanHeaders * 2.17.2     2018-01-20 CRAN (R 3.5.0)                    
+##  stats       * 3.5.0      2018-04-24 local                             
+##  stats4        3.5.0      2018-04-24 local                             
+##  stringi       1.2.2      2018-05-02 cran (@1.2.2)                     
+##  stringr     * 1.3.1      2018-05-10 cran (@1.3.1)                     
+##  tibble      * 1.4.2      2018-01-22 CRAN (R 3.5.0)                    
+##  tidyr       * 0.8.1      2018-05-18 cran (@0.8.1)                     
+##  tidyselect    0.2.4      2018-02-26 CRAN (R 3.5.0)                    
+##  tidyverse   * 1.2.1      2017-11-14 CRAN (R 3.5.0)                    
+##  tools         3.5.0      2018-04-24 local                             
+##  utils       * 3.5.0      2018-04-24 local                             
+##  withr         2.1.2      2018-03-15 CRAN (R 3.5.0)                    
+##  xfun          0.1        2018-01-22 CRAN (R 3.5.0)                    
+##  xml2          1.2.0      2018-01-24 CRAN (R 3.5.0)                    
+##  yaml          2.1.18     2018-03-08 CRAN (R 3.5.0)</code></pre>
+</div>

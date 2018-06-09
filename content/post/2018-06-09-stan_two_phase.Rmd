@@ -1,0 +1,259 @@
+---
+title: "指数関数的な減衰と回復 (Stan)"
+date: 2018-06-09
+categories: ["Stan"]
+---
+
+```{r setup, warning = F, message = F, cache=T, include = F, echo = F}
+knitr::opts_chunk$set(warning = F, message = F, cache = T, echo = T, results = "hold")
+```
+
+Stanの練習
+
+指数減衰中に処理をすることで回復過程に切り替わる経時パターン。
+おもに知りたいのは、
+
+- 処理の効果が生じる時点: `t_cp`
+- 減衰・回復の時定数: `k_dec`・`k_inc`
+
+実験上では`t_cp`以前に処理を行っており、‘時間遅れののちに効果が見られたのだろう’という想定。
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(rstan)
+library(bayesplot)
+
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+theme_set(theme_grey())
+color_scheme_set()
+```
+
+
+## 元データ作成
+
+```{r}
+add_noise <-
+  function(x, sd) x + rnorm(length(x), 0, sd)
+
+time <- seq(0, 15, length.out = 60)
+sigma <- .05 # common sd
+y_max <- 1
+y_min <- .3
+t_cp <- 3.3 # changing point
+k_dec <- .41
+k_inc <- .23
+amp_inc <- .45
+
+NC <- rep(y_max, length(time))
+PC <- y_min + (y_max - y_min) * exp(- k_dec * time)
+RT_dec <- # gross decrease
+  c(y_min + (y_max - y_min) * exp(- k_dec * time))
+RT_inc <- # gross incrase
+  c(numeric(sum(time < t_cp)), # before the changing point
+    amp_inc * (1 - exp(-k_inc * (time[time > t_cp] - t_cp)))) # after the changing point
+RT <- RT_dec + RT_inc
+
+
+set.seed(2018060002)
+
+ddd <- 
+  tibble(NC, PC, RT, t = time) %>%
+  gather(treatment, value, -t) %>%
+  bind_rows(., ., ., .) %>% # N = 4にしておく
+  mutate(value = add_noise(value, sigma))
+```
+
+元データを図示。
+破線が真の処理効果。
+
+```{r}
+ddd %>%
+  ggplot(aes(t, value, col = treatment)) +
+  geom_point() +
+  geom_smooth() +
+  geom_line(data = tibble(t = time, value = RT_inc), col = "blue", linetype = 2)
+
+ddd %>%
+  head(10) %>%
+  kable
+```
+
+## モデル作成
+
+Stanコードを書く。
+`treatment`で場合わけし、回復処理区 (RT) では`t1`以前か以降かでもう一度場合わけして対数尤度を加算する。
+generated quantitiesブロックで1単位時間ごとの事後分布を作成する。
+
+```
+data{
+  int N;
+  vector[N] t;
+  vector[N] y; 
+  vector[N] trtm; // 1: Negative ctrl, 2: Positive ctrl, 3: Recovery treatment
+}
+
+parameters{
+  real<lower=0,upper=1> sigma; // common sd
+  real<lower=0,upper=2> k_dec; // time-constant for decrease
+  real<lower=0,upper=2> k_inc; // time-constant for recovery
+  real<lower=0> y_max; // upper 
+  real<lower=0> y_min; // lower
+  real<lower=0> amp_inc; // amplitude of the recovery
+  real<lower=0> t_cp; // time at the changing point
+}
+
+model{
+  for(i in 1:N){
+    if(trtm[i] == 1){ // for NC 
+      target += normal_lpdf(y[i] | y_max, sigma);
+    } else if(trtm[i] == 2){ // for PC
+      target += normal_lpdf(y[i] | y_min + (y_max - y_min) * exp(-k_dec * t[i]), sigma);
+    } else { // for RT
+      if(t[i] <= t_cp){ // before the changing point
+        target += normal_lpdf(y[i] | y_min + (y_max - y_min) * exp(-k_dec * t[i]), sigma);
+      } else { // before the changing point
+        target += normal_lpdf(y[i] | y_min + (y_max - y_min) * exp(-k_dec * t[i]) + amp_inc * (1 - exp(-k_inc * (t[i] - t_cp))), sigma);
+      }
+    }
+  }
+}
+
+generated quantities{
+  vector[16] PC;
+  vector[16] NC;
+  vector[16] RT;
+  
+  for(i in 1:16){
+    NC[i] = normal_rng(y_max, sigma);
+    PC[i] = normal_rng(y_min + (y_max - y_min) * exp(-k_dec * (i - 1)), sigma);
+    RT[i] = normal_rng(y_min + (y_max - y_min) * exp(-k_dec * (i - 1)), sigma);
+    if((i - 1) > t_cp)
+      RT[i] += amp_inc * (1 - exp(-k_inc * ((i - 1) - t_cp)));
+  }
+}
+```
+
+## MCMC
+
+Rからキックする。
+
+```{r}
+fit_exp <-
+  ddd %>%
+  mutate(treatment = as.numeric(as.factor(treatment))) %>% # treatmentを数値に変換
+  list(N = nrow(.), t = .$t, y = .$value, trtm = .$treatment) %>%
+  stan(file = "~/Dropbox/page/data/stan_code/down_up/changing_exponential.stan", data = .)
+```
+
+数値を確認する。
+
+```{r}
+summary(fit_exp)$summary %>%
+  data.frame %>%
+  head(10) %>%
+  kable
+```
+
+traceも目視で確認する。
+
+```{r}
+pars_shown <-
+  c("sigma", "k_dec", "k_inc", "y_min", "y_max", "t_cp", "amp_inc")
+
+fit_exp %>%
+  as.array %>%
+  {
+    print(mcmc_trace(., pars = pars_shown) + guides(col = F))
+    print(mcmc_dens_overlay(., pars = pars_shown) + guides(col = F))
+  }
+```
+
+## プロット
+
+ベイズ信頼区間を元データに足して表示する。
+経時プロットに区間を追加するのがそこそこ面倒。
+
+```{r}
+mcmc_sample <- rstan::extract(fit_exp)
+
+quantile_mcmc <- 
+  function(mcmc_sample, probs = c(.025, .25, .50, .75, .975), ...){
+    apply(mcmc_sample, 2, quantile, probs = probs) %>%
+      t %>%
+      as_tibble %>%
+      set_names(paste0("qt", seq_along(probs)))
+  }
+
+quantiles <-
+  mcmc_sample[c("PC", "NC", "RT")] %>%
+  map_df(~ quantile_mcmc(.) %>% mutate(t = 0:15), .id = "treatment")
+
+quantiles %>%
+  head(10) %>%
+  kable
+```
+
+50%、95%ベイズ信頼区間を表示したプロット。
+
+```{r}
+ddd %>%
+  ggplot(aes(x = t, group = treatment, fill = treatment)) +
+  geom_vline(xintercept = t_cp, linetype = 2) +
+  geom_ribbon(data = quantiles, aes(ymin = qt1, ymax = qt5), alpha = .25) +
+  geom_ribbon(data = quantiles, aes(ymin = qt2, ymax = qt4), alpha = .75) +
+  geom_line(data = quantiles, aes(y = qt3), col = "white") +
+  geom_point(aes(y = value, col = treatment), alpha = .25) +
+  labs(x = "Time [hour]", y = "Parameter [unit]")
+```
+
+## 雑感
+
+- 処理を始点にsigmoidで組むほうが素直かもしれない
+- 今回のターゲットはタンパク質なので、分解と合成に分けて微分方程式から解くべき
+- `t_cp`が小さいと2カーブの分離がうまくいかず、`t_cp`と`k_inc`が不正確になる
+
+```{r}
+t_cp_short <- 2.3 # changing point
+
+RT_inc2 <- # gross incrase
+  c(numeric(sum(time < t_cp_short)), # before the changing point
+    amp_inc * (1 - exp(-k_inc * (time[time > t_cp_short] - t_cp_short)))) # after the changing point
+
+RT2 <- RT_dec + RT_inc2
+
+set.seed(2018060002)
+
+ddd2 <- 
+  tibble(NC, PC, RT2, t = time) %>%
+  gather(treatment, value, -t) %>%
+  bind_rows(., ., ., .) %>% # N = 4にしておく
+  mutate(value = add_noise(value, sigma))
+
+fit_exp2 <-
+  ddd2 %>%
+  mutate(treatment = as.numeric(as.factor(treatment))) %>% # treatmentを数値に変換
+  list(N = nrow(.), t = .$t, y = .$value, trtm = .$treatment) %>%
+  stan(file = "~/Dropbox/page/data/stan_code/down_up/changing_exponential.stan", data = .)
+
+fit_exp2 %>%
+  as.array %>%
+  .[, , c(3, 7)] %>%
+  mcmc_areas() +
+  geom_vline(xintercept = c(t_cp_short, k_inc), linetype = 2)
+
+summary(fit_exp2)$summary %>%
+  data.frame %>%
+  head(7) %>%
+  kable
+```
+
+`t_cp`と`k_inc`の真値はそれぞれ、`r t_cp_short`と`r k_inc`。
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```
