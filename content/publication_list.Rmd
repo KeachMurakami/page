@@ -3,8 +3,7 @@ title: " "
 ---
 
 <div style="text-align: right; font-size: .7em">
-<!-- <FONT color="grey">Last update: `r lubridate::today()`  </FONT> -->
-<FONT color="grey">Last update: 2018-05-18  </FONT>
+<FONT color="grey">Last update: `r lubridate::today()`  </FONT>
 </div>
 
 ```{r, message = F, echo = F, warning = F}
@@ -167,6 +166,15 @@ books <-
       "Book chapter",
       "LED Lighting for Urban Agriculture",
       "http://www.springer.com/us/book/9789811018466")
+    
+    # ToRecord(
+    #   "03",
+    #   "人工光環境と植物の光合成 (Artificial light environments and photosynthesis of plants)",
+    #   paste(correspond(YI_), KM_, sep = ", "),
+    #   "2018 (in press)",
+    #   "Book chapter",
+    #   "アグリフォトニクスIII",
+    #   "")
   )
 ```
 
@@ -556,11 +564,4 @@ symp_int %>%
 ```{r, message = F, echo = F}
 symp_domestic %>%
   ToKable(in_what = "Venue Date")
-```
-
-
-```{r eval = F, echo = F}
-# rmarkdown::render("~/Dropbox/KeachMurakami.github.io/PublicationList.Rmd")
-# knit(input = "~/Dropbox/KeachMurakami.github.io/PublicationList.Rmd",
-#      output = "~/Dropbox/KeachMurakami.github.io/PublicationList.md")
 ```
