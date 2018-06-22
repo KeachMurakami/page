@@ -54,6 +54,7 @@ KM <- "<FONT color='green'>Keach Murakami</FONT>"
 RM <- "Ryo Matsuda"
 KF <- "Kazuhiro Fujiwara"
 YI <- "Yasuomi Ibaraki"
+WSC <- "Wah Soon Chow"
 
 KM_ <- "<FONT color='green'>村上 貴一</FONT>"
 RM_ <- "松田 怜"
@@ -181,6 +182,15 @@ books <-
 ```{r symposiums_international, message = F, echo = F}
 symp_int <-
   c(  
+    ToRecord(
+      "05",
+      new_item("Time course of leaf content of cytochrome *b*<sub>6</sub>*f* complex and photosynthetic capacity after changes in growth irradiance"),
+      paste(speaker(KM), "Hui Zhu", "Ling-Da Zeng", "Xiao-Ping Yi", "Chang-Lian Peng", "Wang-Feng Zhang", WSC, sep = ", "),
+      "2018",
+      "Poster",
+      "ComBio2018.<br>Sydney, Australia, 2018/09/23-2018/09/26",
+      ""),
+    
     ToRecord(
       "04",
       new_item("Spectral imaging for evaluation of spatial distributions of leaf photosynthetic light use efficiency"),
@@ -443,7 +453,11 @@ venue_domestic <-
     "大阪府立大学中百舌鳥キャンパス")
 
 venue_int <-
-  c("Istanbul", "Canberra", "Evora", "Wageningen")
+  c("Sydney",
+    "Istanbul",
+    "Canberra",
+    "Evora",
+    "Wageningen")
 
 symposium_location_domestic <-
   symp_domestic %>%
@@ -502,14 +516,14 @@ geos_univ <- list(UT = c(139.762, 35.71268),
                   ANU = c(149.1185, -35.2777))
 
 flight_lines_ut <-
-  map(2:4, function(xxx){
+  map(3:5, function(xxx){
     xy_end <- c(symposium_location_int[xxx,]$lng, symposium_location_int[xxx,]$lat)
     
     gcIntermediate(geos_univ$UT, xy_end, n = 300, addStartEnd = T)
     })
 
 flight_lines_anu <-
-  map(1, function(xxx){
+  map(1:2, function(xxx){
     xy_end <- c(symposium_location_int[xxx,]$lng, symposium_location_int[xxx,]$lat)
     
     gcIntermediate(geos_univ$ANU, xy_end, n = 300, addStartEnd = T)
@@ -529,6 +543,7 @@ symposium_map <-
   addPolylines(data = flight_lines_ut[[2]], color = color_flight_path, group = color_set_map[[2]]) %>%
   addPolylines(data = flight_lines_ut[[3]], color = color_flight_path, group = color_set_map[[2]]) %>%
   addPolylines(data = flight_lines_anu[[1]], color = color_flight_path, group = color_set_map[[2]]) %>%
+  addPolylines(data = flight_lines_anu[[2]], color = color_flight_path, group = color_set_map[[2]]) %>%
   addCircleMarkers(lng = ~lng, lat = ~lat, popup = ~name, group = color_set_map[[1]], col = "pink", opacity = .9) %>%
   addCircleMarkers(data = symposium_location_int,
                    lng = ~lng, lat = ~lat, popup = ~name, group = color_set_map[[2]], col = "skyblue", opacity = .9) %>%

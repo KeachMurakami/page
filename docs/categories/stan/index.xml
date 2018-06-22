@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Stan on A plant researcher</title>
-    <link>https://keachmurakami.github.io/categories/stan/</link>
+    <link>/categories/stan/</link>
     <description>Recent content in Stan on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sat, 09 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://keachmurakami.github.io/categories/stan/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/stan/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>指数関数的な減衰と回復 (Stan)</title>
-      <link>https://keachmurakami.github.io/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</link>
+      <link>/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</link>
       <pubDate>Sat, 09 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</guid>
+      <guid>/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</guid>
       <description>Stanの練習 指数減衰中に処理をすることで回復過程に切り替わる経時パターン。 おもに知りたいのは、 処理の効果が生じる時点: t_cp 減衰・回復の時定数</description>
     </item>
     

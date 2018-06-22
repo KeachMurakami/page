@@ -1,0 +1,11 @@
+---
+title: "ComBio2018へ参加・発表の申込み"
+date: 2018-06-22
+---
+
+9/23--9/26開催のComBio2018 (@Sydney) に参加・発表を申し込みました。
+
+> “Time course of leaf content of cytochrome *b*<sub>6</sub>*f* complex and photosynthetic capacity after changes in growth irradiance”  
+> Keach Murakami, Hui Zhu, Ling-Da Zeng, Xiao-Ping Yi, Chang-Lian Peng, Wang-Feng Zhang and Wah Soon Chow
+
+ANUで測定した (+する) データと、すでに出版されている論文 ([Zhu et al. 2017, Funct Plant Biol](http://www.publish.csiro.au/fp/fp16222)) のデータを合わせて発表します。
