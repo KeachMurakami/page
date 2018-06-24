@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>VARでPKが増えた？ (Stan</title>
+      <link>https://keachmurakami.github.io/2018/06/24/var%E3%81%A7pk%E3%81%8C%E5%A2%97%E3%81%88%E3%81%9F-stan/</link>
+      <pubDate>Sun, 24 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/06/24/var%E3%81%A7pk%E3%81%8C%E5%A2%97%E3%81%88%E3%81%9F-stan/</guid>
+      <description>suppressMessages(library(tidyverse)) knitr::opts_chunk$set(echo = T, warning = F, message = F, results = &amp;quot;hold&amp;quot;) VARでPKが増えたような気がする。 Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる</description>
+    </item>
+    
+    <item>
       <title>研究のつながりを可視化する (R</title>
       <link>https://keachmurakami.github.io/2018/06/24/%E7%A0%94%E7%A9%B6%E3%81%AE%E3%81%A4%E3%81%AA%E3%81%8C%E3%82%8A%E3%82%92%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%99%E3%82%8B-r/</link>
       <pubDate>Sun, 24 Jun 2018 00:00:00 +0000</pubDate>
@@ -36,15 +45,6 @@
       
       <guid>https://keachmurakami.github.io/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</guid>
       <description>Stanの練習 指数減衰中に処理をすることで回復過程に切り替わる経時パターン。 おもに知りたいのは、 処理の効果が生じる時点: t_cp 減衰・回復の時定数</description>
-    </item>
-    
-    <item>
-      <title>VARでPKが増えた？ (Stan</title>
-      <link>https://keachmurakami.github.io/2018/06/07/var%E3%81%A7pk%E3%81%8C%E5%A2%97%E3%81%88%E3%81%9F-stan/</link>
-      <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://keachmurakami.github.io/2018/06/07/var%E3%81%A7pk%E3%81%8C%E5%A2%97%E3%81%88%E3%81%9F-stan/</guid>
-      <description>VARでPKが増えたような気がする。 Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる得点数) を調べる。 PK発生</description>
     </item>
     
     <item>

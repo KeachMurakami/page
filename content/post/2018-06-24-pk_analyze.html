@@ -1,17 +1,18 @@
 ---
 title: "VARでPKが増えた？ (Stan"
-date: 2018-06-07
+date: 2018-06-24
 ---
 
 
 
+<pre class="r"><code>suppressMessages(library(tidyverse))
+knitr::opts_chunk$set(echo = T, warning = F, message = F, results = &quot;hold&quot;)</code></pre>
 <p>VARでPKが増えたような気がする。</p>
 <p>Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる得点数) を調べる。 PK発生率のscraping結果を、Stan+状態空間モデルで解析して、VARはPKを増やしたのか？に答える。</p>
 <div id="web-scraping" class="section level2">
 <h2>Web Scraping</h2>
 <p><code>rvest</code>を使う。 GitHubを漁って<a href="https://github.com/openfootball/world-cup">過去のデータ</a>を見つける。</p>
-<pre class="r"><code>suppressMessages(library(tidyverse))
-suppressMessages(library(rvest))
+<pre class="r"><code>suppressMessages(library(rvest))
 
 html_openfootball &lt;-
   xml2::read_html(&quot;https://github.com/openfootball/world-cup&quot;)
@@ -139,78 +140,14 @@ knitr::kable(df_competitions)</code></pre>
 
 stat_wc &lt;-
   df_competitions %&gt;%
-  dplyr::mutate(pk = purrr::map_int(year, count_pk))</code></pre>
-<pre><code>## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
+  dplyr::mutate(pk = purrr::map_int(year, count_pk))
 
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing</code></pre>
-<pre class="r"><code>stat_wc %&gt;%
+stat_wc %&gt;%
   ggplot(aes(year, pk)) +
   geom_line() +
   geom_point() +
   labs(x = &quot;Year&quot;, y = &quot;PK&quot;)</code></pre>
-<p><img src="/post/2018-07-24-pk_analyze_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="/post/2018-06-24-pk_analyze_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>2022年は未開催だからいいとして、1970年にPKが0回なのはおかしい。 wikipediaの形式が揃っていなかった (70年大会だけ各グループ＋決勝トーナメント) ので、個別に対応する。</p>
 <pre class="r"><code>count_pk_1970 &lt;-
   function(key){
@@ -221,22 +158,9 @@ stat_wc &lt;-
 
 num_pk_1970 &lt;-
   map_int(c(paste0(&quot;Group_&quot;, 1:4), &quot;knockout_stage&quot;), count_pk_1970) %&gt;%
-  sum</code></pre>
-<pre><code>## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
+  sum
 
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing</code></pre>
-<pre class="r"><code>stat_wc[stat_wc$year==1970, &quot;pk&quot;] &lt;- num_pk_1970
+stat_wc[stat_wc$year==1970, &quot;pk&quot;] &lt;- num_pk_1970
 
 # ついでに2022を除去
 stat_wc %&lt;&gt;% dplyr::filter(year != 2022)
@@ -246,7 +170,7 @@ stat_wc %&gt;%
   geom_line() +
   geom_point() +
   labs(x = &quot;Year&quot;, y = &quot;PK&quot;)</code></pre>
-<p><img src="/post/2018-07-24-pk_analyze_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/post/2018-06-24-pk_analyze_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>大会ごとに試合回数が異なるので、補正する。 2018年大会は今日 (20180624) までに29試合消化している。</p>
 <pre class="r"><code>num_match &lt;-
   c(18, 17, 18, 22, 26, 35, rep(32, 3), rep(38, 2), rep(52, 4), rep(64, 5), 29)
@@ -260,7 +184,7 @@ stat_wc %&gt;%
   geom_line() +
   geom_point() +
   labs(x = &quot;Year&quot;, y = &quot;PK / Match&quot;)</code></pre>
-<p><img src="/post/2018-07-24-pk_analyze_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="/post/2018-06-24-pk_analyze_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>やっぱり、今回大会は過去最高のPK乱発になっているらしい。</p>
 </div>
 <div id="stan-" class="section level2">
@@ -405,8 +329,25 @@ set.seed(2018)
 fit &lt;- stan(
   model_code = stan_code,
   data=list(n = nrow(df_input), pk = df_input$pk_per_match),
-  iter = 10000, thin = 5)</code></pre>
-<pre><code>## In file included from file642752819cef.cpp:8:
+  iter = 10000, thin = 5)
+
+# 収束診断
+# suppressMessages(library(bayesplot))
+# theme_set(theme_grey())
+#
+# summary(fit)$summary %&gt;%
+#   data.frame %&gt;%
+#   rownames_to_column %&gt;%
+#   slice(c(1:5, 89:93))
+# 
+# pars_shown &lt;- c(&quot;sigma_sys&quot;, &quot;sigma_obs&quot;, &quot;mu[89]&quot;)
+#   
+# as.array(fit) %&gt;%
+#   {
+#   print(mcmc_trace(., pars = pars_shown) + guides(col = F))
+#   print(mcmc_dens_overlay(., pars = pars_shown) + guides(col = F))
+#   }</code></pre>
+<pre><code>## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -421,7 +362,7 @@ fit &lt;- stan(
 ## &lt;command line&gt;:6:9: note: previous definition is here
 ## #define BOOST_NO_CXX11_RVALUE_REFERENCES 1
 ##         ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -434,7 +375,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -447,7 +388,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -461,7 +402,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -474,7 +415,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -488,7 +429,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -501,7 +442,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -514,7 +455,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -527,7 +468,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -549,7 +490,7 @@ fit &lt;- stan(
 ## /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:390:52: note: expanded from macro &#39;_LIBCPP_BEGIN_NAMESPACE_STD&#39;
 ## #define _LIBCPP_BEGIN_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {
 ##                                                    ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
@@ -560,7 +501,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
@@ -571,7 +512,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
@@ -582,7 +523,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
@@ -593,7 +534,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
@@ -604,7 +545,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
 ##     #pragma clang diagnostic pop
 ##                              ^
-## In file included from file642752819cef.cpp:462:
+## In file included from file69685d7869f6.cpp:462:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/rstan/include/rstan/rstaninc.hpp:3:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/rstan/include/rstan/stan_fit.hpp:36:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/services/optimize/bfgs.hpp:11:
@@ -623,7 +564,7 @@ fit &lt;- stan(
 ## /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:390:52: note: expanded from macro &#39;_LIBCPP_BEGIN_NAMESPACE_STD&#39;
 ## #define _LIBCPP_BEGIN_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {
 ##                                                    ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -631,7 +572,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: unused function &#39;set_zero_all_adjoints&#39; [-Wunused-function]
 ##     static void set_zero_all_adjoints() {
 ##                 ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
@@ -639,7 +580,7 @@ fit &lt;- stan(
 ## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints_nested.hpp:17:17: warning: &#39;static&#39; function &#39;set_zero_all_adjoints_nested&#39; declared in header file should be declared &#39;static inline&#39; [-Wunneeded-internal-declaration]
 ##     static void set_zero_all_adjoints_nested() {
 ##                 ^
-## In file included from file642752819cef.cpp:8:
+## In file included from file69685d7869f6.cpp:8:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
 ## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
@@ -648,25 +589,6 @@ fit &lt;- stan(
 ##       size_t fft_next_good_size(size_t N) {
 ##              ^
 ## 19 warnings generated.</code></pre>
-<pre><code>## Warning: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See
-## http://mc-stan.org/misc/warnings.html#bfmi-low</code></pre>
-<pre><code>## Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
-<pre class="r"><code># 収束診断
-# suppressMessages(library(bayesplot))
-# theme_set(theme_grey())
-#
-# summary(fit)$summary %&gt;%
-#   data.frame %&gt;%
-#   rownames_to_column %&gt;%
-#   slice(c(1:5, 89:93))
-# 
-# pars_shown &lt;- c(&quot;sigma_sys&quot;, &quot;sigma_obs&quot;, &quot;mu[89]&quot;)
-#   
-# as.array(fit) %&gt;%
-#   {
-#   print(mcmc_trace(., pars = pars_shown) + guides(col = F))
-#   print(mcmc_dens_overlay(., pars = pars_shown) + guides(col = F))
-#   }</code></pre>
 <p>収束は問題なし。 推定された真の状態である、1試合あたりPK発生数 (<span class="math inline">\(\mu\)</span>) の中央値と50%・95%ベイズ信頼区間を示す。</p>
 <pre class="r"><code>mcmc_sample &lt;- rstan::extract(fit)
 
@@ -692,10 +614,7 @@ stat_wc %&gt;%
   geom_line(col = &quot;magenta&quot;, linetype = 2) +
   geom_point(data = dplyr::filter(stat_wc, year == 2018), col = &quot;red&quot;) +
   labs(x = &quot;Year&quot;, y = &quot;PK/Match&quot;)</code></pre>
-<pre><code>## Warning: Ignoring unknown aesthetics: y
-
-## Warning: Ignoring unknown aesthetics: y</code></pre>
-<p><img src="/post/2018-07-24-pk_analyze_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="/post/2018-06-24-pk_analyze_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>mcmc_sample_2018 &lt;-
   mcmc_sample[[&quot;mu&quot;]][,89]
 
@@ -712,13 +631,9 @@ dnorm(stat_wc$pk_per_match[21], mean(mcmc_sample_2018), sd(mcmc_sample_2018))</c
 <div class="section level3">
 <h3>可視化</h3>
 <p>ついでにPK発生率を世界地図にマッピング。 暑いとダーティになる、みたいなトレンドはなさそう。</p>
-<pre class="r"><code>map_world &lt;- ggplot2::map_data(&#39;world&#39;)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;maps&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     map</code></pre>
-<pre class="r"><code>stat_map &lt;-
+<pre class="r"><code>map_world &lt;- ggplot2::map_data(&#39;world&#39;)
+
+stat_map &lt;-
   stat_wc %&gt;%
   dplyr::mutate(country = if_else(country == &quot;west-germany&quot;, &quot;Germany&quot;, country),
                 country = if_else(country == &quot;united-states&quot;, &quot;USA&quot;, country),
@@ -734,7 +649,7 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
   theme(axis.title = element_blank(),
         legend.position = c(1, 0),
         legend.justification = c(1, 0))</code></pre>
-<p><img src="/post/2018-07-24-pk_analyze_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/post/2018-06-24-pk_analyze_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
 </div>
 <div class="section level2">
@@ -750,7 +665,6 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 <div id="session-info" class="section level2">
 <h2>Session Info</h2>
 <pre class="r"><code>devtools::session_info()</code></pre>
-<pre><code>## Session info -------------------------------------------------------------</code></pre>
 <pre><code>##  setting  value                       
 ##  version  R version 3.5.0 (2018-04-23)
 ##  system   x86_64, darwin15.6.0        
@@ -758,9 +672,9 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 ##  language (EN)                        
 ##  collate  en_US.UTF-8                 
 ##  tz       Australia/Brisbane          
-##  date     2018-06-24</code></pre>
-<pre><code>## Packages -----------------------------------------------------------------</code></pre>
-<pre><code>##  package     * version    date       source                            
+##  date     2018-06-24                  
+## 
+##  package     * version    date       source                            
 ##  assertthat    0.2.0      2017-04-11 CRAN (R 3.5.0)                    
 ##  backports     1.1.2      2017-12-13 CRAN (R 3.5.0)                    
 ##  base        * 3.5.0      2018-04-24 local                             

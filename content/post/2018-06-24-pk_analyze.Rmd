@@ -1,7 +1,12 @@
 ---
 title: "VARでPKが増えた？ (Stan"
-date: 2018-06-07
+date: 2018-06-24
 ---
+
+```{r setup}
+suppressMessages(library(tidyverse))
+knitr::opts_chunk$set(echo = T, warning = F, message = F, results = "hold")
+```
 
 VARでPKが増えたような気がする。
 
@@ -14,7 +19,6 @@ PK発生率のscraping結果を、Stan+状態空間モデルで解析して、VA
 GitHubを漁って[過去のデータ](https://github.com/openfootball/world-cup)を見つける。
 
 ```{r}
-suppressMessages(library(tidyverse))
 suppressMessages(library(rvest))
 
 html_openfootball <-
