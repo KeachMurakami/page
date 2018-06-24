@@ -1,0 +1,270 @@
+---
+title: "研究のつながりを可視化する (R"
+date: 2018-06-24
+categories: ["Infographic"]
+---
+
+```{r setup, warning = F, message = F, cache=T, include = F, echo = F}
+knitr::opts_chunk$set(warning = F, message = F, cache = T, echo = T, results = "hold")
+```
+
+データ可視化系のネタ。
+
+成果物はこれ。
+
+<iframe seamless src="../../../../plotly/research_network/index.html" width="100%" height="900"></iframe>
+
+## データ読み込み
+
+.bibファイルに適当な項目名 (projectとした) でテーマを登録する。
+
+```
+@article{Murakami_et_al2018PCE,
+  title={Quantification of excitation energy distribution between photosystems based on a mechanistic model of photosynthetic electron transport},
+  author={Murakami, Keach and Matsuda, Ryo and Fujiwara, Kazuhiro},
+  journal=PCE,
+  volume={41},
+  number={1},
+  pages={148--159},
+  year={2018},
+  month={January},
+  doi={10.1111/pce.12986},
+  project={Photosynthetic Response to Light Spectrum}
+}
+```
+
+```
+@conference{intl005,
+  title={Time course of leaf content of cytochrome $b_6f$ complex and photosynthetic capacity after changes in growth irradiance},
+  author={Murakami, Keach and Zhu, Hui and Zeng, Ling-Da and Yi, Xiao-Ping and Peng, Chang-Lian and Zhang, Wang-Feng and Chow, Wah Soon},
+  year={2018},
+  month={September},
+  date={23--26},
+  type={Poster presentation},
+  symposium={ComBio2018},
+  short_symposium={ComBio2018},
+  address={Australia},
+  venue={International Convention Centre Sydney/Sydney},
+  project={Light Use in Horticulture, Modeling Temporal Canopy Photosynthesis}
+}
+```
+
+`bib2df`パッケージを使って読み込み。
+
+```{r}
+library(tidyverse)
+library(bib2df)
+
+bib_data <-
+  dir("~/Dropbox/r_packages/fudukue/bibtex/list_bib/", pattern = "^mywork", full.names = T) %>%
+  map_df(bib2df)
+
+bib_data[1:4, 1:5] %>%
+  knitr::kable()
+```
+
+データクレンジング。
+
+```{r}
+library(janitor)
+
+tidy_bib_data <-
+  bib_data %>%
+  janitor::remove_empty("cols") %>%
+  janitor::clean_names() %>%
+  mutate(category = if_else(category %in% c("BOOK", "INBOOK", "INCOLLECTION"), "book/chapter", tolower(category)),
+         id = dplyr::row_number() %>%
+              stringr::str_pad(width = 3, side = "left", pad = "0") %>%
+              paste0(category, "_", .)) %>%
+  dplyr::select(id, project, category, type, title, year, doi, short = short_symposium, venue) %>%
+  tidyr::separate_rows(project, sep = ", ")
+
+
+tidy_bib_data[1:4, 1:5] %>%
+  knitr::kable()
+```
+
+## ネットワーク作成
+
+`igraph::graph_from_data_frame`は1列目と2列目を繋ぐので、列順が重要。
+毎回ネットワークの形状が変わるので、一応`set.seed`しておく。
+
+```{r}
+library(igraph)
+
+set.seed(123)
+
+igraph_obj <-
+  igraph::graph_from_data_frame(d = tidy_bib_data, directed = F)
+
+plot(igraph_obj)
+class(igraph_obj)
+```
+
+見栄えをよくするべく、`ggnetwork`パッケージで`igprah`オブジェクトを`ggplot`用に整える。
+`ggnetwork`は[このページ](https://cran.r-project.org/web/packages/ggnetwork/vignettes/ggnetwork.html)がわかりやすかった。
+
+```{r}
+library(ggnetwork)
+
+df_network <-
+  igraph_obj %>%
+  ggnetwork(layout = "fruchtermanreingold")
+```
+
+ggnetworkの出力を`dplyr`で扱おうとして引っかかった。
+
+```{r, eval = F}
+df_network %>%
+  mutate(hoge = "huga")
+#> Error: Columns `x`, `y`, `xend`, `yend` must be 1d atomic vectors or lists
+```
+
+`tibble`は`data.frame`と異なり、`matrix`を包含することができないのが原因らしい。
+これはバグのようで、近いうちに直されそうな感じ ([Allow matrix and data frame columns ](https://github.com/tidyverse/tibble/issues/416))。
+
+```{r, eval = F}
+n <- network::network(sna::rgraph(5, tprob = 0.2))
+net <- ggnetwork::ggnetwork(n)
+
+mutate(net, hoge = "hoge")
+#> Error: Columns `x`, `y`, `xend`, `yend` must be 1d atomic vectors or lists
+
+net$x
+#>           [,1]
+#> [1,] 0.2249716
+#> [2,] 1.0000000
+#> [3,] 0.8017759
+#> [4,] 0.5301314
+#> [5,] 0.0000000
+#> [6,] 0.0000000
+#> [7,] 0.5301314
+#> [8,] 0.8017759
+
+net %>% as.tibble
+#> Error: Columns `x`, `y`, `xend`, `yend` must be 1d atomic vectors or lists
+
+tibble(x = matrix(1:5, ncol = 1))
+#> Error: Column `x` must be a 1d atomic vector or a list
+
+# リストで包むと通る
+(tbl_mtrx <- tibble(x = list(matrix(1:5, ncol = 1))))
+#> # A tibble: 1 x 1
+#>   x            
+#>   <list>       
+#> 1 <int [5 × 1]>
+
+# unnestするとvectorにdropするっぽい
+tidyr::unnest(tbl_mtrx)
+# A tibble: 5 x 1
+#>       x
+#>   <int>
+#> 1     1
+#> 2     2
+#> 3     3
+#> 4     4
+#> 5     5
+```
+
+`as.matrix %>% as_tibble`で強引に`tibble`型に変えると、`dplyr`系関数が使える。
+
+```{r}
+df_network <-
+  df_network %>%
+  as.matrix %>%
+  as_tibble %>%
+  mutate_at(.vars = vars(x, y, xend, yend, year), .funs = as.numeric) %>% # 文字列を数値に戻す
+  mutate(group = str_extract(vertex.names, "[a-z]*"),
+         group = if_else(group %in% c("article", "conference", "book"), group, "project")) # あとでカテゴリ別に色分けしたいので
+
+knitr::kable(df_network)
+```
+
+このままだと取り回しが悪いので、node部分とedge部分を分離して扱う。
+ggplotとplotlyでの図示用にデータフレームを整える。
+
+```{r}
+# node数をカウント
+node_num <-
+  is.na(df_network$na.y) %>% sum
+
+# node部分だけ抜き出す
+df_node <-
+  df_network[seq_len(node_num),] %>%
+  janitor::remove_empty("cols") %>%
+  mutate(node_size = if_else(group == "project", 10, 1),
+         node_size = if_else(group %in% c("article", "book"), 2, node_size)) # ノードサイズをカテゴリ別に
+
+# 残るedge部分をハンドリング
+df_edge <-
+  df_network[-seq_len(node_num),] %>%
+  janitor::remove_empty("cols")
+
+# plotly hover用
+df_tooltip <-
+  df_edge %>%
+  transmute(vertex.names,
+            link = if_else(is.na(doi), "", paste0('<a href="https://doi.org/', doi, '">LINK</a>')),
+            title,
+            year)
+
+# hoverの要不要に応じてprojectとそれ以外を分ける
+# 空行でもNAが表示されて鬱陶しいので
+df_node %>%
+  left_join(., df_tooltip, by = "vertex.names") %>%
+  {
+    df_node_projects <<-
+      dplyr::filter(., group == "project")
+    df_node_items <<-
+      dplyr::filter(., group != "project")
+  }
+```
+
+`ggplot`で重ねていく。
+
+```{r}
+fig_ggplot <-
+  df_node %>%
+  ggplot(aes(x, y, col = group)) +
+  geom_segment(data = df_edge, aes(xend = xend, yend = yend)) +
+  geom_point(data = df_node_items, aes(size = node_size, text = year)) +
+  geom_point(data = df_node_projects, aes(size = node_size), hoverinfo = "none") +
+  geom_text(data = df_node_projects, aes(label = vertex.names), col = "black") +
+  scale_color_manual(values = c("cyan2", "magenta2", "grey50", "grey75")) +
+  guides(size = F) +
+  theme_blank()
+
+fig_ggplot
+```
+
+`plotly`でinteractiveにして冒頭の図が完成。
+
+```{r}
+library(plotly)
+
+delete_axis <- 
+  list(title = "", ticklen = 0, zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE)
+
+fig_plotly <-
+  ggplotly(fig_ggplot, tooltip = "text") %>%
+  layout(xaxis = delete_axis, yaxis = delete_axis)
+
+# htmlwidgetとして保存
+setwd("../plotly")
+htmlwidgets::saveWidget(fig_plotly, "research_network.html", selfcontained = T)
+setwd("../post")
+```
+
+ネットワークがもっと騒がしくなるように精進しよう。
+
+## 参考
+
+[ggnetwork: Network geometries for ggplot2](https://cran.r-project.org/web/packages/ggnetwork/vignettes/ggnetwork.html)  
+[Allow matrix and data frame columns ](https://github.com/tidyverse/tibble/issues/416)  
+
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```

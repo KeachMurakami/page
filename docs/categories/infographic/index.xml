@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Infographic on A plant researcher</title>
+    <link>https://keachmurakami.github.io/categories/infographic/</link>
+    <description>Recent content in Infographic on A plant researcher</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Sun, 24 Jun 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://keachmurakami.github.io/categories/infographic/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>研究のつながりを可視化する (R</title>
+      <link>https://keachmurakami.github.io/2018/06/24/%E7%A0%94%E7%A9%B6%E3%81%AE%E3%81%A4%E3%81%AA%E3%81%8C%E3%82%8A%E3%82%92%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%99%E3%82%8B-r/</link>
+      <pubDate>Sun, 24 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/06/24/%E7%A0%94%E7%A9%B6%E3%81%AE%E3%81%A4%E3%81%AA%E3%81%8C%E3%82%8A%E3%82%92%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%99%E3%82%8B-r/</guid>
+      <description>データ可視化系のネタ。 成果物はこれ。 データ読み込み .bibファイルに適当な項目名 (projectとした) でテーマを登録する。 @article{Murakami_et_al2018PCE, title={Quantification of excitation energy distribution between photosystems</description>
+    </item>
+    
+  </channel>
+</rss>

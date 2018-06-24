@@ -2,579 +2,588 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on A plant researcher</title>
-    <link>/post/</link>
+    <link>https://keachmurakami.github.io/post/</link>
     <description>Recent content in Posts on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Fri, 22 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 24 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://keachmurakami.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>研究のつながりを可視化する (R</title>
+      <link>https://keachmurakami.github.io/2018/06/24/%E7%A0%94%E7%A9%B6%E3%81%AE%E3%81%A4%E3%81%AA%E3%81%8C%E3%82%8A%E3%82%92%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%99%E3%82%8B-r/</link>
+      <pubDate>Sun, 24 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/06/24/%E7%A0%94%E7%A9%B6%E3%81%AE%E3%81%A4%E3%81%AA%E3%81%8C%E3%82%8A%E3%82%92%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%99%E3%82%8B-r/</guid>
+      <description>データ可視化系のネタ。 成果物はこれ。 データ読み込み .bibファイルに適当な項目名 (projectとした) でテーマを登録する。 @article{Murakami_et_al2018PCE, title={Quantification of excitation energy distribution between photosystems</description>
+    </item>
+    
+    <item>
       <title>ComBio2018へ参加・発表の申込み</title>
-      <link>/2018/06/22/combio2018%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
+      <link>https://keachmurakami.github.io/2018/06/22/combio2018%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
       <pubDate>Fri, 22 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/22/combio2018%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
+      <guid>https://keachmurakami.github.io/2018/06/22/combio2018%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
       <description>9/23–9/26開催のComBio2018 (@Sydney) に参加・発表を申し込みました。 “Time course of leaf content of cytochrome b6f complex and photosynthetic capacity after changes in growth irradiance” Keach</description>
     </item>
     
     <item>
       <title>指数関数的な減衰と回復 (Stan)</title>
-      <link>/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</link>
+      <link>https://keachmurakami.github.io/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</link>
       <pubDate>Sat, 09 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</guid>
+      <guid>https://keachmurakami.github.io/2018/06/09/%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E7%9A%84%E3%81%AA%E6%B8%9B%E8%A1%B0%E3%81%A8%E5%9B%9E%E5%BE%A9-stan/</guid>
       <description>Stanの練習 指数減衰中に処理をすることで回復過程に切り替わる経時パターン。 おもに知りたいのは、 処理の効果が生じる時点: t_cp 減衰・回復の時定数</description>
     </item>
     
     <item>
       <title>TensorFlow系のHMCパッケージ{greta}に触れる</title>
-      <link>/2018/06/02/tensorflow%E7%B3%BB%E3%81%AEhmc%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8greta%E3%81%AB%E8%A7%A6%E3%82%8C%E3%82%8B/</link>
+      <link>https://keachmurakami.github.io/2018/06/02/tensorflow%E7%B3%BB%E3%81%AEhmc%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8greta%E3%81%AB%E8%A7%A6%E3%82%8C%E3%82%8B/</link>
       <pubDate>Sat, 02 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/02/tensorflow%E7%B3%BB%E3%81%AEhmc%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8greta%E3%81%AB%E8%A7%A6%E3%82%8C%E3%82%8B/</guid>
+      <guid>https://keachmurakami.github.io/2018/06/02/tensorflow%E7%B3%BB%E3%81%AEhmc%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8greta%E3%81%AB%E8%A7%A6%E3%82%8C%E3%82%8B/</guid>
       <description>タイトルの通り、gretaに少し触れてみたメモ。 公式曰く、‘gretaはモデルをRに直書きできるから他言語を学ぶ必要はないし、TensorF</description>
     </item>
     
     <item>
       <title>3D lollipop on map なアニメーション (R</title>
-      <link>/2018/05/26/3d-lollipop-on-map-%E3%81%AA%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3-r/</link>
+      <link>https://keachmurakami.github.io/2018/05/26/3d-lollipop-on-map-%E3%81%AA%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3-r/</link>
       <pubDate>Sat, 26 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/05/26/3d-lollipop-on-map-%E3%81%AA%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3-r/</guid>
+      <guid>https://keachmurakami.github.io/2018/05/26/3d-lollipop-on-map-%E3%81%AA%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3-r/</guid>
       <description>データ可視化系。 コレの2番煎じ。 Rで東京版に挑戦。 簡単に統計データがみつかった東京都の昼夜人工の過去実測データと将来予測データから、昼夜人口</description>
     </item>
     
     <item>
       <title>htmlwidget x (Hugo &#43; Blogdown &#43; GitHub Page)</title>
-      <link>/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</link>
+      <link>https://keachmurakami.github.io/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</link>
       <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</guid>
+      <guid>https://keachmurakami.github.io/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</guid>
       <description>{leaflet}や{plotly}で作成したインタラクティブなjavascript系コンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメ</description>
     </item>
     
     <item>
       <title>two-dots ..1 (R</title>
-      <link>/2018/05/19/two-dots-..1-r/</link>
+      <link>https://keachmurakami.github.io/2018/05/19/two-dots-..1-r/</link>
       <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/05/19/two-dots-..1-r/</guid>
+      <guid>https://keachmurakami.github.io/2018/05/19/two-dots-..1-r/</guid>
       <description>Rstudioで予約語としてハイライトされる..1、..2についてのメモ。 “double periods”とか“..1”とかでググってもまった</description>
     </item>
     
     <item>
       <title>Jekyll -&gt; Hugo</title>
-      <link>/2018/05/03/jekyll---hugo/</link>
+      <link>https://keachmurakami.github.io/2018/05/03/jekyll---hugo/</link>
       <pubDate>Thu, 03 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/05/03/jekyll---hugo/</guid>
+      <guid>https://keachmurakami.github.io/2018/05/03/jekyll---hugo/</guid>
       <description>Jekyll + servr体制からHugo + blogdown体制へ移行 blogdown時代なので時流に合わせて 引っかかりどころメモ blogdown::build_site() -&amp;gt; docs以下に公開</description>
     </item>
     
     <item>
       <title>Rまわりのアップデート (ver. 3.5.0)</title>
-      <link>/2018/04/26/r%E3%81%BE%E3%82%8F%E3%82%8A%E3%81%AE%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88-ver.-3.5.0/</link>
+      <link>https://keachmurakami.github.io/2018/04/26/r%E3%81%BE%E3%82%8F%E3%82%8A%E3%81%AE%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88-ver.-3.5.0/</link>
       <pubDate>Thu, 26 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/04/26/r%E3%81%BE%E3%82%8F%E3%82%8A%E3%81%AE%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88-ver.-3.5.0/</guid>
+      <guid>https://keachmurakami.github.io/2018/04/26/r%E3%81%BE%E3%82%8F%E3%82%8A%E3%81%AE%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88-ver.-3.5.0/</guid>
       <description>投稿論文など、色々と一段落したのでR環境を整備する。 Rを3.3.1 (Bug in Your Hair)から3.5.0 (Joy in Playing)まで、Rstudioを1</description>
     </item>
     
     <item>
       <title>論文受理 (Regular_005, 3誌目再round2)</title>
-      <link>/2018/04/24/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_005-3%E8%AA%8C%E7%9B%AE%E5%86%8Dround2/</link>
+      <link>https://keachmurakami.github.io/2018/04/24/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_005-3%E8%AA%8C%E7%9B%AE%E5%86%8Dround2/</link>
       <pubDate>Tue, 24 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/04/24/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_005-3%E8%AA%8C%E7%9B%AE%E5%86%8Dround2/</guid>
+      <guid>https://keachmurakami.github.io/2018/04/24/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_005-3%E8%AA%8C%E7%9B%AE%E5%86%8Dround2/</guid>
       <description>論文が受理されました。 波長の異なる光を同時に照射したときの葉の光合成電子伝達速度および光化学反応量子収率を簡単な数式で表現しています。 “A mathematical</description>
     </item>
     
     <item>
       <title>査読対応 (Regular_005, 3誌目再round2)</title>
-      <link>/2018/04/19/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_005-3%E8%AA%8C%E7%9B%AE%E5%86%8Dround2/</link>
+      <link>https://keachmurakami.github.io/2018/04/19/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_005-3%E8%AA%8C%E7%9B%AE%E5%86%8Dround2/</link>
       <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/04/19/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_005-3%E8%AA%8C%E7%9B%AE%E5%86%8Dround2/</guid>
+      <guid>https://keachmurakami.github.io/2018/04/19/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_005-3%E8%AA%8C%E7%9B%AE%E5%86%8Dround2/</guid>
       <description>Minor revisionだった論文を修正して返送。 概念図の追加など。 和書の分担章の執筆を開始 学会要旨以外で衆目に触れる日本語文書を書くのははじめて</description>
     </item>
     
     <item>
       <title>査読結果 (Regular_005, 3誌目へ再投稿)</title>
-      <link>/2018/04/14/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-3%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</link>
+      <link>https://keachmurakami.github.io/2018/04/14/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-3%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</link>
       <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/04/14/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-3%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</guid>
+      <guid>https://keachmurakami.github.io/2018/04/14/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-3%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</guid>
       <description>苦戦している論文の査読結果が返ってきた。 Minor revisionでよさそう。</description>
     </item>
     
     <item>
       <title>論文受理 (Regular_006, 1誌目)</title>
-      <link>/2018/04/09/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_006-1%E8%AA%8C%E7%9B%AE/</link>
+      <link>https://keachmurakami.github.io/2018/04/09/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_006-1%E8%AA%8C%E7%9B%AE/</link>
       <pubDate>Mon, 09 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/04/09/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_006-1%E8%AA%8C%E7%9B%AE/</guid>
+      <guid>https://keachmurakami.github.io/2018/04/09/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_006-1%E8%AA%8C%E7%9B%AE/</guid>
       <description>論文が受理されました。 分光反射パラメータPRIを光学フィルタ+CMOSカメラで評価し、その光強度変化時の挙動を光合成光利用効率と比較したもの</description>
     </item>
     
     <item>
       <title>査読対応 (Regular_006, 1誌目)</title>
-      <link>/2018/04/05/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_006-1%E8%AA%8C%E7%9B%AE/</link>
+      <link>https://keachmurakami.github.io/2018/04/05/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_006-1%E8%AA%8C%E7%9B%AE/</link>
       <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/04/05/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_006-1%E8%AA%8C%E7%9B%AE/</guid>
+      <guid>https://keachmurakami.github.io/2018/04/05/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_006-1%E8%AA%8C%E7%9B%AE/</guid>
       <description>Minor revisionで返ってきていた査読に対応して返送。 エディタも込みの３人査読でコメントが多かった (箇条書きにすると76件) が、内容の改善も</description>
     </item>
     
     <item>
       <title>査読結果 (Regular_006, 1誌目)</title>
-      <link>/2018/03/25/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_006-1%E8%AA%8C%E7%9B%AE/</link>
+      <link>https://keachmurakami.github.io/2018/03/25/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_006-1%E8%AA%8C%E7%9B%AE/</link>
       <pubDate>Sun, 25 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/03/25/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_006-1%E8%AA%8C%E7%9B%AE/</guid>
+      <guid>https://keachmurakami.github.io/2018/03/25/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_006-1%E8%AA%8C%E7%9B%AE/</guid>
       <description>1月末に投稿した論文が、“Accept pending revision”で返ってきた。 ちょうど実験が一時停止なので、来週中には返したいところ。</description>
     </item>
     
     <item>
       <title>論文投稿 (Regular_005, 3誌目へ再投稿)</title>
-      <link>/2018/02/27/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-3%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</link>
+      <link>https://keachmurakami.github.io/2018/02/27/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-3%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</link>
       <pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/02/27/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-3%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</guid>
+      <guid>https://keachmurakami.github.io/2018/02/27/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-3%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</guid>
       <description>年始めに再投稿可リジェクトで帰ってきた論文を再投稿。 ANU行きのVISAをようやく申請 5/7入りの予定 もろもろ整う気がしない 農業気象用のスラ</description>
     </item>
     
     <item>
       <title>論文投稿 (Regular_006, 1誌目)</title>
-      <link>/2018/01/26/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_006-1%E8%AA%8C%E7%9B%AE/</link>
+      <link>https://keachmurakami.github.io/2018/01/26/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_006-1%E8%AA%8C%E7%9B%AE/</link>
       <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/01/26/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_006-1%E8%AA%8C%E7%9B%AE/</guid>
+      <guid>https://keachmurakami.github.io/2018/01/26/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_006-1%E8%AA%8C%E7%9B%AE/</guid>
       <description>分光イメージングでの光合成量子収率の測定に関する論文を投稿しました “Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its correlation with the photochemical yield of photosystem II” Keach Murakami*, Yasuomi Ibaraki. * corresponding authors</description>
     </item>
     
     <item>
       <title>農業気象学会へ参加・発表の申込み</title>
-      <link>/2018/01/15/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
+      <link>https://keachmurakami.github.io/2018/01/15/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
       <pubDate>Mon, 15 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/01/15/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
+      <guid>https://keachmurakami.github.io/2018/01/15/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
       <description>3/13–3/17開催の日本農業気象学会 (@九大伊都キャンパス) に参加・発表を申し込みました。 “分光画像計測による光合成速度分布解析の試み”</description>
     </item>
     
     <item>
       <title>査読結果 (Regular_005, 3誌目)</title>
-      <link>/2018/01/04/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-3%E8%AA%8C%E7%9B%AE/</link>
+      <link>https://keachmurakami.github.io/2018/01/04/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-3%E8%AA%8C%E7%9B%AE/</link>
       <pubDate>Thu, 04 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/01/04/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-3%E8%AA%8C%E7%9B%AE/</guid>
+      <guid>https://keachmurakami.github.io/2018/01/04/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-3%E8%AA%8C%E7%9B%AE/</guid>
       <description>仕事はじめの再投稿可リジェクト。 レビュア２人の反応は好意的なので、同誌にもう一発。 ちょうど今日は山口での1報目を共著者に送信したところ。 今月</description>
     </item>
     
     <item>
       <title>関数への全引数をmutateで追加する (R</title>
-      <link>/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</link>
+      <link>https://keachmurakami.github.io/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</link>
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</guid>
+      <guid>https://keachmurakami.github.io/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</guid>
       <description>はまったのでメモ。 複数パラメータを引数にとる自作関数で感度分析するとき、出力のデータフレームには入力したパラメータがあってほしい。 引数が多く</description>
     </item>
     
     <item>
       <title>IHC2018へ参加・発表の申込み</title>
-      <link>/2017/10/30/ihc2018%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
+      <link>https://keachmurakami.github.io/2017/10/30/ihc2018%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
       <pubDate>Mon, 30 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/10/30/ihc2018%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
+      <guid>https://keachmurakami.github.io/2017/10/30/ihc2018%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
       <description>2018/08/12–08/16にイスタンブールで開催されるIHC2018 (XXX International Horticultural Congress) に参加・ポスター発表を申し込みました。 “Spectral imaging</description>
     </item>
     
     <item>
       <title>農業気象学会 (中国四国支部会) へ参加・発表の申込み</title>
-      <link>/2017/10/20/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A-%E4%B8%AD%E5%9B%BD%E5%9B%9B%E5%9B%BD%E6%94%AF%E9%83%A8%E4%BC%9A-%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
+      <link>https://keachmurakami.github.io/2017/10/20/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A-%E4%B8%AD%E5%9B%BD%E5%9B%9B%E5%9B%BD%E6%94%AF%E9%83%A8%E4%BC%9A-%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
       <pubDate>Fri, 20 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/10/20/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A-%E4%B8%AD%E5%9B%BD%E5%9B%9B%E5%9B%BD%E6%94%AF%E9%83%A8%E4%BC%9A-%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
+      <guid>https://keachmurakami.github.io/2017/10/20/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A-%E4%B8%AD%E5%9B%BD%E5%9B%9B%E5%9B%BD%E6%94%AF%E9%83%A8%E4%BC%9A-%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
       <description>12/7–12/8の日本農業気象学会の中国四国支部大会 (@鳥取大学) に参加・発表を申し込みました。 “分光反射画像計測による葉位別光合成速度推</description>
     </item>
     
     <item>
       <title>論文投稿 (Regular_005, 3誌目)</title>
-      <link>/2017/10/06/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-3%E8%AA%8C%E7%9B%AE/</link>
+      <link>https://keachmurakami.github.io/2017/10/06/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-3%E8%AA%8C%E7%9B%AE/</link>
       <pubDate>Fri, 06 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/10/06/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-3%E8%AA%8C%E7%9B%AE/</guid>
+      <guid>https://keachmurakami.github.io/2017/10/06/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-3%E8%AA%8C%E7%9B%AE/</guid>
       <description>3誌目へ、合計4回目の投稿。 Scholar Oneのステータス表示が即日で“Under Review”になって逆に不安。</description>
     </item>
     
     <item>
       <title>査読結果 (Regular_005, 2誌目へ再投稿)</title>
-      <link>/2017/09/29/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-2%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</link>
+      <link>https://keachmurakami.github.io/2017/09/29/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-2%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</link>
       <pubDate>Fri, 29 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/09/29/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-2%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</guid>
+      <guid>https://keachmurakami.github.io/2017/09/29/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-2%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</guid>
       <description>9/14に再投稿した論文がRejectされた。 この論文は初回リジェクトのときといい、いつもプレミアムフライデーに悲報を届けてくれる。 科研費申</description>
     </item>
     
     <item>
       <title>論文投稿 (Regular_005, 2誌目へ再投稿)</title>
-      <link>/2017/09/14/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-2%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</link>
+      <link>https://keachmurakami.github.io/2017/09/14/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-2%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</link>
       <pubDate>Thu, 14 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/09/14/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-2%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</guid>
+      <guid>https://keachmurakami.github.io/2017/09/14/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-2%E8%AA%8C%E7%9B%AE%E3%81%B8%E5%86%8D%E6%8A%95%E7%A8%BF/</guid>
       <description>8/25に再投稿可リジェクトで帰ってきた論文を再投稿。エディタは好意的っぽいが、厳しかったReviewer#1はどうなるか。 今日は研究室のイ</description>
     </item>
     
     <item>
       <title>査読結果 (Regular_005, 2誌目)</title>
-      <link>/2017/08/25/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-2%E8%AA%8C%E7%9B%AE/</link>
+      <link>https://keachmurakami.github.io/2017/08/25/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-2%E8%AA%8C%E7%9B%AE/</link>
       <pubDate>Fri, 25 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/08/25/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-2%E8%AA%8C%E7%9B%AE/</guid>
+      <guid>https://keachmurakami.github.io/2017/08/25/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005-2%E8%AA%8C%E7%9B%AE/</guid>
       <description>先月末に投稿した論文が、厳しめコメント付きの再投稿可リジェクトで帰ってきた。実査読期間が８日間と短く、嫌な予感はしていたのでさもありなん。 レ</description>
     </item>
     
     <item>
       <title>波長に応じた色でプロットする (R</title>
-      <link>/2017/08/22/%E6%B3%A2%E9%95%B7%E3%81%AB%E5%BF%9C%E3%81%98%E3%81%9F%E8%89%B2%E3%81%A7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%99%E3%82%8B-r/</link>
+      <link>https://keachmurakami.github.io/2017/08/22/%E6%B3%A2%E9%95%B7%E3%81%AB%E5%BF%9C%E3%81%98%E3%81%9F%E8%89%B2%E3%81%A7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%99%E3%82%8B-r/</link>
       <pubDate>Tue, 22 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/08/22/%E6%B3%A2%E9%95%B7%E3%81%AB%E5%BF%9C%E3%81%98%E3%81%9F%E8%89%B2%E3%81%A7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%99%E3%82%8B-r/</guid>
+      <guid>https://keachmurakami.github.io/2017/08/22/%E6%B3%A2%E9%95%B7%E3%81%AB%E5%BF%9C%E3%81%98%E3%81%9F%E8%89%B2%E3%81%A7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%99%E3%82%8B-r/</guid>
       <description>研究でしばしば波長に関係するデータを出すため、波長に応じた色でプロットしたい場合が多い。 波長から色の変換の各種定数は、このページから。文字列</description>
     </item>
     
     <item>
       <title>論文掲載 (Regular_004)</title>
-      <link>/2017/08/18/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-regular_004/</link>
+      <link>https://keachmurakami.github.io/2017/08/18/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-regular_004/</link>
       <pubDate>Fri, 18 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/08/18/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-regular_004/</guid>
+      <guid>https://keachmurakami.github.io/2017/08/18/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-regular_004/</guid>
       <description>論文が公開されました “Quantification of excitation energy distribution between photosystems based on a mechanistic model of photosynthetic electron transport” Keach Murakami*, Ryo Matsuda*, Kazuhiro Fujiwara, Plant, Cell &amp;amp; Environment. (* corresponding authors) abstract</description>
     </item>
     
     <item>
       <title>論文投稿 (Regular_005, 2誌目)</title>
-      <link>/2017/07/31/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-2%E8%AA%8C%E7%9B%AE/</link>
+      <link>https://keachmurakami.github.io/2017/07/31/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-2%E8%AA%8C%E7%9B%AE/</link>
       <pubDate>Mon, 31 Jul 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/07/31/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-2%E8%AA%8C%E7%9B%AE/</guid>
+      <guid>https://keachmurakami.github.io/2017/07/31/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005-2%E8%AA%8C%E7%9B%AE/</guid>
       <description>キックされた電子伝達モデル論文のフォーマットを修正して、他誌へ挑戦。 今日は新３年生歓迎会で焼肉</description>
     </item>
     
     <item>
       <title>査読結果 (Regular_005)</title>
-      <link>/2017/07/30/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005/</link>
+      <link>https://keachmurakami.github.io/2017/07/30/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005/</link>
       <pubDate>Sun, 30 Jul 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/07/30/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005/</guid>
+      <guid>https://keachmurakami.github.io/2017/07/30/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_005/</guid>
       <description>週末に投稿した論文がoutside the scope ということで、エディタ・リジェクト@Planta。 なまじ査読にまわって時間がかかるよりはありがたい。 他</description>
     </item>
     
     <item>
       <title>論文投稿 (Regular_005)</title>
-      <link>/2017/07/27/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005/</link>
+      <link>https://keachmurakami.github.io/2017/07/27/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005/</link>
       <pubDate>Thu, 27 Jul 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/07/27/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005/</guid>
+      <guid>https://keachmurakami.github.io/2017/07/27/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_005/</guid>
       <description>光質 (分光分布) に対する電子伝達の応答を簡単な数式でモデル化した、という論文を投稿した 引用などコミコミで5181 words (本文は4243 words) これで東</description>
     </item>
     
     <item>
       <title>生物環境工学会へ参加・発表の申込み</title>
-      <link>/2017/06/01/%E7%94%9F%E7%89%A9%E7%92%B0%E5%A2%83%E5%B7%A5%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
+      <link>https://keachmurakami.github.io/2017/06/01/%E7%94%9F%E7%89%A9%E7%92%B0%E5%A2%83%E5%B7%A5%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
       <pubDate>Thu, 01 Jun 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/06/01/%E7%94%9F%E7%89%A9%E7%92%B0%E5%A2%83%E5%B7%A5%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
+      <guid>https://keachmurakami.github.io/2017/06/01/%E7%94%9F%E7%89%A9%E7%92%B0%E5%A2%83%E5%B7%A5%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
       <description>8/30-9/4の日本生物環境工学会2017年松山大会に参加・発表を申し込みました。 “葉面反射画像計測による光合成光利用効率の光環境変化に対</description>
     </item>
     
     <item>
       <title>光合成学会へ参加・発表の申込み</title>
-      <link>/2017/04/28/%E5%85%89%E5%90%88%E6%88%90%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
+      <link>https://keachmurakami.github.io/2017/04/28/%E5%85%89%E5%90%88%E6%88%90%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</link>
       <pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/04/28/%E5%85%89%E5%90%88%E6%88%90%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
+      <guid>https://keachmurakami.github.io/2017/04/28/%E5%85%89%E5%90%88%E6%88%90%E5%AD%A6%E4%BC%9A%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</guid>
       <description>5/27-28の光合成学会への参加を申込む。 ちょうど今週acceptされた論文の内容でポスター発表。 山口での出張の申請の仕方がよくわからない</description>
     </item>
     
     <item>
       <title>論文受理 (Regular_004)</title>
-      <link>/2017/04/26/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_004/</link>
+      <link>https://keachmurakami.github.io/2017/04/26/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_004/</link>
       <pubDate>Wed, 26 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/04/26/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_004/</guid>
+      <guid>https://keachmurakami.github.io/2017/04/26/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-regular_004/</guid>
       <description>論文が受理されました “Quantification of excitation energy distribution between photosystems based on a mechanistic model of photosynthetic electron transport” Keach Murakami*, Ryo Matsuda*, Kazuhiro Fujiwara, Plant, Cell &amp;amp; Environment, in press. * corresponding authors</description>
     </item>
     
     <item>
       <title>査読対応 (Regular_004, 再)</title>
-      <link>/2017/04/16/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_004-%E5%86%8D/</link>
+      <link>https://keachmurakami.github.io/2017/04/16/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_004-%E5%86%8D/</link>
       <pubDate>Sun, 16 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/04/16/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_004-%E5%86%8D/</guid>
+      <guid>https://keachmurakami.github.io/2017/04/16/%E6%9F%BB%E8%AA%AD%E5%AF%BE%E5%BF%9C-regular_004-%E5%86%8D/</guid>
       <description>Minor revisionに対応し、この論文で３度目の投稿。 「MS office版を送れ」という指示があった。 R→Markdown→Pandoc→MS</description>
     </item>
     
     <item>
       <title>査読結果 (Regular_004, 再)</title>
-      <link>/2017/04/11/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_004-%E5%86%8D/</link>
+      <link>https://keachmurakami.github.io/2017/04/11/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_004-%E5%86%8D/</link>
       <pubDate>Tue, 11 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/04/11/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_004-%E5%86%8D/</guid>
+      <guid>https://keachmurakami.github.io/2017/04/11/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_004-%E5%86%8D/</guid>
       <description>再投稿していた光分配論文がMinor revisionで帰ってきた。 前回の２人の査読者はほとんどコメントなし。 新たに１人、査読者が増え、その人</description>
     </item>
     
     <item>
       <title>論文投稿 (Regular_004, 再)</title>
-      <link>/2017/03/11/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_004-%E5%86%8D/</link>
+      <link>https://keachmurakami.github.io/2017/03/11/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_004-%E5%86%8D/</link>
       <pubDate>Sat, 11 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/03/11/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_004-%E5%86%8D/</guid>
+      <guid>https://keachmurakami.github.io/2017/03/11/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_004-%E5%86%8D/</guid>
       <description>先日、Reject Encouarge (再投稿可リジェクト) で戻ってきた光分配論文を改訂し、再投稿 minor revisionで戻ってくれば、年度末の学振の報告までにi</description>
     </item>
     
     <item>
       <title>査読結果 (Regular_004)</title>
-      <link>/2017/02/14/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_004/</link>
+      <link>https://keachmurakami.github.io/2017/02/14/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_004/</link>
       <pubDate>Tue, 14 Feb 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/02/14/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_004/</guid>
+      <guid>https://keachmurakami.github.io/2017/02/14/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-regular_004/</guid>
       <description>年始に投稿した論文の査読結果が帰ってきた Although the present manuscript cannot be accepted, the Editor has indicated that the topic of your research is of interest to the journal, and you are encouraged to consider a new submission in due course, incorporating all the suggestions of the referees with additional data or analysis. Any such resubmission</description>
     </item>
     
     <item>
       <title>論文掲載 (Letter_001)</title>
-      <link>/2017/02/01/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-letter_001/</link>
+      <link>https://keachmurakami.github.io/2017/02/01/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-letter_001/</link>
       <pubDate>Wed, 01 Feb 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/02/01/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-letter_001/</guid>
+      <guid>https://keachmurakami.github.io/2017/02/01/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-letter_001/</guid>
       <description>解説記事のような論文 (letter) が公開されました “A basis for selecting light spectral distribution for evaluating leaf photosynthetic rates of plants grown under different light spectral distributions” Keach Murakami, Ryo Matsuda, Kazuhiro Fujiwara, Environmental Control in Biology, Vol. 55: 1–6. Open</description>
     </item>
     
     <item>
       <title>学振SPDの面接へ</title>
-      <link>/2016/12/06/%E5%AD%A6%E6%8C%AFspd%E3%81%AE%E9%9D%A2%E6%8E%A5%E3%81%B8/</link>
+      <link>https://keachmurakami.github.io/2016/12/06/%E5%AD%A6%E6%8C%AFspd%E3%81%AE%E9%9D%A2%E6%8E%A5%E3%81%B8/</link>
       <pubDate>Tue, 06 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/12/06/%E5%AD%A6%E6%8C%AFspd%E3%81%AE%E9%9D%A2%E6%8E%A5%E3%81%B8/</guid>
+      <guid>https://keachmurakami.github.io/2016/12/06/%E5%AD%A6%E6%8C%AFspd%E3%81%AE%E9%9D%A2%E6%8E%A5%E3%81%B8/</guid>
       <description>学振SPDの面接を受けてきた (不採用 2016-12-26) 自分もwebから情報を得たので、有益そうなことをまとめる 「すーぱーぽすどく」、だと思っていたけど、実際</description>
     </item>
     
     <item>
       <title>書籍発売 (分担執筆)</title>
-      <link>/2016/11/25/%E6%9B%B8%E7%B1%8D%E7%99%BA%E5%A3%B2-%E5%88%86%E6%8B%85%E5%9F%B7%E7%AD%86/</link>
+      <link>https://keachmurakami.github.io/2016/11/25/%E6%9B%B8%E7%B1%8D%E7%99%BA%E5%A3%B2-%E5%88%86%E6%8B%85%E5%9F%B7%E7%AD%86/</link>
       <pubDate>Fri, 25 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/11/25/%E6%9B%B8%E7%B1%8D%E7%99%BA%E5%A3%B2-%E5%88%86%E6%8B%85%E5%9F%B7%E7%AD%86/</guid>
+      <guid>https://keachmurakami.github.io/2016/11/25/%E6%9B%B8%E7%B1%8D%E7%99%BA%E5%A3%B2-%E5%88%86%E6%8B%85%E5%9F%B7%E7%AD%86/</guid>
       <description>去年の冬に書いていたチャプターが掲載された本の印刷版が発売された Optical and physiological properties of a leaf Keach Murakami, Ryo Matsuda, pp. 113–123 In LED Lighting for Urban Agriculture, Eds: T. Kozai, K. Fujiwara, E. S. Runkle URL 紙面で1</description>
     </item>
     
     <item>
       <title>論文受理 (Letter_001)</title>
-      <link>/2016/10/19/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-letter_001/</link>
+      <link>https://keachmurakami.github.io/2016/10/19/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-letter_001/</link>
       <pubDate>Wed, 19 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/10/19/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-letter_001/</guid>
+      <guid>https://keachmurakami.github.io/2016/10/19/%E8%AB%96%E6%96%87%E5%8F%97%E7%90%86-letter_001/</guid>
       <description>論文が受理されました “A basis for selecting light spectral distribution for evaluating leaf photosynthetic rates of plants grown under different light spectral distributions” Keach Murakami, Ryo Matsuda, Kazuhiro Fujiwara, Environmental Control in Biology, in press.</description>
     </item>
     
     <item>
       <title>knitr equation (数式に連番をつけて本文で呼び出す)</title>
-      <link>/2016/10/04/knitr-equation-%E6%95%B0%E5%BC%8F%E3%81%AB%E9%80%A3%E7%95%AA%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%E6%9C%AC%E6%96%87%E3%81%A7%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%99/</link>
+      <link>https://keachmurakami.github.io/2016/10/04/knitr-equation-%E6%95%B0%E5%BC%8F%E3%81%AB%E9%80%A3%E7%95%AA%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%E6%9C%AC%E6%96%87%E3%81%A7%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%99/</link>
       <pubDate>Tue, 04 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/10/04/knitr-equation-%E6%95%B0%E5%BC%8F%E3%81%AB%E9%80%A3%E7%95%AA%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%E6%9C%AC%E6%96%87%E3%81%A7%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%99/</guid>
+      <guid>https://keachmurakami.github.io/2016/10/04/knitr-equation-%E6%95%B0%E5%BC%8F%E3%81%AB%E9%80%A3%E7%95%AA%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%E6%9C%AC%E6%96%87%E3%81%A7%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%99/</guid>
       <description>knitr + Rmarkdown + pandocメモ 数式に連続番号 (タグ) を付けて、本文中でタグを呼び出す 連番作成用に関数を組む EqnNum_count &amp;lt;- 0 head &amp;lt;- &amp;quot;Eqn.&amp;quot; EqnNum &amp;lt;- function(head){ EqnNum_count &amp;lt;&amp;lt;- EqnNum_count + 1 return(paste0(head, EqnNum_count)) } Cha</description>
     </item>
     
     <item>
       <title>査読結果 (Letter_001)</title>
-      <link>/2016/09/28/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-letter_001/</link>
+      <link>https://keachmurakami.github.io/2016/09/28/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-letter_001/</link>
       <pubDate>Wed, 28 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/09/28/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-letter_001/</guid>
+      <guid>https://keachmurakami.github.io/2016/09/28/%E6%9F%BB%E8%AA%AD%E7%B5%90%E6%9E%9C-letter_001/</guid>
       <description>先日投稿したLetterの査読結果が帰ってきた The reviewer(s) have recommended publication, but also suggest some minor revisions to your manuscript. およそ２週間という並々ならぬスピード審査の割になかなかコメントが重</description>
     </item>
     
     <item>
       <title>論文掲載 (Regular_003)</title>
-      <link>/2016/09/27/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-regular_003/</link>
+      <link>https://keachmurakami.github.io/2016/09/27/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-regular_003/</link>
       <pubDate>Tue, 27 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/09/27/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-regular_003/</guid>
+      <guid>https://keachmurakami.github.io/2016/09/27/%E8%AB%96%E6%96%87%E6%8E%B2%E8%BC%89-regular_003/</guid>
       <description>論文が出版され、手元に印刷版が届いた Interaction between the spectral photon flux density distributions of light during growth and for measurements in net photosynthetic rates of cucumber leaves Keach Murakami, Ryo Matsuda, Kazuhiro Fujiwara, Physiologia Plantarum, Vol. 158: 213–224. abstract 投稿日が2015年9月</description>
     </item>
     
     <item>
       <title>学会 (AusPheno16) のスライド完成・提出</title>
-      <link>/2016/09/09/%E5%AD%A6%E4%BC%9A-auspheno16-%E3%81%AE%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%89%E5%AE%8C%E6%88%90%E6%8F%90%E5%87%BA/</link>
+      <link>https://keachmurakami.github.io/2016/09/09/%E5%AD%A6%E4%BC%9A-auspheno16-%E3%81%AE%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%89%E5%AE%8C%E6%88%90%E6%8F%90%E5%87%BA/</link>
       <pubDate>Fri, 09 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/09/09/%E5%AD%A6%E4%BC%9A-auspheno16-%E3%81%AE%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%89%E5%AE%8C%E6%88%90%E6%8F%90%E5%87%BA/</guid>
+      <guid>https://keachmurakami.github.io/2016/09/09/%E5%AD%A6%E4%BC%9A-auspheno16-%E3%81%AE%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%89%E5%AE%8C%E6%88%90%E6%8F%90%E5%87%BA/</guid>
       <description>「円滑な進行のため、スライドを予め学会事務局に提出するように」とのことだったので 演者交代のタイミングでスライドが映りません、という毎度おなじ</description>
     </item>
     
     <item>
       <title>knitr figure</title>
-      <link>/2016/08/05/knitr-figure/</link>
+      <link>https://keachmurakami.github.io/2016/08/05/knitr-figure/</link>
       <pubDate>Fri, 05 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/08/05/knitr-figure/</guid>
+      <guid>https://keachmurakami.github.io/2016/08/05/knitr-figure/</guid>
       <description>knitr + Rmarkdown + pandocメモ YAML --- title: &amp;quot;MyYAML&amp;quot; author: &amp;quot;Keach Murakami&amp;quot; date: &amp;quot;2018-05-05 16:58:16&amp;quot; bibliography: ~/GitHub/BeeLabR/BibTex/Full.bib header-includes: - \setmainfont{Helvetica Neue} - \usepackage{zxjatype} # 日本語を使うためのパッケージ - \setjamainfont{Hiragino Kaku Gothic Pro} # 日本語フォントの指定 - \usepackage{lscape} # 図を回転する</description>
     </item>
     
     <item>
       <title>初稿完成 (Regular_004)</title>
-      <link>/2016/06/24/%E5%88%9D%E7%A8%BF%E5%AE%8C%E6%88%90-regular_004/</link>
+      <link>https://keachmurakami.github.io/2016/06/24/%E5%88%9D%E7%A8%BF%E5%AE%8C%E6%88%90-regular_004/</link>
       <pubDate>Fri, 24 Jun 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/06/24/%E5%88%9D%E7%A8%BF%E5%AE%8C%E6%88%90-regular_004/</guid>
+      <guid>https://keachmurakami.github.io/2016/06/24/%E5%88%9D%E7%A8%BF%E5%AE%8C%E6%88%90-regular_004/</guid>
       <description>アウトライン作成が20160520。 初稿までに35日。 引用などコミコミで8968 words。</description>
     </item>
     
     <item>
       <title>引用文献の管理 (bibtex; 書式の設定と引用の形式)</title>
-      <link>/2016/06/14/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex-%E6%9B%B8%E5%BC%8F%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E5%BC%95%E7%94%A8%E3%81%AE%E5%BD%A2%E5%BC%8F/</link>
+      <link>https://keachmurakami.github.io/2016/06/14/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex-%E6%9B%B8%E5%BC%8F%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E5%BC%95%E7%94%A8%E3%81%AE%E5%BD%A2%E5%BC%8F/</link>
       <pubDate>Tue, 14 Jun 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/06/14/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex-%E6%9B%B8%E5%BC%8F%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E5%BC%95%E7%94%A8%E3%81%AE%E5%BD%A2%E5%BC%8F/</guid>
+      <guid>https://keachmurakami.github.io/2016/06/14/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex-%E6%9B%B8%E5%BC%8F%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E5%BC%95%E7%94%A8%E3%81%AE%E5%BD%A2%E5%BC%8F/</guid>
       <description>論文に引用文献リストをさくっと挿入したい (メモ２: 書式の設定と本文中での引用の形式) 引用文献の書式の変更 引用文献のタイトルが、斜体、下付き・</description>
     </item>
     
     <item>
       <title>引用文献の管理 (bibtex)</title>
-      <link>/2016/05/30/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex/</link>
+      <link>https://keachmurakami.github.io/2016/05/30/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex/</link>
       <pubDate>Mon, 30 May 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/05/30/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex/</guid>
+      <guid>https://keachmurakami.github.io/2016/05/30/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex/</guid>
       <description>論文に引用文献リストをさくっと挿入したい (メモ) Rmd+knitrで論文を書いている 論文をダウンロードするときに、その論文の情報をbibte</description>
     </item>
     
     <item>
       <title>学振PDを提出</title>
-      <link>/2016/05/12/%E5%AD%A6%E6%8C%AFpd%E3%82%92%E6%8F%90%E5%87%BA/</link>
+      <link>https://keachmurakami.github.io/2016/05/12/%E5%AD%A6%E6%8C%AFpd%E3%82%92%E6%8F%90%E5%87%BA/</link>
       <pubDate>Thu, 12 May 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/05/12/%E5%AD%A6%E6%8C%AFpd%E3%82%92%E6%8F%90%E5%87%BA/</guid>
+      <guid>https://keachmurakami.github.io/2016/05/12/%E5%AD%A6%E6%8C%AFpd%E3%82%92%E6%8F%90%E5%87%BA/</guid>
       <description>第0稿が20160422。 最終稿までに20日。</description>
     </item>
     
     <item>
       <title>RでDropboxからファイルを読み込む</title>
-      <link>/2016/04/30/r%E3%81%A7dropbox%E3%81%8B%E3%82%89%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80/</link>
+      <link>https://keachmurakami.github.io/2016/04/30/r%E3%81%A7dropbox%E3%81%8B%E3%82%89%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80/</link>
       <pubDate>Sat, 30 Apr 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/04/30/r%E3%81%A7dropbox%E3%81%8B%E3%82%89%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80/</guid>
+      <guid>https://keachmurakami.github.io/2016/04/30/r%E3%81%A7dropbox%E3%81%8B%E3%82%89%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80/</guid>
       <description>## Warning in system(&amp;quot;/usr/libexec/java_home&amp;quot;, intern = TRUE): running command ## &amp;#39;/usr/libexec/java_home&amp;#39; had status 1 ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; RでDropboxからデータ</description>
     </item>
     
     <item>
       <title>中間生成なしでカラム名を変更する５つの方法</title>
-      <link>/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95/</link>
+      <link>https://keachmurakami.github.io/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95/</link>
       <pubDate>Fri, 01 Apr 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95/</guid>
+      <guid>https://keachmurakami.github.io/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; 中間生成なしでカラム名を変更する 中間生成的なことをせずに</description>
     </item>
     
     <item>
       <title>データフレームからのベクトル出力</title>
-      <link>/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B/</link>
+      <link>https://keachmurakami.github.io/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B/</link>
       <pubDate>Sun, 20 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B/</guid>
+      <guid>https://keachmurakami.github.io/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B/</guid>
       <description>dplyr::selectでvector出力はできない (メモ # デフォルトの列選択 iris[, &amp;quot;Species&amp;quot;] %&amp;gt;% head ## [1] setosa setosa setosa setosa setosa setosa ## Levels: setosa versicolor virginica # データフレーム構造を維持</description>
     </item>
     
     <item>
       <title>二項演算子 %in% を改良したかった</title>
-      <link>/2016/03/10/%E4%BA%8C%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90-in-%E3%82%92%E6%94%B9%E8%89%AF%E3%81%97%E3%81%9F%E3%81%8B%E3%81%A3%E3%81%9F/</link>
+      <link>https://keachmurakami.github.io/2016/03/10/%E4%BA%8C%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90-in-%E3%82%92%E6%94%B9%E8%89%AF%E3%81%97%E3%81%9F%E3%81%8B%E3%81%A3%E3%81%9F/</link>
       <pubDate>Thu, 10 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/03/10/%E4%BA%8C%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90-in-%E3%82%92%E6%94%B9%E8%89%AF%E3%81%97%E3%81%9F%E3%81%8B%E3%81%A3%E3%81%9F/</guid>
+      <guid>https://keachmurakami.github.io/2016/03/10/%E4%BA%8C%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90-in-%E3%82%92%E6%94%B9%E8%89%AF%E3%81%97%E3%81%9F%E3%81%8B%E3%81%A3%E3%81%9F/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; %in%をよく使う iris %&amp;gt;% filter(Species %in% &amp;quot;setosa&amp;quot;) %&amp;gt;% head ## Sepal.Length Sepal.Width Petal.Length Petal.Width Species ## 1 5.1 3.5 1.4 0.2</description>
     </item>
     
     <item>
       <title>aes(group)</title>
-      <link>/2016/03/09/aesgroup/</link>
+      <link>https://keachmurakami.github.io/2016/03/09/aesgroup/</link>
       <pubDate>Wed, 09 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/03/09/aesgroup/</guid>
+      <guid>https://keachmurakami.github.io/2016/03/09/aesgroup/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; ggplot2のaes(group)内で処理をする (メモ</description>
     </item>
     
     <item>
       <title>pandoc経由で.Rmdから.docxを作る</title>
-      <link>/2016/03/07/pandoc%E7%B5%8C%E7%94%B1%E3%81%A7.rmd%E3%81%8B%E3%82%89.docx%E3%82%92%E4%BD%9C%E3%82%8B/</link>
+      <link>https://keachmurakami.github.io/2016/03/07/pandoc%E7%B5%8C%E7%94%B1%E3%81%A7.rmd%E3%81%8B%E3%82%89.docx%E3%82%92%E4%BD%9C%E3%82%8B/</link>
       <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/03/07/pandoc%E7%B5%8C%E7%94%B1%E3%81%A7.rmd%E3%81%8B%E3%82%89.docx%E3%82%92%E4%BD%9C%E3%82%8B/</guid>
+      <guid>https://keachmurakami.github.io/2016/03/07/pandoc%E7%B5%8C%E7%94%B1%E3%81%A7.rmd%E3%81%8B%E3%82%89.docx%E3%82%92%E4%BD%9C%E3%82%8B/</guid>
       <description>knitrでRmdからMSwordファイル (docx) を作る (メモ こんな感じでdocxを出力 コード</description>
     </item>
     
     <item>
       <title>Excel作図で困ること</title>
-      <link>/2016/02/29/excel%E4%BD%9C%E5%9B%B3%E3%81%A7%E5%9B%B0%E3%82%8B%E3%81%93%E3%81%A8/</link>
+      <link>https://keachmurakami.github.io/2016/02/29/excel%E4%BD%9C%E5%9B%B3%E3%81%A7%E5%9B%B0%E3%82%8B%E3%81%93%E3%81%A8/</link>
       <pubDate>Mon, 29 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/02/29/excel%E4%BD%9C%E5%9B%B3%E3%81%A7%E5%9B%B0%E3%82%8B%E3%81%93%E3%81%A8/</guid>
+      <guid>https://keachmurakami.github.io/2016/02/29/excel%E4%BD%9C%E5%9B%B3%E3%81%A7%E5%9B%B0%E3%82%8B%E3%81%93%E3%81%A8/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; 最近はMSoffice離れが進み、作図はR、たまにInk</description>
     </item>
     
     <item>
       <title>徐々に細くなる線を書く (Inkscape</title>
-      <link>/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</link>
+      <link>https://keachmurakami.github.io/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</link>
       <pubDate>Sat, 13 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</guid>
+      <guid>https://keachmurakami.github.io/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</guid>
       <description>Inkscapeで先細りの線を書く (メモ ペンツール/成形/三角形 底辺→頂角 howto F2で底辺の長さを変更できる 根を書くときにお世話になった draw</description>
     </item>
     
     <item>
       <title>複数層の3次元プロットを1枚の図で</title>
-      <link>/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7/</link>
+      <link>https://keachmurakami.github.io/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7/</link>
       <pubDate>Wed, 10 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7/</guid>
+      <guid>https://keachmurakami.github.io/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;akima&amp;#39; ## Warning in library(package, lib.loc = lib.loc,</description>
     </item>
     
     <item>
       <title>図のラベルを楽に付けたい</title>
-      <link>/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84/</link>
+      <link>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84/</link>
       <pubDate>Mon, 01 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84/</guid>
+      <guid>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; expression関数内に変数を動的に組み込みたかった</description>
     </item>
     
     <item>
       <title>出張時の持ち物リスト</title>
-      <link>/2001/01/01/%E5%87%BA%E5%BC%B5%E6%99%82%E3%81%AE%E6%8C%81%E3%81%A1%E7%89%A9%E3%83%AA%E3%82%B9%E3%83%88/</link>
+      <link>https://keachmurakami.github.io/2001/01/01/%E5%87%BA%E5%BC%B5%E6%99%82%E3%81%AE%E6%8C%81%E3%81%A1%E7%89%A9%E3%83%AA%E3%82%B9%E3%83%88/</link>
       <pubDate>Mon, 01 Jan 2001 00:00:00 +0000</pubDate>
       
-      <guid>/2001/01/01/%E5%87%BA%E5%BC%B5%E6%99%82%E3%81%AE%E6%8C%81%E3%81%A1%E7%89%A9%E3%83%AA%E3%82%B9%E3%83%88/</guid>
+      <guid>https://keachmurakami.github.io/2001/01/01/%E5%87%BA%E5%BC%B5%E6%99%82%E3%81%AE%E6%8C%81%E3%81%A1%E7%89%A9%E3%83%AA%E3%82%B9%E3%83%88/</guid>
       <description>S (ないと直ちに死ぬ) パスポート 印刷したコピー×2 大使館の住所と電話番号をコピーに書いておく チケット類 飛行機 (印刷×2枚) バス 電車 オーラル バ</description>
     </item>
     
     <item>
       <title>旅行・帰省時の持ち物リスト</title>
-      <link>/2001/01/01/%E6%97%85%E8%A1%8C%E5%B8%B0%E7%9C%81%E6%99%82%E3%81%AE%E6%8C%81%E3%81%A1%E7%89%A9%E3%83%AA%E3%82%B9%E3%83%88/</link>
+      <link>https://keachmurakami.github.io/2001/01/01/%E6%97%85%E8%A1%8C%E5%B8%B0%E7%9C%81%E6%99%82%E3%81%AE%E6%8C%81%E3%81%A1%E7%89%A9%E3%83%AA%E3%82%B9%E3%83%88/</link>
       <pubDate>Mon, 01 Jan 2001 00:00:00 +0000</pubDate>
       
-      <guid>/2001/01/01/%E6%97%85%E8%A1%8C%E5%B8%B0%E7%9C%81%E6%99%82%E3%81%AE%E6%8C%81%E3%81%A1%E7%89%A9%E3%83%AA%E3%82%B9%E3%83%88/</guid>
+      <guid>https://keachmurakami.github.io/2001/01/01/%E6%97%85%E8%A1%8C%E5%B8%B0%E7%9C%81%E6%99%82%E3%81%AE%E6%8C%81%E3%81%A1%E7%89%A9%E3%83%AA%E3%82%B9%E3%83%88/</guid>
       <description>S チケット類 飛行機 (カード) 電気周り PC 充電 iPhone surface お土産 A B 着替え 歯みがきセット 名刺？</description>
     </item>
     
     <item>
       <title>転居時のやることリスト</title>
-      <link>/2001/01/01/%E8%BB%A2%E5%B1%85%E6%99%82%E3%81%AE%E3%82%84%E3%82%8B%E3%81%93%E3%81%A8%E3%83%AA%E3%82%B9%E3%83%88/</link>
+      <link>https://keachmurakami.github.io/2001/01/01/%E8%BB%A2%E5%B1%85%E6%99%82%E3%81%AE%E3%82%84%E3%82%8B%E3%81%93%E3%81%A8%E3%83%AA%E3%82%B9%E3%83%88/</link>
       <pubDate>Mon, 01 Jan 2001 00:00:00 +0000</pubDate>
       
-      <guid>/2001/01/01/%E8%BB%A2%E5%B1%85%E6%99%82%E3%81%AE%E3%82%84%E3%82%8B%E3%81%93%E3%81%A8%E3%83%AA%E3%82%B9%E3%83%88/</guid>
+      <guid>https://keachmurakami.github.io/2001/01/01/%E8%BB%A2%E5%B1%85%E6%99%82%E3%81%AE%E3%82%84%E3%82%8B%E3%81%93%E3%81%A8%E3%83%AA%E3%82%B9%E3%83%88/</guid>
       <description>転出側での手続き 郵便局の転居届 銀行口座 不動産への連絡 1ヶ月前に連絡 役所 転出届け 印鑑登録 国民健康保険 ライフラインを止める 転入側での手続き 急ぎ 役</description>
     </item>
     

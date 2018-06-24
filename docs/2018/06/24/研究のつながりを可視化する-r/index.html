@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.40" />
+
+
+<title>研究のつながりを可視化する (R - A plant researcher</title>
+<meta property="og:title" content="研究のつながりを可視化する (R - A plant researcher">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="../../../../css/fonts.css" media="all">
+<link rel="stylesheet" href="../../../../css/main.css" media="all">
+
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="../../../../" class="nav-logo">
+    <img src="../../../../images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="../../../../cv_eng/">About (Eng)</a></li>
+    
+    <li><a href="../../../../cv_jpn/">About (Jpn)</a></li>
+    
+    <li><a href="../../../../publication_list/">Publication</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">10 min read</span>
+    
+
+    <h1 class="article-title">研究のつながりを可視化する (R</h1>
+
+    
+    <span class="article-date">2018/06/24</span>
+    
+
+    <div class="article-content">
+      <p>データ可視化系のネタ。</p>
+<p>成果物はこれ。</p>
+<iframe seamless src="../../../../plotly/research_network/index.html" width="100%" height="900">
+</iframe>
+<div class="section level2">
+<h2>データ読み込み</h2>
+<p>.bibファイルに適当な項目名 (projectとした) でテーマを登録する。</p>
+<pre><code>@article{Murakami_et_al2018PCE,
+  title={Quantification of excitation energy distribution between photosystems based on a mechanistic model of photosynthetic electron transport},
+  author={Murakami, Keach and Matsuda, Ryo and Fujiwara, Kazuhiro},
+  journal=PCE,
+  volume={41},
+  number={1},
+  pages={148--159},
+  year={2018},
+  month={January},
+  doi={10.1111/pce.12986},
+  project={Photosynthetic Response to Light Spectrum}
+}</code></pre>
+<pre><code>@conference{intl005,
+  title={Time course of leaf content of cytochrome $b_6f$ complex and photosynthetic capacity after changes in growth irradiance},
+  author={Murakami, Keach and Zhu, Hui and Zeng, Ling-Da and Yi, Xiao-Ping and Peng, Chang-Lian and Zhang, Wang-Feng and Chow, Wah Soon},
+  year={2018},
+  month={September},
+  date={23--26},
+  type={Poster presentation},
+  symposium={ComBio2018},
+  short_symposium={ComBio2018},
+  address={Australia},
+  venue={International Convention Centre Sydney/Sydney},
+  project={Light Use in Horticulture, Modeling Temporal Canopy Photosynthesis}
+}</code></pre>
+<p><code>bib2df</code>パッケージを使って読み込み。</p>
+<pre class="r"><code>library(tidyverse)
+library(bib2df)
+
+bib_data &lt;-
+  dir(&quot;~/Dropbox/r_packages/fudukue/bibtex/list_bib/&quot;, pattern = &quot;^mywork&quot;, full.names = T) %&gt;%
+  map_df(bib2df)
+
+bib_data[1:4, 1:5] %&gt;%
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">CATEGORY</th>
+<th align="left">BIBTEXKEY</th>
+<th align="left">ADDRESS</th>
+<th align="left">ANNOTE</th>
+<th align="left">AUTHOR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">INCOLLECTION</td>
+<td align="left">Murakami_Matsuda2016Chap</td>
+<td align="left">Singapore</td>
+<td align="left">NA</td>
+<td align="left">c(“Murakami, Keach”, “Matsuda, Ryo”)</td>
+</tr>
+<tr class="even">
+<td align="left">INCOLLECTION</td>
+<td align="left">Matsuda_Murakami2016Chap</td>
+<td align="left">Switzerland</td>
+<td align="left">NA</td>
+<td align="left">c(“Matsuda, Ryo”, “Murakami, Keach”)</td>
+</tr>
+<tr class="odd">
+<td align="left">ARTICLE</td>
+<td align="left">Matsuda_et_al2016SH</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">c(“Matsuda, Ryo”, “Yamano, Takuto”, “Murakami, Keach”, “Fujiwara, Kazuhiro”)</td>
+</tr>
+<tr class="even">
+<td align="left">CONFERENCE</td>
+<td align="left">domest001</td>
+<td align="left">大阪</td>
+<td align="left">NA</td>
+<td align="left">c(“松田, 怜”, “村上, 貴一”, “富士原, 和宏”)</td>
+</tr>
+</tbody>
+</table>
+<p>データクレンジング。</p>
+<pre class="r"><code>library(janitor)
+
+tidy_bib_data &lt;-
+  bib_data %&gt;%
+  janitor::remove_empty(&quot;cols&quot;) %&gt;%
+  janitor::clean_names() %&gt;%
+  mutate(category = if_else(category %in% c(&quot;BOOK&quot;, &quot;INBOOK&quot;, &quot;INCOLLECTION&quot;), &quot;book/chapter&quot;, tolower(category)),
+         id = dplyr::row_number() %&gt;%
+              stringr::str_pad(width = 3, side = &quot;left&quot;, pad = &quot;0&quot;) %&gt;%
+              paste0(category, &quot;_&quot;, .)) %&gt;%
+  dplyr::select(id, project, category, type, title, year, doi, short = short_symposium, venue) %&gt;%
+  tidyr::separate_rows(project, sep = &quot;, &quot;)
+
+
+tidy_bib_data[1:4, 1:5] %&gt;%
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">id</th>
+<th align="left">project</th>
+<th align="left">category</th>
+<th align="left">type</th>
+<th align="left">title</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">book/chapter_001</td>
+<td align="left">Others</td>
+<td align="left">book/chapter</td>
+<td align="left">NA</td>
+<td align="left">Optical and Physiological Properties of a Leaf</td>
+</tr>
+<tr class="even">
+<td align="left">book/chapter_001</td>
+<td align="left">Light Use in Horticulture</td>
+<td align="left">book/chapter</td>
+<td align="left">NA</td>
+<td align="left">Optical and Physiological Properties of a Leaf</td>
+</tr>
+<tr class="odd">
+<td align="left">book/chapter_002</td>
+<td align="left">Others</td>
+<td align="left">book/chapter</td>
+<td align="left">NA</td>
+<td align="left">Light- and <span class="math inline">\(\\textrm{CO}_2\)</span>-Dependent Systemic Regulation of Photosynthesis</td>
+</tr>
+<tr class="even">
+<td align="left">article_003</td>
+<td align="left">Light Use in Horticulture</td>
+<td align="left">article</td>
+<td align="left">NA</td>
+<td align="left">Effects of spectral distribution and photosynthetic photon flux density for overnight {LED} light irradiation on tomato seedling growth and leaf injury</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level2">
+<h2>ネットワーク作成</h2>
+<p><code>igraph::graph_from_data_frame</code>は1列目と2列目を繋ぐので、列順が重要。 毎回ネットワークの形状が変わるので、一応<code>set.seed</code>しておく。</p>
+<pre class="r"><code>library(igraph)
+
+set.seed(123)
+
+igraph_obj &lt;-
+  igraph::graph_from_data_frame(d = tidy_bib_data, directed = F)
+
+plot(igraph_obj)</code></pre>
+<p><img src="../../../../post/2018-06-24-research_network_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>class(igraph_obj)</code></pre>
+<pre><code>## [1] &quot;igraph&quot;</code></pre>
+<p>見栄えをよくするべく、<code>ggnetwork</code>パッケージで<code>igprah</code>オブジェクトを<code>ggplot</code>用に整える。 <code>ggnetwork</code>は<a href="https://cran.r-project.org/web/packages/ggnetwork/vignettes/ggnetwork.html">このページ</a>がわかりやすかった。</p>
+<pre class="r"><code>library(ggnetwork)
+
+df_network &lt;-
+  igraph_obj %&gt;%
+  ggnetwork(layout = &quot;fruchtermanreingold&quot;)</code></pre>
+<p>ggnetworkの出力を<code>dplyr</code>で扱おうとして引っかかった。</p>
+<pre class="r"><code>df_network %&gt;%
+  mutate(hoge = &quot;huga&quot;)
+#&gt; Error: Columns `x`, `y`, `xend`, `yend` must be 1d atomic vectors or lists</code></pre>
+<p><code>tibble</code>は<code>data.frame</code>と異なり、<code>matrix</code>を包含することができないのが原因らしい。 これはバグのようで、近いうちに直されそうな感じ (<a href="https://github.com/tidyverse/tibble/issues/416">Allow matrix and data frame columns</a>)。</p>
+<pre class="r"><code>n &lt;- network::network(sna::rgraph(5, tprob = 0.2))
+net &lt;- ggnetwork::ggnetwork(n)
+
+mutate(net, hoge = &quot;hoge&quot;)
+#&gt; Error: Columns `x`, `y`, `xend`, `yend` must be 1d atomic vectors or lists
+
+net$x
+#&gt;           [,1]
+#&gt; [1,] 0.2249716
+#&gt; [2,] 1.0000000
+#&gt; [3,] 0.8017759
+#&gt; [4,] 0.5301314
+#&gt; [5,] 0.0000000
+#&gt; [6,] 0.0000000
+#&gt; [7,] 0.5301314
+#&gt; [8,] 0.8017759
+
+net %&gt;% as.tibble
+#&gt; Error: Columns `x`, `y`, `xend`, `yend` must be 1d atomic vectors or lists
+
+tibble(x = matrix(1:5, ncol = 1))
+#&gt; Error: Column `x` must be a 1d atomic vector or a list
+
+# リストで包むと通る
+(tbl_mtrx &lt;- tibble(x = list(matrix(1:5, ncol = 1))))
+#&gt; # A tibble: 1 x 1
+#&gt;   x            
+#&gt;   &lt;list&gt;       
+#&gt; 1 &lt;int [5 × 1]&gt;
+
+# unnestするとvectorにdropするっぽい
+tidyr::unnest(tbl_mtrx)
+# A tibble: 5 x 1
+#&gt;       x
+#&gt;   &lt;int&gt;
+#&gt; 1     1
+#&gt; 2     2
+#&gt; 3     3
+#&gt; 4     4
+#&gt; 5     5</code></pre>
+<p><code>as.matrix %&gt;% as_tibble</code>で強引に<code>tibble</code>型に変えると、<code>dplyr</code>系関数が使える。</p>
+<pre class="r"><code>df_network &lt;-
+  df_network %&gt;%
+  as.matrix %&gt;%
+  as_tibble %&gt;%
+  mutate_at(.vars = vars(x, y, xend, yend, year), .funs = as.numeric) %&gt;% # 文字列を数値に戻す
+  mutate(group = str_extract(vertex.names, &quot;[a-z]*&quot;),
+         group = if_else(group %in% c(&quot;article&quot;, &quot;conference&quot;, &quot;book&quot;), group, &quot;project&quot;)) # あとでカテゴリ別に色分けしたいので
+
+knitr::kable(df_network)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">x</th>
+<th align="right">y</th>
+<th align="left">na.x</th>
+<th align="left">vertex.names</th>
+<th align="right">xend</th>
+<th align="right">yend</th>
+<th align="left">category</th>
+<th align="left">doi</th>
+<th align="left">na.y</th>
+<th align="left">short</th>
+<th align="left">title</th>
+<th align="left">type</th>
+<th align="left">venue</th>
+<th align="right">year</th>
+<th align="left">group</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3564629</td>
+<td align="right">0.7606544</td>
+<td align="left">FALSE</td>
+<td align="left">book/chapter_001</td>
+<td align="right">0.3564629</td>
+<td align="right">0.7606544</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">book</td>
+</tr>
+<tr class="even">
+<td align="right">0.5682415</td>
+<td align="right">1.0000000</td>
+<td align="left">FALSE</td>
+<td align="left">book/chapter_002</td>
+<td align="right">0.5682415</td>
+<td align="right">1.0000000</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">book</td>
+</tr>
+<tr class="odd">
+<td align="right">0.1973102</td>
+<td align="right">0.6080856</td>
+<td align="left">FALSE</td>
+<td align="left">article_003</td>
+<td align="right">0.1973102</td>
+<td align="right">0.6080856</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.6329070</td>
+<td align="right">0.8842712</td>
+<td align="left">FALSE</td>
+<td align="left">conference_004</td>
+<td align="right">0.6329070</td>
+<td align="right">0.8842712</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.4339224</td>
+<td align="right">0.3767279</td>
+<td align="left">FALSE</td>
+<td align="left">conference_005</td>
+<td align="right">0.4339224</td>
+<td align="right">0.3767279</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.7525673</td>
+<td align="right">0.4706679</td>
+<td align="left">FALSE</td>
+<td align="left">conference_006</td>
+<td align="right">0.7525673</td>
+<td align="right">0.4706679</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.4984273</td>
+<td align="right">0.1377537</td>
+<td align="left">FALSE</td>
+<td align="left">conference_007</td>
+<td align="right">0.4984273</td>
+<td align="right">0.1377537</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.4343270</td>
+<td align="right">0.7332506</td>
+<td align="left">FALSE</td>
+<td align="left">conference_008</td>
+<td align="right">0.4343270</td>
+<td align="right">0.7332506</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.5570582</td>
+<td align="right">0.0943262</td>
+<td align="left">FALSE</td>
+<td align="left">conference_009</td>
+<td align="right">0.5570582</td>
+<td align="right">0.0943262</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.8445277</td>
+<td align="right">0.2662823</td>
+<td align="left">FALSE</td>
+<td align="left">conference_010</td>
+<td align="right">0.8445277</td>
+<td align="right">0.2662823</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.8087631</td>
+<td align="right">0.3309935</td>
+<td align="left">FALSE</td>
+<td align="left">conference_011</td>
+<td align="right">0.8087631</td>
+<td align="right">0.3309935</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">1.0000000</td>
+<td align="right">0.4993646</td>
+<td align="left">FALSE</td>
+<td align="left">conference_012</td>
+<td align="right">1.0000000</td>
+<td align="right">0.4993646</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.2260585</td>
+<td align="right">0.6913162</td>
+<td align="left">FALSE</td>
+<td align="left">conference_013</td>
+<td align="right">0.2260585</td>
+<td align="right">0.6913162</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.6816995</td>
+<td align="right">0.4940149</td>
+<td align="left">FALSE</td>
+<td align="left">conference_014</td>
+<td align="right">0.6816995</td>
+<td align="right">0.4940149</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.2032883</td>
+<td align="right">0.0185217</td>
+<td align="left">FALSE</td>
+<td align="left">conference_015</td>
+<td align="right">0.2032883</td>
+<td align="right">0.0185217</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.0000000</td>
+<td align="right">0.1954500</td>
+<td align="left">FALSE</td>
+<td align="left">conference_016</td>
+<td align="right">0.0000000</td>
+<td align="right">0.1954500</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.0575966</td>
+<td align="right">0.2983583</td>
+<td align="left">FALSE</td>
+<td align="left">conference_017</td>
+<td align="right">0.0575966</td>
+<td align="right">0.2983583</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.3844490</td>
+<td align="right">0.9821992</td>
+<td align="left">FALSE</td>
+<td align="left">conference_018</td>
+<td align="right">0.3844490</td>
+<td align="right">0.9821992</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.4554287</td>
+<td align="right">0.4163133</td>
+<td align="left">FALSE</td>
+<td align="left">conference_019</td>
+<td align="right">0.4554287</td>
+<td align="right">0.4163133</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.8304311</td>
+<td align="right">0.2271776</td>
+<td align="left">FALSE</td>
+<td align="left">conference_020</td>
+<td align="right">0.8304311</td>
+<td align="right">0.2271776</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.4640695</td>
+<td align="right">0.2087334</td>
+<td align="left">FALSE</td>
+<td align="left">conference_021</td>
+<td align="right">0.4640695</td>
+<td align="right">0.2087334</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.0947808</td>
+<td align="right">0.0000000</td>
+<td align="left">FALSE</td>
+<td align="left">conference_022</td>
+<td align="right">0.0947808</td>
+<td align="right">0.0000000</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.1753379</td>
+<td align="right">0.5134788</td>
+<td align="left">FALSE</td>
+<td align="left">conference_023</td>
+<td align="right">0.1753379</td>
+<td align="right">0.5134788</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.5003495</td>
+<td align="right">0.4561548</td>
+<td align="left">FALSE</td>
+<td align="left">article_024</td>
+<td align="right">0.5003495</td>
+<td align="right">0.4561548</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">article</td>
+</tr>
+<tr class="odd">
+<td align="right">0.5340257</td>
+<td align="right">0.4979847</td>
+<td align="left">FALSE</td>
+<td align="left">article_025</td>
+<td align="right">0.5340257</td>
+<td align="right">0.4979847</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.8106316</td>
+<td align="right">0.4057778</td>
+<td align="left">FALSE</td>
+<td align="left">article_026</td>
+<td align="right">0.8106316</td>
+<td align="right">0.4057778</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">article</td>
+</tr>
+<tr class="odd">
+<td align="right">0.7014519</td>
+<td align="right">0.0941772</td>
+<td align="left">FALSE</td>
+<td align="left">article_027</td>
+<td align="right">0.7014519</td>
+<td align="right">0.0941772</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.6312999</td>
+<td align="right">0.0798881</td>
+<td align="left">FALSE</td>
+<td align="left">article_028</td>
+<td align="right">0.6312999</td>
+<td align="right">0.0798881</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">article</td>
+</tr>
+<tr class="odd">
+<td align="right">0.7634561</td>
+<td align="right">0.1299868</td>
+<td align="left">FALSE</td>
+<td align="left">article_029</td>
+<td align="right">0.7634561</td>
+<td align="right">0.1299868</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.4790799</td>
+<td align="right">0.8769860</td>
+<td align="left">FALSE</td>
+<td align="left">Others</td>
+<td align="right">0.4790799</td>
+<td align="right">0.8769860</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">project</td>
+</tr>
+<tr class="odd">
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">FALSE</td>
+<td align="left">Light Use in Horticulture</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">project</td>
+</tr>
+<tr class="even">
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">FALSE</td>
+<td align="left">Photosynthetic Response to Light Spectrum</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">project</td>
+</tr>
+<tr class="odd">
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">FALSE</td>
+<td align="left">Statistics in Plant Science</td>
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">project</td>
+</tr>
+<tr class="even">
+<td align="right">0.1044156</td>
+<td align="right">0.1370176</td>
+<td align="left">FALSE</td>
+<td align="left">Imaging Photosynthesis</td>
+<td align="right">0.1044156</td>
+<td align="right">0.1370176</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">project</td>
+</tr>
+<tr class="odd">
+<td align="right">0.0507163</td>
+<td align="right">0.4429380</td>
+<td align="left">FALSE</td>
+<td align="left">Modeling Temporal Canopy Photosynthesis</td>
+<td align="right">0.0507163</td>
+<td align="right">0.4429380</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">project</td>
+</tr>
+<tr class="even">
+<td align="right">0.0000000</td>
+<td align="right">0.1954500</td>
+<td align="left">FALSE</td>
+<td align="left">conference_016</td>
+<td align="right">0.1044156</td>
+<td align="right">0.1370176</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">中四国農業気象2017</td>
+<td align="left">分光反射画像計測による葉位別光合成速度推定にむけて: PRIの光応答の評価</td>
+<td align="left">Oral presentation</td>
+<td align="left">湖山キャンパス/鳥取大学</td>
+<td align="right">2017</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.0575966</td>
+<td align="right">0.2983583</td>
+<td align="left">FALSE</td>
+<td align="left">conference_017</td>
+<td align="right">0.1044156</td>
+<td align="right">0.1370176</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2018</td>
+<td align="left">分光画像計測による光合成速度分布解析の試み</td>
+<td align="left">Oral presentation</td>
+<td align="left">伊都キャンパス/九州大学</td>
+<td align="right">2018</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.0575966</td>
+<td align="right">0.2983583</td>
+<td align="left">FALSE</td>
+<td align="left">conference_017</td>
+<td align="right">0.0507163</td>
+<td align="right">0.4429380</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2018</td>
+<td align="left">分光画像計測による光合成速度分布解析の試み</td>
+<td align="left">Oral presentation</td>
+<td align="left">伊都キャンパス/九州大学</td>
+<td align="right">2018</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.0947808</td>
+<td align="right">0.0000000</td>
+<td align="left">FALSE</td>
+<td align="left">conference_022</td>
+<td align="right">0.1044156</td>
+<td align="right">0.1370176</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">IHC2018</td>
+<td align="left">Spectral imaging for evaluation of spatial distributions of leaf photosynthetic Light Use efficiency</td>
+<td align="left">Oral presentation</td>
+<td align="left">Istanbul Congress Center/Istanbul</td>
+<td align="right">2018</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.1753379</td>
+<td align="right">0.5134788</td>
+<td align="left">FALSE</td>
+<td align="left">conference_023</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">ComBio2018</td>
+<td align="left">Time course of leaf content of cytochrome <span class="math inline">\(b_6f\)</span> complex and photosynthetic capacity after changes in growth irradiance</td>
+<td align="left">Poster presentation</td>
+<td align="left">International Convention Centre Sydney/Sydney</td>
+<td align="right">2018</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.1753379</td>
+<td align="right">0.5134788</td>
+<td align="left">FALSE</td>
+<td align="left">conference_023</td>
+<td align="right">0.0507163</td>
+<td align="right">0.4429380</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">ComBio2018</td>
+<td align="left">Time course of leaf content of cytochrome <span class="math inline">\(b_6f\)</span> complex and photosynthetic capacity after changes in growth irradiance</td>
+<td align="left">Poster presentation</td>
+<td align="left">International Convention Centre Sydney/Sydney</td>
+<td align="right">2018</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.1973102</td>
+<td align="right">0.6080856</td>
+<td align="left">FALSE</td>
+<td align="left">article_003</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">article</td>
+<td align="left">10.1016/j.scienta.2015.11.045</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Effects of spectral distribution and photosynthetic photon flux density for overnight {LED} light irradiation on tomato seedling growth and leaf injury</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2016</td>
+<td align="left">article</td>
+</tr>
+<tr class="odd">
+<td align="right">0.2032883</td>
+<td align="right">0.0185217</td>
+<td align="left">FALSE</td>
+<td align="left">conference_015</td>
+<td align="right">0.1044156</td>
+<td align="right">0.1370176</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">生環工2017</td>
+<td align="left">葉面反射画像計測による光合成光利用効率の光環境変化に対する応答の評価の試み</td>
+<td align="left">Oral presentation</td>
+<td align="left">樽味キャンパス/愛媛大学</td>
+<td align="right">2017</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.2260585</td>
+<td align="right">0.6913162</td>
+<td align="left">FALSE</td>
+<td align="left">conference_013</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2016</td>
+<td align="left">夜間に照射する LED 光の分光分布および PPFD がトマト苗の成育および可視障害に及ぼす影響</td>
+<td align="left">Oral presentation</td>
+<td align="left">津島キャンパス/岡山大学</td>
+<td align="right">2016</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.3564629</td>
+<td align="right">0.7606544</td>
+<td align="left">FALSE</td>
+<td align="left">book/chapter_001</td>
+<td align="right">0.4790799</td>
+<td align="right">0.8769860</td>
+<td align="left">book/chapter</td>
+<td align="left">10.1007/978-981-10-1848-0</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Optical and Physiological Properties of a Leaf</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2016</td>
+<td align="left">book</td>
+</tr>
+<tr class="even">
+<td align="right">0.3564629</td>
+<td align="right">0.7606544</td>
+<td align="left">FALSE</td>
+<td align="left">book/chapter_001</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">book/chapter</td>
+<td align="left">10.1007/978-981-10-1848-0</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Optical and Physiological Properties of a Leaf</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2016</td>
+<td align="left">book</td>
+</tr>
+<tr class="odd">
+<td align="right">0.3844490</td>
+<td align="right">0.9821992</td>
+<td align="left">FALSE</td>
+<td align="left">conference_018</td>
+<td align="right">0.4790799</td>
+<td align="right">0.8769860</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2018</td>
+<td align="left">深層学習を用いた葉面積推定に関する研究</td>
+<td align="left">Oral presentation</td>
+<td align="left">伊都キャンパス/九州大学</td>
+<td align="right">2018</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.4339224</td>
+<td align="right">0.3767279</td>
+<td align="left">FALSE</td>
+<td align="left">conference_005</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">生環工2012</td>
+<td align="left">インゲンマメ下位葉への単色 LED 光照射が上位葉の光合成特性に及ぼす影響</td>
+<td align="left">Oral presentation</td>
+<td align="left">弥生キャンパス/東京大学</td>
+<td align="right">2012</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.4339224</td>
+<td align="right">0.3767279</td>
+<td align="left">FALSE</td>
+<td align="left">conference_005</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">生環工2012</td>
+<td align="left">インゲンマメ下位葉への単色 LED 光照射が上位葉の光合成特性に及ぼす影響</td>
+<td align="left">Oral presentation</td>
+<td align="left">弥生キャンパス/東京大学</td>
+<td align="right">2012</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.4343270</td>
+<td align="right">0.7332506</td>
+<td align="left">FALSE</td>
+<td align="left">conference_008</td>
+<td align="right">0.4790799</td>
+<td align="right">0.8769860</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2014</td>
+<td align="left">下位葉補光・終夜補光の光質が植物の光合成特性と成育に及ぼす影響</td>
+<td align="left">Oral presentation</td>
+<td align="left">札幌キャンパス/北海道大学</td>
+<td align="right">2014</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.4343270</td>
+<td align="right">0.7332506</td>
+<td align="left">FALSE</td>
+<td align="left">conference_008</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2014</td>
+<td align="left">下位葉補光・終夜補光の光質が植物の光合成特性と成育に及ぼす影響</td>
+<td align="left">Oral presentation</td>
+<td align="left">札幌キャンパス/北海道大学</td>
+<td align="right">2014</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.4554287</td>
+<td align="right">0.4163133</td>
+<td align="left">FALSE</td>
+<td align="left">conference_019</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">LightSym2012</td>
+<td align="left">Effect of supplemental lighting to a lower leaf using LEDs with different wavelengths on leaf photosynthetic characteristics in sweet pepper</td>
+<td align="left">Poster presentation</td>
+<td align="left">Wageningen Unversity/Wageningen</td>
+<td align="right">2012</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.4554287</td>
+<td align="right">0.4163133</td>
+<td align="left">FALSE</td>
+<td align="left">conference_019</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">LightSym2012</td>
+<td align="left">Effect of supplemental lighting to a lower leaf using LEDs with different wavelengths on leaf photosynthetic characteristics in sweet pepper</td>
+<td align="left">Poster presentation</td>
+<td align="left">Wageningen Unversity/Wageningen</td>
+<td align="right">2012</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.4640695</td>
+<td align="right">0.2087334</td>
+<td align="left">FALSE</td>
+<td align="left">conference_021</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">ICEC/AusPheno 2016</td>
+<td align="left">Non-destructive estimation of light energy distribution between photosystems</td>
+<td align="left">Oral presentation</td>
+<td align="left">CSIRO/Canberra</td>
+<td align="right">2016</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.4984273</td>
+<td align="right">0.1377537</td>
+<td align="left">FALSE</td>
+<td align="left">conference_007</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2014</td>
+<td align="left">種々のピーク波長の LED を用いた混合光照射下におけるコスレタス葉の光合成量子収率</td>
+<td align="left">Oral presentation</td>
+<td align="left">札幌キャンパス/北海道大学</td>
+<td align="right">2014</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.5003495</td>
+<td align="right">0.4561548</td>
+<td align="left">FALSE</td>
+<td align="left">article_024</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">article</td>
+<td align="left">10.2480/agrmet.69.2.2</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Effects of supplemental lighting to a lower leaf using light-emitting diodes with different spectra on the leaf photosynthetic rate in sweet pepper</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2013</td>
+<td align="left">article</td>
+</tr>
+<tr class="odd">
+<td align="right">0.5003495</td>
+<td align="right">0.4561548</td>
+<td align="left">FALSE</td>
+<td align="left">article_024</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">article</td>
+<td align="left">10.2480/agrmet.69.2.2</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Effects of supplemental lighting to a lower leaf using light-emitting diodes with different spectra on the leaf photosynthetic rate in sweet pepper</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2013</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.5340257</td>
+<td align="right">0.4979847</td>
+<td align="left">FALSE</td>
+<td align="left">article_025</td>
+<td align="right">0.3596180</td>
+<td align="right">0.5660283</td>
+<td align="left">article</td>
+<td align="left">10.1111/plb.12055</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Light-induced systemic regulation of photosynthesis in primary and trifoliate leaves of : effects of photosynthetic photon flux density ({PPFD})  spectrum</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2014</td>
+<td align="left">article</td>
+</tr>
+<tr class="odd">
+<td align="right">0.5340257</td>
+<td align="right">0.4979847</td>
+<td align="left">FALSE</td>
+<td align="left">article_025</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">article</td>
+<td align="left">10.1111/plb.12055</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Light-induced systemic regulation of photosynthesis in primary and trifoliate leaves of : effects of photosynthetic photon flux density ({PPFD})  spectrum</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2014</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.5570582</td>
+<td align="right">0.0943262</td>
+<td align="left">FALSE</td>
+<td align="left">conference_009</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">光合成学会2014</td>
+<td align="left">異なる狭波長帯 LED 光の混合照射下における個葉の総光合成速度の推定</td>
+<td align="left">Poster presentation</td>
+<td align="left">奈良キャンパス/近畿大学</td>
+<td align="right">2014</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.5682415</td>
+<td align="right">1.0000000</td>
+<td align="left">FALSE</td>
+<td align="left">book/chapter_002</td>
+<td align="right">0.4790799</td>
+<td align="right">0.8769860</td>
+<td align="left">book/chapter</td>
+<td align="left">10.1007/978-3-319-25688-7_4</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Light- and <span class="math inline">\(\\textrm{CO}_2\)</span>-Dependent Systemic Regulation of Photosynthesis</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2016</td>
+<td align="left">book</td>
+</tr>
+<tr class="even">
+<td align="right">0.6312999</td>
+<td align="right">0.0798881</td>
+<td align="left">FALSE</td>
+<td align="left">article_028</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">article</td>
+<td align="left">10.1093/pcp/pcy085</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">A mathematical model of photosynthetic electron transport in response to light spectrum based on excitation energy distributed to photosystems</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2018</td>
+<td align="left">article</td>
+</tr>
+<tr class="odd">
+<td align="right">0.6329070</td>
+<td align="right">0.8842712</td>
+<td align="left">FALSE</td>
+<td align="left">conference_004</td>
+<td align="right">0.4790799</td>
+<td align="right">0.8769860</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2012</td>
+<td align="left">トマト養液栽培における葉面積指数推定モデルの構築: 気孔コンダクタンスモデルの検討</td>
+<td align="left">Poster presentation</td>
+<td align="left">中百舌鳥キャンパス/大阪府立大学</td>
+<td align="right">2012</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.6816995</td>
+<td align="right">0.4940149</td>
+<td align="left">FALSE</td>
+<td align="left">conference_014</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">光合成学会2017</td>
+<td align="left">光化学系I・II間での励起エネルギー分配比の非破壊定量法の開発</td>
+<td align="left">Poster presentation</td>
+<td align="left">瀬田キャンパス/龍谷大学</td>
+<td align="right">2017</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.7014519</td>
+<td align="right">0.0941772</td>
+<td align="left">FALSE</td>
+<td align="left">article_027</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">article</td>
+<td align="left">10.1111/pce.12986</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Quantification of excitation energy distribution between photosystems based on a mechanistic model of photosynthetic electron transport</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2018</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.7525673</td>
+<td align="right">0.4706679</td>
+<td align="left">FALSE</td>
+<td align="left">conference_006</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">生環工2013</td>
+<td align="left">異なるピーク波長の LED を用いた混合光照射下における個葉の光合成量子収率</td>
+<td align="left">Oral presentation</td>
+<td align="left">幸町キャンパス/香川大学</td>
+<td align="right">2013</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.7634561</td>
+<td align="right">0.1299868</td>
+<td align="left">FALSE</td>
+<td align="left">article_029</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">article</td>
+<td align="left">10.1111/ppl.12745</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem II</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2018</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.8087631</td>
+<td align="right">0.3309935</td>
+<td align="left">FALSE</td>
+<td align="left">conference_011</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">生環工2015</td>
+<td align="left">栽培中の遠赤色光添加は栽培後の葉の光合成速度を小さくするのか？</td>
+<td align="left">Oral presentation</td>
+<td align="left">シーガイア</td>
+<td align="right">2015</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.8087631</td>
+<td align="right">0.3309935</td>
+<td align="left">FALSE</td>
+<td align="left">conference_011</td>
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">生環工2015</td>
+<td align="left">栽培中の遠赤色光添加は栽培後の葉の光合成速度を小さくするのか？</td>
+<td align="left">Oral presentation</td>
+<td align="left">シーガイア</td>
+<td align="right">2015</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.8106316</td>
+<td align="right">0.4057778</td>
+<td align="left">FALSE</td>
+<td align="left">article_026</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">article</td>
+<td align="left">10.1111/ppl.12421</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Interaction between the spectral photon flux density distributions of light during growth and for measurements in net photosynthetic rates of cucumber leaves</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2016</td>
+<td align="left">article</td>
+</tr>
+<tr class="odd">
+<td align="right">0.8106316</td>
+<td align="right">0.4057778</td>
+<td align="left">FALSE</td>
+<td align="left">article_026</td>
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">article</td>
+<td align="left">10.1111/ppl.12421</td>
+<td align="left">FALSE</td>
+<td align="left">NA</td>
+<td align="left">Interaction between the spectral photon flux density distributions of light during growth and for measurements in net photosynthetic rates of cucumber leaves</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">2016</td>
+<td align="left">article</td>
+</tr>
+<tr class="even">
+<td align="right">0.8304311</td>
+<td align="right">0.2271776</td>
+<td align="left">FALSE</td>
+<td align="left">conference_020</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">GreenSys2015</td>
+<td align="left">A difference in net photosynthetic rate between leaves grown with and without far-red light depends on the spectral distribution of measuring light</td>
+<td align="left">Poster presentation</td>
+<td align="left">Universidade Évora/</td>
+<td align="right">2015</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.8304311</td>
+<td align="right">0.2271776</td>
+<td align="left">FALSE</td>
+<td align="left">conference_020</td>
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">GreenSys2015</td>
+<td align="left">A difference in net photosynthetic rate between leaves grown with and without far-red light depends on the spectral distribution of measuring light</td>
+<td align="left">Poster presentation</td>
+<td align="left">Universidade Évora/</td>
+<td align="right">2015</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">0.8445277</td>
+<td align="right">0.2662823</td>
+<td align="left">FALSE</td>
+<td align="left">conference_010</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2015</td>
+<td align="left">異なる分光分布の光照射下で成育した葉の光合成速度比較結果は測定光分光分布に影響される</td>
+<td align="left">Oral presentation</td>
+<td align="left">文部科学省研究交流センター</td>
+<td align="right">2015</td>
+<td align="left">conference</td>
+</tr>
+<tr class="odd">
+<td align="right">0.8445277</td>
+<td align="right">0.2662823</td>
+<td align="left">FALSE</td>
+<td align="left">conference_010</td>
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2015</td>
+<td align="left">異なる分光分布の光照射下で成育した葉の光合成速度比較結果は測定光分光分布に影響される</td>
+<td align="left">Oral presentation</td>
+<td align="left">文部科学省研究交流センター</td>
+<td align="right">2015</td>
+<td align="left">conference</td>
+</tr>
+<tr class="even">
+<td align="right">1.0000000</td>
+<td align="right">0.4993646</td>
+<td align="left">FALSE</td>
+<td align="left">conference_012</td>
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">conference</td>
+<td align="left">NA</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2016</td>
+<td align="left">サンプルサイズ (<span class="math inline">\(n\)</span>）の検定力分析による決定 —グロースチャンバでの植物栽培試験での例—</td>
+<td align="left">Poster presentation</td>
+<td align="left">津島キャンパス/岡山大学</td>
+<td align="right">2016</td>
+<td align="left">conference</td>
+</tr>
+</tbody>
+</table>
+<p>このままだと取り回しが悪いので、node部分とedge部分を分離して扱う。 ggplotとplotlyでの図示用にデータフレームを整える。</p>
+<pre class="r"><code># node数をカウント
+node_num &lt;-
+  is.na(df_network$na.y) %&gt;% sum
+
+# node部分だけ抜き出す
+df_node &lt;-
+  df_network[seq_len(node_num),] %&gt;%
+  janitor::remove_empty(&quot;cols&quot;) %&gt;%
+  mutate(node_size = if_else(group == &quot;project&quot;, 10, 1),
+         node_size = if_else(group %in% c(&quot;article&quot;, &quot;book&quot;), 2, node_size)) # ノードサイズをカテゴリ別に
+
+# 残るedge部分をハンドリング
+df_edge &lt;-
+  df_network[-seq_len(node_num),] %&gt;%
+  janitor::remove_empty(&quot;cols&quot;)
+
+# plotly hover用
+df_tooltip &lt;-
+  df_edge %&gt;%
+  transmute(vertex.names,
+            link = if_else(is.na(doi), &quot;&quot;, paste0(&#39;&lt;a href=&quot;https://doi.org/&#39;, doi, &#39;&quot;&gt;LINK&lt;/a&gt;&#39;)),
+            title,
+            year)
+
+# hoverの要不要に応じてprojectとそれ以外を分ける
+# 空行でもNAが表示されて鬱陶しいので
+df_node %&gt;%
+  left_join(., df_tooltip, by = &quot;vertex.names&quot;) %&gt;%
+  {
+    df_node_projects &lt;&lt;-
+      dplyr::filter(., group == &quot;project&quot;)
+    df_node_items &lt;&lt;-
+      dplyr::filter(., group != &quot;project&quot;)
+  }</code></pre>
+<p><code>ggplot</code>で重ねていく。</p>
+<pre class="r"><code>fig_ggplot &lt;-
+  df_node %&gt;%
+  ggplot(aes(x, y, col = group)) +
+  geom_segment(data = df_edge, aes(xend = xend, yend = yend)) +
+  geom_point(data = df_node_items, aes(size = node_size, text = year)) +
+  geom_point(data = df_node_projects, aes(size = node_size), hoverinfo = &quot;none&quot;) +
+  geom_text(data = df_node_projects, aes(label = vertex.names), col = &quot;black&quot;) +
+  scale_color_manual(values = c(&quot;cyan2&quot;, &quot;magenta2&quot;, &quot;grey50&quot;, &quot;grey75&quot;)) +
+  guides(size = F) +
+  theme_blank()
+
+fig_ggplot</code></pre>
+<p><img src="../../../../post/2018-06-24-research_network_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><code>plotly</code>でinteractiveにして冒頭の図が完成。</p>
+<pre class="r"><code>library(plotly)
+
+delete_axis &lt;- 
+  list(title = &quot;&quot;, ticklen = 0, zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE)
+
+fig_plotly &lt;-
+  ggplotly(fig_ggplot, tooltip = &quot;text&quot;) %&gt;%
+  layout(xaxis = delete_axis, yaxis = delete_axis)
+
+# htmlwidgetとして保存
+setwd(&quot;../plotly&quot;)
+htmlwidgets::saveWidget(fig_plotly, &quot;research_network.html&quot;, selfcontained = T)
+setwd(&quot;../post&quot;)</code></pre>
+<p>ネットワークがもっと騒がしくなるように精進しよう。</p>
+</div>
+<div class="section level2">
+<h2>参考</h2>
+<p><a href="https://cran.r-project.org/web/packages/ggnetwork/vignettes/ggnetwork.html">ggnetwork: Network geometries for ggplot2</a><br />
+<a href="https://github.com/tidyverse/tibble/issues/416">Allow matrix and data frame columns</a></p>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Brisbane          
+##  date     2018-06-24                  
+## 
+##  package        * version    date       source                            
+##  assertthat       0.2.0      2017-04-11 CRAN (R 3.5.0)                    
+##  backports        1.1.2      2017-12-13 CRAN (R 3.5.0)                    
+##  base           * 3.5.0      2018-04-24 local                             
+##  bib2df         * 1.0.1      2018-06-22 Github (ottlngr/bib2df@027215c)   
+##  bindr            0.1.1      2018-03-13 CRAN (R 3.5.0)                    
+##  bindrcpp       * 0.2.2      2018-03-29 CRAN (R 3.5.0)                    
+##  blogdown         0.6        2018-04-18 CRAN (R 3.5.0)                    
+##  bookdown         0.7        2018-02-18 CRAN (R 3.5.0)                    
+##  broom            0.4.4.9000 2018-06-21 Github (tidyverse/broom@2721de4)  
+##  cellranger       1.1.0      2016-07-27 CRAN (R 3.5.0)                    
+##  cli              1.0.0      2017-11-05 CRAN (R 3.5.0)                    
+##  coda             0.19-1     2016-12-08 CRAN (R 3.5.0)                    
+##  codetools        0.2-15     2016-10-05 CRAN (R 3.5.0)                    
+##  colorspace       1.3-2      2016-12-14 CRAN (R 3.5.0)                    
+##  compiler         3.5.0      2018-04-24 local                             
+##  crayon           1.3.4      2017-09-16 CRAN (R 3.5.0)                    
+##  crosstalk        1.0.0      2016-12-21 CRAN (R 3.5.0)                    
+##  data.table       1.10.4-3   2017-10-27 CRAN (R 3.5.0)                    
+##  datasets       * 3.5.0      2018-04-24 local                             
+##  devtools         1.13.5     2018-02-18 CRAN (R 3.5.0)                    
+##  digest           0.6.15     2018-01-28 CRAN (R 3.5.0)                    
+##  dplyr          * 0.7.5      2018-05-19 cran (@0.7.5)                     
+##  evaluate         0.10.1     2017-06-24 CRAN (R 3.5.0)                    
+##  forcats        * 0.3.0      2018-02-19 CRAN (R 3.5.0)                    
+##  ggnetwork      * 0.5.1      2016-03-25 CRAN (R 3.5.0)                    
+##  ggplot2        * 2.2.1.9000 2018-06-21 Github (tidyverse/ggplot2@1c09bae)
+##  ggrepel          0.7.0      2017-09-29 CRAN (R 3.5.0)                    
+##  glue             1.2.0      2017-10-29 CRAN (R 3.5.0)                    
+##  graphics       * 3.5.0      2018-04-24 local                             
+##  grDevices      * 3.5.0      2018-04-24 local                             
+##  grid             3.5.0      2018-04-24 local                             
+##  gtable           0.2.0      2016-02-26 CRAN (R 3.5.0)                    
+##  haven            1.1.1      2018-01-18 CRAN (R 3.5.0)                    
+##  highr            0.6        2016-05-09 CRAN (R 3.5.0)                    
+##  hms              0.4.2      2018-03-10 CRAN (R 3.5.0)                    
+##  htmltools        0.3.6      2017-04-28 CRAN (R 3.5.0)                    
+##  htmlwidgets      1.2        2018-04-19 CRAN (R 3.5.0)                    
+##  httpuv           1.4.3      2018-05-10 cran (@1.4.3)                     
+##  httr             1.3.1      2017-08-20 CRAN (R 3.5.0)                    
+##  humaniformat     0.6.0      2016-04-24 cran (@0.6.0)                     
+##  igraph         * 1.2.1      2018-03-10 CRAN (R 3.5.0)                    
+##  intergraph       2.0-2      2016-12-05 CRAN (R 3.5.0)                    
+##  janitor        * 1.0.0      2018-03-22 CRAN (R 3.5.0)                    
+##  jsonlite         1.5        2017-06-01 CRAN (R 3.5.0)                    
+##  knitr            1.20       2018-02-20 CRAN (R 3.5.0)                    
+##  labeling         0.3        2014-08-23 CRAN (R 3.5.0)                    
+##  later            0.7.2      2018-05-01 cran (@0.7.2)                     
+##  lattice          0.20-35    2017-03-25 CRAN (R 3.5.0)                    
+##  lazyeval         0.2.1      2017-10-29 CRAN (R 3.5.0)                    
+##  lubridate        1.7.4      2018-04-11 CRAN (R 3.5.0)                    
+##  magrittr       * 1.5        2014-11-22 CRAN (R 3.5.0)                    
+##  memoise          1.1.0      2017-04-21 CRAN (R 3.5.0)                    
+##  methods        * 3.5.0      2018-04-24 local                             
+##  mime             0.5        2016-07-07 CRAN (R 3.5.0)                    
+##  modelr           0.1.2      2018-05-11 cran (@0.1.2)                     
+##  munsell          0.4.3      2016-02-13 CRAN (R 3.5.0)                    
+##  network        * 1.13.0.1   2018-04-02 CRAN (R 3.5.0)                    
+##  nlme             3.1-137    2018-04-07 CRAN (R 3.5.0)                    
+##  pillar           1.2.3      2018-05-25 cran (@1.2.3)                     
+##  pkgconfig        2.0.1      2017-03-21 CRAN (R 3.5.0)                    
+##  plotly         * 4.7.1      2017-07-29 CRAN (R 3.5.0)                    
+##  plyr             1.8.4      2016-06-08 CRAN (R 3.5.0)                    
+##  promises         1.0.1      2018-04-13 CRAN (R 3.5.0)                    
+##  purrr          * 0.2.5      2018-05-29 cran (@0.2.5)                     
+##  R6               2.2.2      2017-06-17 CRAN (R 3.5.0)                    
+##  Rcpp             0.12.17    2018-05-18 cran (@0.12.17)                   
+##  readr          * 1.1.1      2017-05-16 CRAN (R 3.5.0)                    
+##  readxl           1.1.0      2018-04-20 CRAN (R 3.5.0)                    
+##  reshape2         1.4.3      2017-12-11 CRAN (R 3.5.0)                    
+##  rlang            0.2.1      2018-05-30 cran (@0.2.1)                     
+##  rmarkdown        1.9        2018-03-01 CRAN (R 3.5.0)                    
+##  rprojroot        1.3-2      2018-01-03 CRAN (R 3.5.0)                    
+##  rstudioapi       0.7        2017-09-07 CRAN (R 3.5.0)                    
+##  rvest            0.3.2      2016-06-17 CRAN (R 3.5.0)                    
+##  scales           0.5.0      2017-08-24 CRAN (R 3.5.0)                    
+##  shiny            1.1.0      2018-05-17 cran (@1.1.0)                     
+##  sna            * 2.4        2016-08-08 CRAN (R 3.5.0)                    
+##  snakecase        0.9.1      2018-03-25 CRAN (R 3.5.0)                    
+##  statnet.common * 4.1.2      2018-06-05 CRAN (R 3.5.0)                    
+##  stats          * 3.5.0      2018-04-24 local                             
+##  stringi          1.2.2      2018-05-02 cran (@1.2.2)                     
+##  stringr        * 1.3.1      2018-05-10 cran (@1.3.1)                     
+##  tibble         * 1.4.2      2018-01-22 CRAN (R 3.5.0)                    
+##  tidyr          * 0.8.1      2018-05-18 cran (@0.8.1)                     
+##  tidyselect       0.2.4      2018-02-26 CRAN (R 3.5.0)                    
+##  tidyverse      * 1.2.1.9000 2018-06-21 Github (hadley/tidyverse@a720dcd) 
+##  tools            3.5.0      2018-04-24 local                             
+##  utils          * 3.5.0      2018-04-24 local                             
+##  viridisLite      0.3.0      2018-02-01 CRAN (R 3.5.0)                    
+##  withr            2.1.2      2018-03-15 CRAN (R 3.5.0)                    
+##  xfun             0.1        2018-01-22 CRAN (R 3.5.0)                    
+##  xml2             1.2.0      2018-01-24 CRAN (R 3.5.0)                    
+##  xtable           1.8-2      2016-02-05 CRAN (R 3.5.0)                    
+##  yaml             2.1.18     2018-03-08 CRAN (R 3.5.0)</code></pre>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="../../../../index.xml" type="application/rss+xml" target="_blank"><i class="fas fa-rss"></i></a>
+          </li>
+          <li>
+            <a href="https://github.com/KeachMurakami/page" class="footer-link"><i class="fab fa-github"></i></a>
+          </li>
+          <li>
+            Powered by <a href="https://gohugo.io/" class="footer-link">Hugo</a>, <a href="https://github.com/rstudio/blogdown" class="footer-link">blogdown</a>, and <a href="https://pages.github.com/" class="footer-link">GitHub Pages</a>.
+          </li>
+        </ul>
+        <ul class="footer-links">
+          <li>
+            Except where otherwise noted, content on this site is licensed under a<a href="https://creativecommons.org/licenses/by/4.0/" class="footer-link">Creative Commons Attribution 4.0 International license</a>.
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="../../../../js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
+

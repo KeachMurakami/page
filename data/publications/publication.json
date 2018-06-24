@@ -1,0 +1,463 @@
+{
+ "paper1": {
+    "title": "Effects of supplemental lighting to a lower leaf using light-emitting diodes with different spectra on the leaf photosynthetic rate in sweet pepper",
+    "author": "KM, correspond(RM), KF",
+    "year": "2013",
+    "month": "June",
+    "role": "first",
+    "category": "Original Article",
+    "journal": "Journal of Agricultural Meteorology",
+    "volume": "69",
+    "page": "55--63",
+    "doi": "10.2480/agrmet.69.2.2",
+    "project": ["Light Use in Horticulture", "Photosynthetic Response to Light Spectrum"]
+  },
+
+ "paper2": {
+    "title": "Light-induced systemic regulation of photosynthesis in primary and trifoliate leaves of <i>Phaseolus vulgaris</i>: effects of photosynthetic photon flux density (PPFD) <i>versus</i> spectrum",
+    "author": "KM, correspond(RM), KF",
+    "year": "2014",
+    "month": "January",
+    "role": "first",
+    "category": "Original Article",
+    "journal": "Plant Biology",
+    "volume": "16",
+    "page": "16--21",
+    "doi": "10.1111/plb.12055",
+    "project": ["Light Use in Horticulture", "Photosynthetic Response to Light Spectrum"]
+  },
+
+ "paper3": {
+    "title": "Interaction between the spectral photon flux density distributions of light during growth and for measurements in net photosynthetic rates of cucumber leaves",
+    "author": "correspond(KM), RM, KF",
+    "year": "2016",
+    "month": "October",
+    "role": "first",
+    "category": "Original Article",
+    "journal": "Physiologia Plantarum",
+    "volume": "158",
+    "page": "213--224",
+    "doi": "10.1111/ppl.12421",
+    "project":  ["Photosynthetic Response to Light Spectrum", "Statistics in Plant Science"]
+  },
+
+ "paper4": {
+    "title": "Quantification of excitation energy distribution between photosystems based on a mechanistic model of photosynthetic electron transport",
+    "author": "correspond(KM), correspond(RM), KF",
+    "year": "2018",
+    "role": "first",
+    "category": "Original Article",
+    "journal": "Plant, Cell & Environment",
+    "volume": "41",
+    "page": "148--159",
+    "month": "January",
+    "doi": "10.1111/pce.12986",
+    "project": "Photosynthetic Response to Light Spectrum"
+  },
+
+ "paper5": {
+    "title": "A mathematical model of photosynthetic electron transport in response to light spectrum based on excitation energy distributed to photosystems",
+    "author": "correspond(KM), correspond(RM), KF",
+    "year": "in press",
+    "role": "first",
+    "category": "Original Article",
+    "journal": "Plant and Cell Physiology",
+    "volume": "--",
+    "page": "--",
+    "month": "--",
+    "doi": "10.1093/pcp/pcy085",
+    "project": "Photosynthetic Response to Light Spectrum"
+  },
+
+ "paper6": {
+    "title": "Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem II",
+    "author": "correspond(KM), YI",
+    "year": "in press",
+    "month": "--",
+    "role": "first",
+    "category": "Original Article",
+    "journal": "Physiologia Plantarum",
+    "volume": "--",
+    "page": "--",
+    "doi": "10.1111/ppl.12745",
+    "project": ["Imaging Photosynthesis", "Modeling Temporal Canopy Photosynthesis"]
+  },
+
+ "paper7": {
+    "title": "Effects of spectral distribution and photosynthetic photon flux density for overnight LED light irradiation on tomato seedling growth and leaf injury",
+    "author": "correspond(RM), Takuto Yamano, KM, KF",
+    "year": "2016",
+    "month": "January",
+    "role": "co_authored",
+    "category": "Original Article",
+    "journal": "Scientia Horticulturae",
+    "volume": "198",
+    "page": "363--369",
+    "doi": "10.1016/j.scienta.2015.11.045",
+    "project": "Light Use in Horticulture"
+  },
+
+ "paper8": {
+    "title": "A basis for selecting light spectral distribution for evaluating leaf photosynthetic rates of plants grown under different light spectral distributions",
+    "author": "correspond(KM), RM, KF",
+    "year": "2017",
+    "month": "January",
+    "role": "first",
+    "category": "Letter",
+    "journal": "Environmental Control in Biology",
+    "volume": "55",
+    "page": "1--6",
+    "doi": "10.2525/ecb.55.1",
+    "project": ["Photosynthetic Response to Light Spectrum", "Statistics in Plant Science"]
+  },
+
+ "chapter1": {
+    "title": "Light- and CO<sub>2</sub>-dependent systemic regulation of photosynthesis",
+    "booktitle": "Progress in Botany 77",
+    "author": "correspond(RM), KM",
+    "editor": "Ulrich Lüttge, Francisco M. Cánovas, Rainer Matyssek",
+    "year": "2016",
+    "month": "",
+    "role": "co_authored",
+    "category": "Book chapter",
+    "page": "151--166",
+    "publisher": "Springer International Publishing",
+    "doi": "10.1007/978-3-319-25688-7_4",
+    "project": "Others"
+  },
+
+ "chapter2": {
+    "title": "Optical and physiological properties of a leaf",
+    "booktitle": "LED Lighting for Urban Agriculture",
+    "author": "correspond(KM), RM",
+    "editor": "Toyoki Kozai, KF, Erik S. Runkle",
+    "year": "2016",
+    "month": "November",
+    "role": "first",
+    "category": "Book chapter",
+    "page": "113--123",
+    "publisher": "Springer Singapore",
+    "doi": "10.1007/978-981-10-1848-0_8",
+    "project": ["Others", "Light Use in Horticulture"]
+  },
+
+ "chapter3": {
+    "title": "人工光環境と植物の光合成 (Artificial light environments and photosynthesis of plants)",
+    "booktitle": "アグリフォトニクスIII",
+    "author": "correspond(YI), KM",
+    "editor": "後藤 英司",
+    "year": "2018",
+    "month": "--",
+    "role": "co_authored",
+    "category": "Book chapter",
+    "page": "--",
+    "publisher": "CMC出版",
+    "doi": "--",
+    "project": ["Others", "Light Use in Horticulture"]
+  },
+
+
+
+  "intl5": {
+     "title": "Time course of leaf content of cytochrome *b*<sub>6</sub>*f* complex and photosynthetic capacity after changes in growth irradiance",
+     "author": ["speaker(KM)", "Hui Zhu", "Ling-Da Zeng", "Xiao-Ping Yi", "Chang-Lian Peng", "Wang-Feng Zhang", "WSC"],
+     "year": "2018",
+     "month": "September",
+     "date": "23--26",
+     "role": "first",
+     "category": "Poster presentation",
+     "symposium": "ComBio2018",
+     "short_symposium": "ComBio2018",
+     "city": "Sydney/Australia",
+     "venue": "International Convention Centre Sydney",
+     "project": ["Light Use in Horticulture", "Modeling Temporal Canopy Photosynthesis"]
+   },
+
+ "intl4": {
+    "title": "Spectral imaging for evaluation of spatial distributions of leaf photosynthetic Light Use efficiency",
+    "author": ["speaker(KM)", "YI"],
+    "year": "2018",
+    "month": "August",
+    "date": "12--16",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "XXX. International Horticultural Congress",
+    "short_symposium": "IHC2018",
+    "city": "Istanbul/Turkey",
+    "venue": "Istanbul Congress Center",
+    "project": ["Imaging Photosynthesis", "Modeling Temporal Canopy Photosynthesis"]
+  },
+
+ "intl3": {
+    "title": "Non-destructive estimation of light energy distribution between photosystems",
+    "author": "speaker(KM), RM, KF",
+    "year": "2016",
+    "month": "September",
+    "date": "18--23",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "ICEC/AusPheno 2016",
+    "short_symposium": "AusPheno",
+    "city": "Canberra/Australia",
+    "venue": "CISRO",
+    "project": "Photosynthetic Response to Light Spectrum"
+  },
+
+ "intl2": {
+    "title": "A difference in net photosynthetic rate between leaves grown with and without far-red light depends on the spectral distribution of measuring light",
+    "author": "speaker(KM), RM, KF",
+    "year": "2015",
+    "month": "July",
+    "date": "19--23",
+    "role": "first",
+    "category": "Poster presentation",
+    "symposium": "--",
+    "short_symposium": "GreenSys 2015",
+    "city": "Évora/Portugal",
+    "venue": "Universitat de Évora",
+    "project": ["Photosynthetic Response to Light Spectrum", "Statistics in Plant Science"]
+  },
+
+ "intl1": {
+    "title": "Effect of supplemental lighting to a lower leaf using LEDs with different wavelengths on leaf photosynthetic characteristics in sweet pepper",
+    "author": "speaker(KM), RM, KF",
+    "year": "2012",
+    "month": "October",
+    "date": "15--18",
+    "role": "first",
+    "category": "Poster presentation",
+    "symposium": "7th International Symposium on Light in Horticultural Systems",
+    "short_symposium": "LightSym 2012",
+    "city": "Wageningen/The Netherlands",
+    "venue": "Wageningen Unversity",
+    "project": ["Light Use in Horticulture", "Photosynthetic Response to Light Spectrum"]
+  },
+
+
+
+
+ "domest15": {
+    "title": "深層学習を用いた葉面積推定に関する研究",
+    "author": "speaker(YI), 水畑 順太, KM",
+    "year": "2018",
+    "month": "March",
+    "date": "13--17",
+    "role": "co_authored",
+    "category": "Oral presentation",
+    "symposium": "日本農業気象学会 2018 年全国大会",
+    "short_symposium": "農業気象2018",
+    "city": "福岡",
+    "venue": "九州大学伊都キャンパス",
+    "project": "Others"
+  },
+
+ "domest14": {
+    "title": "分光画像計測による光合成速度分布解析の試み",
+    "author": "speaker(KM), YI",
+    "year": "2018",
+    "month": "March",
+    "date": "13--17",
+    "role": "co_authored",
+    "category": "Oral presentation",
+    "symposium": "日本農業気象学会 2018 年全国大会",
+    "short_symposium": "農業気象2018",
+    "city": "福岡",
+    "venue": "九州大学伊都キャンパス",
+    "project": ["Imaging Photosynthesis", "Modeling Temporal Canopy Photosynthesis"]
+  },
+
+ "domest13": {
+    "title": "分光反射画像計測による葉位別光合成速度推定にむけて: PRIの光応答の評価",
+    "author": "speaker(KM), YI",
+    "year": "2018",
+    "month": "December",
+    "date": "7--8",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "農業気象学会",
+    "short_symposium": "",
+    "city": "鳥取",
+    "venue": "湖山キャンパス/鳥取大学",
+    "project": "Imaging Photosynthesis"
+  },
+
+ "domest12": {
+    "title": "葉面反射画像計測による光合成光利用効率の光環境変化に対する応答の評価の試み",
+    "author": "speaker(KM_), YI_",
+    "year": "2017",
+    "month": "September",
+    "date": "30--4",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "日本生物環境工学会 2017 年松山大会",
+    "short_symposium": "生環工2017",
+    "city": "愛媛",
+    "venue": "樽味キャンパス/愛媛大学",
+    "project": "Imaging Photosynthesis"
+  },
+
+"domest11": {
+    "title": "光化学系I・II間での励起エネルギー分配比の非破壊定量法の開発",
+    "author": "speaker(KM_), RM_, KF_",
+    "year": "2017",
+    "month": "May",
+    "date": "27--28",
+    "role": "first",
+    "category": "Poster presentation",
+    "symposium": "第 8 回日本光合成学会年会",
+    "short_symposium": "光合成学会2017",
+    "city": "滋賀",
+    "venue": "瀬田キャンパス/龍谷大学",
+    "project": "Photosynthetic Response to Light Spectrum"
+  },
+
+ "domest10": {
+    "title": "夜間に照射する LED 光の分光分布および PPFD がトマト苗の成育および可視障害に及ぼす影響",
+    "author": "speaker(RM_), 山埜 拓人, KM_, KF_",
+    "year": "2016",
+    "month": "March",
+    "date": "14--17",
+    "role": "co_authored",
+    "category": "Oral presentation",
+    "symposium": "日本農業気象学会 2016 年全国大会",
+    "short_symposium": "農業気象2016",
+    "city": "岡山",
+    "venue": "津島キャンパス/岡山大学",
+    "project": "Light Use in Horticulture"
+  },
+
+ "domest9": {
+    "title": "サンプルサイズ（<i>n</i>）の検定力分析による決定 ---グロースチャンバでの植物栽培試験での例---",
+    "author": "speaker(KM_), RM_, KF_",
+    "year": "2016",
+    "month": "March",
+    "date": "14--17",
+    "role": "first",
+    "category": "Poster presentation",
+    "symposium": "日本農業気象学会 2016 年全国大会",
+    "short_symposium": "農業気象2016",
+    "city": "岡山",
+    "venue": "津島キャンパス/岡山大学",
+    "project": "Statistics in Plant Science"
+  },
+
+ "domest8": {
+    "title": "栽培中の遠赤色光添加は栽培後の葉の光合成速度を小さくするのか？",
+    "author": "speaker(KM_), RM_, KF_",
+    "year": "2015",
+    "month": "September",
+    "date": "8--11",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "日本生物環境工学会 2015 年宮崎大会",
+    "short_symposium": "生環工2015",
+    "city": "宮崎",
+    "venue": "シーガイア",
+    "project": ["Photosynthetic Response to Light Spectrum", "Statistics in Plant Science"]
+  },
+
+"domest7": {
+    "title": "異なる分光分布の光照射下で成育した葉の光合成速度比較結果は測定光分光分布に影響される",
+    "author": "speaker(KM), RM, KF",
+    "year": "2015",
+    "month": "March",
+    "date": "16--19",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "日本農業気象学会 2015 年全国大会",
+    "short_symposium": "農業気象2015",
+    "city": "茨城",
+    "venue": "文部科学省研究交流センター",
+    "project": ["Photosynthetic Response to Light Spectrum", "Statistics in Plant Science"]
+  },
+
+ "domest6": {
+    "title": "異なる狭波長帯 LED 光の混合照射下における個葉の総光合成速度の推定",
+    "author": "speaker(KM), RM, KF",
+    "year": "2014",
+    "month": "May",
+    "date": "30--31",
+    "role": "first",
+    "category": "Poster presentation",
+    "symposium": "第 5 回日本光合成学会年会",
+    "short_symposium": "光合成学会2014",
+    "city": "奈良",
+    "venue": "奈良キャンパス/近畿大学",
+    "project": "Photosynthetic Response to Light Spectrum"
+  },
+
+ "domest5": {
+    "title": "下位葉補光・終夜補光の光質が植物の光合成特性と成育に及ぼす影響",
+    "author": "speaker(RM_), 山埜 拓人, KM_, KF_",
+    "year": "2014",
+    "month": "March",
+    "date": "18--21",
+    "role": "co_authored",
+    "category": "Oral presentation",
+    "symposium": "日本農業気象学会 2014 年全国大会",
+    "short_symposium": "農業気象2014",
+    "city": "北海道",
+    "venue": "/北海道大学",
+    "project": ["Others", "Light Use in Horticulture"]
+  },
+
+ "domest4": {
+    "title": "種々のピーク波長の LED を用いた混合光照射下におけるコスレタス葉の光合成量子収率",
+    "author": "speaker(KM), RM, KF",
+    "year": "2014",
+    "month": "March",
+    "date": "18--21",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "日本農業気象学会 2014 年全国大会",
+    "short_symposium": "農業気象2014",
+    "city": "北海道",
+    "venue": "北海道大学",
+    "project": "Photosynthetic Response to Light Spectrum"
+  },
+
+ "domest3": {
+    "title": "異なるピーク波長の LED を用いた混合光照射下における個葉の光合成量子収率",
+    "author": "speaker(KM), RM, KF",
+    "year": "2013",
+    "month": "September",
+    "date": "2--5",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "日本生物環境工学会 2013 年香川大会",
+    "short_symposium": "生環工2013",
+    "city": "香川",
+    "venue": "/香川大学",
+    "project": "Photosynthetic Response to Light Spectrum"
+  },
+
+ "domest2": {
+    "title": "インゲンマメ下位葉への単色 LED 光照射が上位葉の光合成特性に及ぼす影響",
+    "author": "speaker(KM_), RM_, KF_",
+    "year": "2012",
+    "month": "September",
+    "date": "4-7",
+    "role": "first",
+    "category": "Oral presentation",
+    "symposium": "日本生物環境工学会 2012 年東京大会",
+    "short_symposium": "生環工2012",
+    "city": "東京",
+    "venue": "弥生キャンパス/東京大学",
+    "project": ["Light Use in Horticulture", "Photosynthetic Response to Light Spectrum"]
+  },
+
+ "domest1": {
+    "title": "トマト養液栽培における葉面積指数推定モデルの構築: 気孔コンダクタンスモデルの検討",
+    "author": "speaker(KM_), KM_, KF_",
+    "year": "2012",
+    "month": "March",
+    "date": "13--17",
+    "role": "co_authored",
+    "category": "Poster presentation",
+    "symposium": "日本農業気象学会 2012 年全国大会",
+    "short_symposium": "農業気象2012",
+    "city": "大阪",
+    "venue": "中百舌鳥キャンパス/大阪府立大学",
+    "project": "Others"
+  }
+}
