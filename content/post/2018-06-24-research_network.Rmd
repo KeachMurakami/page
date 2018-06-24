@@ -206,18 +206,10 @@ df_edge <-
   df_network[-seq_len(node_num),] %>%
   janitor::remove_empty("cols")
 
-# plotly hover用
-df_tooltip <-
-  df_edge %>%
-  transmute(vertex.names,
-            link = if_else(is.na(doi), "", paste0('<a href="https://doi.org/', doi, '">LINK</a>')),
-            title,
-            year)
-
 # hoverの要不要に応じてprojectとそれ以外を分ける
 # 空行でもNAが表示されて鬱陶しいので
-df_node %>%
-  left_join(., df_tooltip, by = "vertex.names") %>%
+transmute(df_edge, vertex.names, year) %>%
+  left_join(df_node, ., by = "vertex.names") %>%
   {
     df_node_projects <<-
       dplyr::filter(., group == "project")

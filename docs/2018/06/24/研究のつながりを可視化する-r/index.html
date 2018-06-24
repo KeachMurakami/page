@@ -79,7 +79,7 @@ ga('send', 'pageview');
 
   <article class="article">
     
-    <span class="article-duration">6 min read</span>
+    <span class="article-duration">5 min read</span>
     
 
     <h1 class="article-title">研究のつながりを可視化する (R</h1>
@@ -523,18 +523,10 @@ df_edge &lt;-
   df_network[-seq_len(node_num),] %&gt;%
   janitor::remove_empty(&quot;cols&quot;)
 
-# plotly hover用
-df_tooltip &lt;-
-  df_edge %&gt;%
-  transmute(vertex.names,
-            link = if_else(is.na(doi), &quot;&quot;, paste0(&#39;&lt;a href=&quot;https://doi.org/&#39;, doi, &#39;&quot;&gt;LINK&lt;/a&gt;&#39;)),
-            title,
-            year)
-
 # hoverの要不要に応じてprojectとそれ以外を分ける
 # 空行でもNAが表示されて鬱陶しいので
-df_node %&gt;%
-  left_join(., df_tooltip, by = &quot;vertex.names&quot;) %&gt;%
+transmute(df_edge, vertex.names, year) %&gt;%
+  left_join(df_node, ., by = &quot;vertex.names&quot;) %&gt;%
   {
     df_node_projects &lt;&lt;-
       dplyr::filter(., group == &quot;project&quot;)
