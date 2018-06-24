@@ -59,7 +59,7 @@ bib_data <-
   dir("~/Dropbox/r_packages/fudukue/bibtex/list_bib/", pattern = "^mywork", full.names = T) %>%
   map_df(bib2df)
 
-bib_data[1:4, 1:5] %>%
+bib_data[1:4, 1:4] %>%
   knitr::kable()
 ```
 
@@ -80,7 +80,7 @@ tidy_bib_data <-
   tidyr::separate_rows(project, sep = ", ")
 
 
-tidy_bib_data[1:4, 1:5] %>%
+tidy_bib_data[1:4, 1:4] %>%
   knitr::kable()
 ```
 
@@ -177,7 +177,13 @@ df_network <-
   mutate(group = str_extract(vertex.names, "[a-z]*"),
          group = if_else(group %in% c("article", "conference", "book"), group, "project")) # あとでカテゴリ別に色分けしたいので
 
-knitr::kable(df_network)
+# node部分
+head(df_network, 3) %>%
+  knitr::kable()
+
+# edge部分
+head(df_network, 3) %>%
+  knitr::kable()
 ```
 
 このままだと取り回しが悪いので、node部分とedge部分を分離して扱う。
