@@ -39,6 +39,15 @@
     </item>
     
     <item>
+      <title>VARでPKが増えた？ (Stan</title>
+      <link>https://keachmurakami.github.io/2018/06/07/var%E3%81%A7pk%E3%81%8C%E5%A2%97%E3%81%88%E3%81%9F-stan/</link>
+      <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/06/07/var%E3%81%A7pk%E3%81%8C%E5%A2%97%E3%81%88%E3%81%9F-stan/</guid>
+      <description>VARでPKが増えたような気がする。 Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる得点数) を調べる。 PK発生</description>
+    </item>
+    
+    <item>
       <title>TensorFlow系のHMCパッケージ{greta}に触れる</title>
       <link>https://keachmurakami.github.io/2018/06/02/tensorflow%E7%B3%BB%E3%81%AEhmc%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8greta%E3%81%AB%E8%A7%A6%E3%82%8C%E3%82%8B/</link>
       <pubDate>Sat, 02 Jun 2018 00:00:00 +0000</pubDate>

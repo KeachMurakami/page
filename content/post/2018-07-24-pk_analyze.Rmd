@@ -1,0 +1,290 @@
+---
+title: "VARでPKが増えた？ (Stan"
+date: 2018-06-07
+---
+
+VARでPKが増えたような気がする。
+
+Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる得点数) を調べる。
+PK発生率のscraping結果を、Stan+状態空間モデルで解析して、VARはPKを増やしたのか？に答える。
+
+## Web Scraping
+
+`rvest`を使う。
+GitHubを漁って[過去のデータ](https://github.com/openfootball/world-cup)を見つける。
+
+```{r}
+suppressMessages(library(tidyverse))
+suppressMessages(library(rvest))
+
+html_openfootball <-
+  xml2::read_html("https://github.com/openfootball/world-cup")
+
+dirs_openfootball <-
+  html_openfootball %>%
+  rvest::html_nodes("a.js-navigation-open") %>%
+  rvest::html_text()
+  
+
+df_competitions <-
+  dirs_openfootball %>%
+  stringr::str_subset("^[0-9]") %>%
+  tibble(year_country = .) %>%
+  dplyr::transmute(year = readr::parse_number(year_country),
+                   country = stringr::str_extract(year_country, "([a-z, -]*)$") %>%
+                             stringr::str_replace("--", ""))
+
+knitr::kable(df_competitions)
+```
+
+ここまでやって、フォーマットが揃っていないことに気づき、ソースをwikipediaに切り替える。
+ページ内の`(pen.)`という文字列をカウントするだけの簡単なコード。
+
+```{r}
+count_pk <-
+  function(year){
+    stringr::str_glue("https://en.wikipedia.org/wiki/{year}_FIFA_World_Cup") %>%
+      xml2::read_html() %>%
+      stringr::str_count("(pen\\.)")
+  }
+
+stat_wc <-
+  df_competitions %>%
+  dplyr::mutate(pk = purrr::map_int(year, count_pk))
+
+stat_wc %>%
+  ggplot(aes(year, pk)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Year", y = "PK")
+```
+
+2022年は未開催だからいいとして、1970年にPKが0回なのはおかしい。
+wikipediaの形式が揃っていなかった (70年大会だけ各グループ＋決勝トーナメント) ので、個別に対応する。
+
+```{r}
+count_pk_1970 <-
+  function(key){
+    stringr::str_glue("https://en.wikipedia.org/wiki/1970_FIFA_World_Cup_{key}") %>%
+      xml2::read_html() %>%
+      stringr::str_count("(pen\\.)")
+  }
+
+num_pk_1970 <-
+  map_int(c(paste0("Group_", 1:4), "knockout_stage"), count_pk_1970) %>%
+  sum
+
+stat_wc[stat_wc$year==1970, "pk"] <- num_pk_1970
+
+# ついでに2022を除去
+stat_wc %<>% dplyr::filter(year != 2022)
+
+stat_wc %>%
+  ggplot(aes(year, pk)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Year", y = "PK")
+```
+
+大会ごとに試合回数が異なるので、補正する。
+2018年大会は今日 (20180624) までに29試合消化している。
+
+```{r}
+num_match <-
+  c(18, 17, 18, 22, 26, 35, rep(32, 3), rep(38, 2), rep(52, 4), rep(64, 5), 29)
+
+stat_wc %<>%
+  dplyr::mutate(match = num_match,
+                pk_per_match = pk / match)
+
+stat_wc %>%
+  ggplot(aes(x = year, y = pk_per_match)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Year", y = "PK / Match")
+```
+
+やっぱり、今回大会は過去最高のPK乱発になっているらしい。
+
+## Stan + 状態空間モデル
+
+簡単に状態空間モデルで解析する。
+VARがなかった場合の2018年のPK発生率を推定し、実際の値と比較する。
+比率変換したカウントデータに正規分布というNGな解析だけども、とりあえず。
+
+- 「PKの発生しやすさ」という状態パラメータ$\mu$が存在する
+- $\mu_i$は、前年の値$\mu_{i-1}$に過程誤差$\sigma_{sys}$を加えた値となる (i.e. ランダムウォーク)
+- 実際に試合で観測されるのは、その年の$\mu$に観測誤差$\sigma_{obs}$を加えた値となる
+
+Stanへの入力データを準備。
+
+```{r}
+df_input <-
+  stat_wc %>%
+  dplyr::filter(year != 2018) %>% # VARの効果を見るべく、2018年のデータを隠す
+  dplyr::left_join(tibble(year = 1930:2018), ., by = "year") %>%
+  dplyr::mutate(pk_per_match = if_else(is.na(pk_per_match), 999, pk_per_match))
+
+head(df_input, 10) %>%
+  knitr::kable()
+```
+
+StanはNAに対応していない。
+なので、[このページ](http://kosugitti.net/archives/5786)を参考に、欠測値にはNAではなく適当な数字 (999)をいれ、if文でさばくようなmodelブロックを書く。
+
+stanコードを書いて、キックする。
+
+```{r}
+suppressMessages(library(rstan))
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+stan_code <-
+  "
+  data {
+    int n;
+    vector[n] pk;
+  }
+  parameters {
+    real mu0;
+    vector[n] mu;
+    real<lower=0> sigma_sys;
+    real<lower=0> sigma_obs;
+  }
+  model {
+    mu[1] ~ normal(mu0, sqrt(sigma_sys));  
+ 
+    for(i in 2:n) {
+      mu[i] ~ normal(mu[i-1], sqrt(sigma_sys));
+    }
+ 
+    for(i in 1:n) {
+      if(pk[i] != 999){
+        pk[i] ~ normal(mu[i], sqrt(sigma_obs));
+      } else {
+        target += 0;
+      }
+    }
+  sigma_sys ~ cauchy(0, 10);
+  sigma_obs ~ cauchy(0, 10);
+  }
+"
+
+set.seed(2018)
+ 
+fit <- stan(
+  model_code = stan_code,
+  data=list(n = nrow(df_input), pk = df_input$pk_per_match),
+  iter = 10000, thin = 5)
+
+# 収束診断
+# suppressMessages(library(bayesplot))
+# theme_set(theme_grey())
+#
+# summary(fit)$summary %>%
+#   data.frame %>%
+#   rownames_to_column %>%
+#   slice(c(1:5, 89:93))
+# 
+# pars_shown <- c("sigma_sys", "sigma_obs", "mu[89]")
+#   
+# as.array(fit) %>%
+#   {
+#   print(mcmc_trace(., pars = pars_shown) + guides(col = F))
+#   print(mcmc_dens_overlay(., pars = pars_shown) + guides(col = F))
+#   }
+```
+
+収束は問題なし。
+推定された真の状態である、1試合あたりPK発生数 ($\mu$) の中央値と50%・95%ベイズ信頼区間を示す。
+
+```{r}
+mcmc_sample <- rstan::extract(fit)
+
+quantile_mcmc <- 
+  function(mcmc_sample, probs = c(.025, .25, .50, .75, .975), ...){
+    apply(mcmc_sample, 2, quantile, probs = probs) %>%
+      t %>%
+      as_tibble %>%
+      set_names(paste0("qt", seq_along(probs)))
+  }
+
+quantiles <-
+  mcmc_sample[c("mu")] %>%
+  map_df(~ quantile_mcmc(.) %>% mutate(year = 1930 + 0:88))
+
+stat_wc %>%
+  dplyr::filter(year != 2018) %>%
+  ggplot(aes(x = year, y = pk_per_match)) +
+  geom_ribbon(data = quantiles, aes(y = 0, ymin = qt1, ymax = qt5), alpha = .25) +
+  geom_ribbon(data = quantiles, aes(y = 0, ymin = qt2, ymax = qt4), alpha = .75) +
+  geom_line(data = quantiles, aes(y = qt3), col = "white") +
+  geom_point(col = "magenta") +
+  geom_line(col = "magenta", linetype = 2) +
+  geom_point(data = dplyr::filter(stat_wc, year == 2018), col = "red") +
+  labs(x = "Year", y = "PK/Match")
+
+mcmc_sample_2018 <-
+  mcmc_sample[["mu"]][,89]
+
+dnorm(stat_wc$pk_per_match[21], mean(mcmc_sample_2018), sd(mcmc_sample_2018))
+```
+
+### PKの発生しやすさのトレンド
+
+PKの発生しやすさの‘状態’は、1960年前後にピークを迎えたのちは低下傾向にある。
+「昔の選手は倒れなかった」は正しいかもしれないが、「近頃のサッカーはすぐ転んでPKだ」というイメージは誤りだと思われる。
+守備重視のセリエA全盛期の2000年前後はとくにジャッジが厳しかったのかもしれない。
+
+### VARはPKを増やしている
+
+このモデルが正しいという前提のもとでは、「もしVARがなければ、2018年のPK発生率が0.25が以下となる確率はおよそ95%」と予想された。
+実際には、2018年大会では、いまのところ1試合平均0.4回弱のPK得点がある (赤プロット)。
+現在のPK発生率はランダムウォークモデルでは、0.22%ほどの確率でしか生起しない事象らしい。
+そこそこ強く「VARはPKを増やす」といってもいいのではないだろうか。
+今後のデータがあれば、VARによるPK発生率の上昇量もわかりそう。
+
+### 可視化
+
+ついでにPK発生率を世界地図にマッピング。
+暑いとダーティになる、みたいなトレンドはなさそう。
+
+```{r}
+map_world <- ggplot2::map_data('world')
+
+stat_map <-
+  stat_wc %>%
+  dplyr::mutate(country = if_else(country == "west-germany", "Germany", country),
+                country = if_else(country == "united-states", "USA", country),
+                country = if_else(country == "south-korea-n-japan", "South Korea:Japan", country),
+                country = if_else(country == "south-africa", "South Africa", country),
+                country = tools::toTitleCase(country)) %>%
+  tidyr::separate_rows(country, sep = ":") %>%
+  dplyr::left_join(map_world, ., by = c("region" = "country"))
+
+ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(fill = pk_per_match)) + 
+  scale_fill_gradient(low = "cyan", high = "magenta", name = "PK/Match") +
+  theme(axis.title = element_blank(),
+        legend.position = c(1, 0),
+        legend.justification = c(1, 0))
+```
+
+## サッカーの話
+
+VARはダイブ抑制に効果的だから推進してほしい。
+ただ、なんだかんだDFはボディコンタクトが常にあるわけで、VARでじっくり見たら多くの場合ファウルになってしまうのではないかな、と思う。
+テニスのチャレンジのように、回数制限するなどの工夫があるともっとよさそう。
+
+頑張れ日本。
+
+## 参考
+
+[openfootball/world-cup](https://github.com/openfootball/world-cup)  
+[Stanで体重の推移をみつめてみた(状態空間モデル)](http://kosugitti.net/archives/5786)  
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```
