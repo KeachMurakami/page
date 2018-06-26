@@ -1,18 +1,18 @@
 ---
 title: "VARでPKが増えた？ (Stan"
 date: 2018-06-24
+categories: ["Stan"]
 ---
 
 
 
-<pre class="r"><code>suppressMessages(library(tidyverse))
-knitr::opts_chunk$set(echo = T, warning = F, message = F, results = &quot;hold&quot;)</code></pre>
 <p>VARでPKが増えたような気がする。</p>
 <p>Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる得点数) を調べる。 PK発生率のscraping結果を、Stan+状態空間モデルで解析して、VARはPKを増やしたのか？に答える。</p>
 <div id="web-scraping" class="section level2">
 <h2>Web Scraping</h2>
 <p><code>rvest</code>を使う。 GitHubを漁って<a href="https://github.com/openfootball/world-cup">過去のデータ</a>を見つける。</p>
-<pre class="r"><code>suppressMessages(library(rvest))
+<pre class="r"><code>suppressMessages(library(tidyverse))
+suppressMessages(library(rvest))
 
 html_openfootball &lt;-
   xml2::read_html(&quot;https://github.com/openfootball/world-cup&quot;)
@@ -140,9 +140,73 @@ knitr::kable(df_competitions)</code></pre>
 
 stat_wc &lt;-
   df_competitions %&gt;%
-  dplyr::mutate(pk = purrr::map_int(year, count_pk))
+  dplyr::mutate(pk = purrr::map_int(year, count_pk))</code></pre>
+<pre><code>## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
 
-stat_wc %&gt;%
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing</code></pre>
+<pre class="r"><code>stat_wc %&gt;%
   ggplot(aes(year, pk)) +
   geom_line() +
   geom_point() +
@@ -158,9 +222,22 @@ stat_wc %&gt;%
 
 num_pk_1970 &lt;-
   map_int(c(paste0(&quot;Group_&quot;, 1:4), &quot;knockout_stage&quot;), count_pk_1970) %&gt;%
-  sum
+  sum</code></pre>
+<pre><code>## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
 
-stat_wc[stat_wc$year==1970, &quot;pk&quot;] &lt;- num_pk_1970
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing
+
+## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
+## argument is not an atomic vector; coercing</code></pre>
+<pre class="r"><code>stat_wc[stat_wc$year==1970, &quot;pk&quot;] &lt;- num_pk_1970
 
 # ついでに2022を除去
 stat_wc %&lt;&gt;% dplyr::filter(year != 2022)
@@ -290,8 +367,6 @@ head(df_input, 10) %&gt;%
 <p>StanはNAに対応していない。 なので、<a href="http://kosugitti.net/archives/5786">このページ</a>を参考に、欠測値にはNAではなく適当な数字 (999)をいれ、if文でさばくようなmodelブロックを書く。</p>
 <p>stanコードを書いて、キックする。</p>
 <pre class="r"><code>suppressMessages(library(rstan))
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
 
 stan_code &lt;-
   &quot;
@@ -326,271 +401,34 @@ stan_code &lt;-
 
 set.seed(2018)
  
-fit &lt;- stan(
+stan_result &lt;- stan(
   model_code = stan_code,
   data=list(n = nrow(df_input), pk = df_input$pk_per_match),
   iter = 10000, thin = 5)
+
+write_rds(stan_result, path = &quot;~/Dropbox/page/data/pk_analyze/stan.rdata&quot;)
 
 # 収束診断
 # suppressMessages(library(bayesplot))
 # theme_set(theme_grey())
 #
-# summary(fit)$summary %&gt;%
+# summary(stan_result)$summary %&gt;%
 #   data.frame %&gt;%
 #   rownames_to_column %&gt;%
 #   slice(c(1:5, 89:93))
 # 
 # pars_shown &lt;- c(&quot;sigma_sys&quot;, &quot;sigma_obs&quot;, &quot;mu[89]&quot;)
 #   
-# as.array(fit) %&gt;%
+# as.array(stan_result) %&gt;%
 #   {
 #   print(mcmc_trace(., pars = pars_shown) + guides(col = F))
 #   print(mcmc_dens_overlay(., pars = pars_shown) + guides(col = F))
 #   }</code></pre>
-<pre><code>## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:12:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/var.hpp:7:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/math/tools/config.hpp:13:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/config.hpp:39:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/config/compiler/clang.hpp:200:11: warning: &#39;BOOST_NO_CXX11_RVALUE_REFERENCES&#39; macro redefined [-Wmacro-redefined]
-## #  define BOOST_NO_CXX11_RVALUE_REFERENCES
-##           ^
-## &lt;command line&gt;:6:9: note: previous definition is here
-## #define BOOST_NO_CXX11_RVALUE_REFERENCES 1
-##         ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:14:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Dense:1:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Core:531:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:14:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Dense:2:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/LU:47:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:14:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Dense:3:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Cholesky:12:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Jacobi:29:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:14:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Dense:3:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Cholesky:43:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:14:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Dense:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/QR:17:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Householder:27:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:14:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Dense:5:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/SVD:48:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:14:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Dense:6:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Geometry:58:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:14:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Dense:7:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Eigenvalues:58:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:36:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/operator_unary_plus.hpp:7:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/scal/fun/constants.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/math/constants/constants.hpp:13:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/math/tools/convert_from_string.hpp:15:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/lexical_cast.hpp:32:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/lexical_cast/try_lexical_convert.hpp:42:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/lexical_cast/detail/converter_lexical.hpp:52:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/container/container_fwd.hpp:61:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/container/detail/std_fwd.hpp:27:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]
-## BOOST_MOVE_STD_NS_BEG
-## ^
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;
-##    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_BEGIN_NAMESPACE_STD
-##                                  ^
-## /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:390:52: note: expanded from macro &#39;_LIBCPP_BEGIN_NAMESPACE_STD&#39;
-## #define _LIBCPP_BEGIN_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {
-##                                                    ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat.hpp:83:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Sparse:26:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/SparseCore:66:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat.hpp:83:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Sparse:27:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/OrderingMethods:71:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat.hpp:83:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Sparse:29:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/SparseCholesky:43:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat.hpp:83:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Sparse:32:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/SparseQR:35:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat.hpp:83:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/Sparse:33:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/IterativeLinearSolvers:46:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]
-##     #pragma clang diagnostic pop
-##                              ^
-## In file included from file69685d7869f6.cpp:462:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/rstan/include/rstan/rstaninc.hpp:3:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/rstan/include/rstan/stan_fit.hpp:36:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/services/optimize/bfgs.hpp:11:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/optimization/bfgs.hpp:9:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/optimization/lbfgs_update.hpp:6:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/circular_buffer.hpp:54:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/circular_buffer/details.hpp:20:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/move/move.hpp:30:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/move/iterator.hpp:27:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/move/detail/iterator_traits.hpp:29:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]
-## BOOST_MOVE_STD_NS_BEG
-## ^
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;
-##    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_BEGIN_NAMESPACE_STD
-##                                  ^
-## /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:390:52: note: expanded from macro &#39;_LIBCPP_BEGIN_NAMESPACE_STD&#39;
-## #define _LIBCPP_BEGIN_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {
-##                                                    ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:44:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: unused function &#39;set_zero_all_adjoints&#39; [-Wunused-function]
-##     static void set_zero_all_adjoints() {
-##                 ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core.hpp:45:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints_nested.hpp:17:17: warning: &#39;static&#39; function &#39;set_zero_all_adjoints_nested&#39; declared in header file should be declared &#39;static inline&#39; [-Wunneeded-internal-declaration]
-##     static void set_zero_all_adjoints_nested() {
-##                 ^
-## In file included from file69685d7869f6.cpp:8:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math.hpp:4:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/rev/mat.hpp:12:
-## In file included from /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat.hpp:58:
-## /Library/Frameworks/R.framework/Versions/3.5/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/autocorrelation.hpp:17:14: warning: function &#39;fft_next_good_size&#39; is not needed and will not be emitted [-Wunneeded-internal-declaration]
-##       size_t fft_next_good_size(size_t N) {
-##              ^
-## 19 warnings generated.</code></pre>
 <p>収束は問題なし。 推定された真の状態である、1試合あたりPK発生数 (<span class="math inline">\(\mu\)</span>) の中央値と50%・95%ベイズ信頼区間を示す。</p>
-<pre class="r"><code>mcmc_sample &lt;- rstan::extract(fit)
+<pre class="r"><code>suppressMessages(library(rstan))
+
+stan_result &lt;- read_rds(&quot;../../data/pk_analyze/stan.rdata&quot;)
+mcmc_sample &lt;- rstan::extract(stan_result)
 
 quantile_mcmc &lt;- 
   function(mcmc_sample, probs = c(.025, .25, .50, .75, .975), ...){
@@ -614,12 +452,15 @@ stat_wc %&gt;%
   geom_line(col = &quot;magenta&quot;, linetype = 2) +
   geom_point(data = dplyr::filter(stat_wc, year == 2018), col = &quot;red&quot;) +
   labs(x = &quot;Year&quot;, y = &quot;PK/Match&quot;)</code></pre>
+<pre><code>## Warning: Ignoring unknown aesthetics: y
+
+## Warning: Ignoring unknown aesthetics: y</code></pre>
 <p><img src="/post/2018-06-24-pk_analyze_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>mcmc_sample_2018 &lt;-
   mcmc_sample[[&quot;mu&quot;]][,89]
 
 dnorm(stat_wc$pk_per_match[21], mean(mcmc_sample_2018), sd(mcmc_sample_2018))</code></pre>
-<pre><code>## [1] 0.00220784</code></pre>
+<pre><code>## [1] 7.714993e-08</code></pre>
 <div id="pk" class="section level3">
 <h3>PKの発生しやすさのトレンド</h3>
 <p>PKの発生しやすさの‘状態’は、1960年前後にピークを迎えたのちは低下傾向にある。 「昔の選手は倒れなかった」は正しいかもしれないが、「近頃のサッカーはすぐ転んでPKだ」というイメージは誤りだと思われる。 守備重視のセリエA全盛期の2000年前後はとくにジャッジが厳しかったのかもしれない。</p>
@@ -631,9 +472,13 @@ dnorm(stat_wc$pk_per_match[21], mean(mcmc_sample_2018), sd(mcmc_sample_2018))</c
 <div class="section level3">
 <h3>可視化</h3>
 <p>ついでにPK発生率を世界地図にマッピング。 暑いとダーティになる、みたいなトレンドはなさそう。</p>
-<pre class="r"><code>map_world &lt;- ggplot2::map_data(&#39;world&#39;)
-
-stat_map &lt;-
+<pre class="r"><code>map_world &lt;- ggplot2::map_data(&#39;world&#39;)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;maps&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     map</code></pre>
+<pre class="r"><code>stat_map &lt;-
   stat_wc %&gt;%
   dplyr::mutate(country = if_else(country == &quot;west-germany&quot;, &quot;Germany&quot;, country),
                 country = if_else(country == &quot;united-states&quot;, &quot;USA&quot;, country),
@@ -665,6 +510,7 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 <div id="session-info" class="section level2">
 <h2>Session Info</h2>
 <pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>## Session info -------------------------------------------------------------</code></pre>
 <pre><code>##  setting  value                       
 ##  version  R version 3.5.0 (2018-04-23)
 ##  system   x86_64, darwin15.6.0        
@@ -672,9 +518,9 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 ##  language (EN)                        
 ##  collate  en_US.UTF-8                 
 ##  tz       Australia/Brisbane          
-##  date     2018-06-24                  
-## 
-##  package     * version    date       source                            
+##  date     2018-06-26</code></pre>
+<pre><code>## Packages -----------------------------------------------------------------</code></pre>
+<pre><code>##  package     * version    date       source                            
 ##  assertthat    0.2.0      2017-04-11 CRAN (R 3.5.0)                    
 ##  backports     1.1.2      2017-12-13 CRAN (R 3.5.0)                    
 ##  base        * 3.5.0      2018-04-24 local                             
@@ -685,7 +531,6 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 ##  broom         0.4.4.9000 2018-06-21 Github (tidyverse/broom@2721de4)  
 ##  cellranger    1.1.0      2016-07-27 CRAN (R 3.5.0)                    
 ##  cli           1.0.0      2017-11-05 CRAN (R 3.5.0)                    
-##  codetools     0.2-15     2016-10-05 CRAN (R 3.5.0)                    
 ##  colorspace    1.3-2      2016-12-14 CRAN (R 3.5.0)                    
 ##  compiler      3.5.0      2018-04-24 local                             
 ##  crayon        1.3.4      2017-09-16 CRAN (R 3.5.0)                    
@@ -696,7 +541,7 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 ##  dplyr       * 0.7.5      2018-05-19 cran (@0.7.5)                     
 ##  evaluate      0.10.1     2017-06-24 CRAN (R 3.5.0)                    
 ##  forcats     * 0.3.0      2018-02-19 CRAN (R 3.5.0)                    
-##  ggplot2     * 2.2.1.9000 2018-06-21 Github (tidyverse/ggplot2@1c09bae)
+##  ggplot2     * 2.2.1.9000 2018-06-25 Github (tidyverse/ggplot2@1c09bae)
 ##  glue          1.2.0      2017-10-29 CRAN (R 3.5.0)                    
 ##  graphics    * 3.5.0      2018-04-24 local                             
 ##  grDevices   * 3.5.0      2018-04-24 local                             
@@ -722,7 +567,6 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 ##  modelr        0.1.2      2018-05-11 cran (@0.1.2)                     
 ##  munsell       0.4.3      2016-02-13 CRAN (R 3.5.0)                    
 ##  nlme          3.1-137    2018-04-07 CRAN (R 3.5.0)                    
-##  parallel      3.5.0      2018-04-24 local                             
 ##  pillar        1.2.3      2018-05-25 cran (@1.2.3)                     
 ##  pkgconfig     2.0.1      2017-03-21 CRAN (R 3.5.0)                    
 ##  plyr          1.8.4      2016-06-08 CRAN (R 3.5.0)                    
@@ -733,7 +577,7 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 ##  readxl        1.1.0      2018-04-20 CRAN (R 3.5.0)                    
 ##  reshape2      1.4.3      2017-12-11 CRAN (R 3.5.0)                    
 ##  rlang         0.2.1      2018-05-30 cran (@0.2.1)                     
-##  rmarkdown     1.9        2018-03-01 CRAN (R 3.5.0)                    
+##  rmarkdown     1.10       2018-06-11 cran (@1.10)                      
 ##  rprojroot     1.3-2      2018-01-03 CRAN (R 3.5.0)                    
 ##  rstan       * 2.17.3     2018-01-20 CRAN (R 3.5.0)                    
 ##  rstudioapi    0.7        2017-09-07 CRAN (R 3.5.0)                    
@@ -754,5 +598,5 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 ##  withr         2.1.2      2018-03-15 CRAN (R 3.5.0)                    
 ##  xfun          0.1        2018-01-22 CRAN (R 3.5.0)                    
 ##  xml2        * 1.2.0      2018-01-24 CRAN (R 3.5.0)                    
-##  yaml          2.1.18     2018-03-08 CRAN (R 3.5.0)</code></pre>
+##  yaml          2.1.19     2018-05-01 cran (@2.1.19)</code></pre>
 </div>

@@ -79,7 +79,7 @@ ga('send', 'pageview');
 
   <article class="article">
     
-    <span class="article-duration">5 min read</span>
+    <span class="article-duration">6 min read</span>
     
 
     <h1 class="article-title">研究のつながりを可視化する (R</h1>
@@ -122,8 +122,8 @@ ga('send', 'pageview');
   project={Light Use in Horticulture, Modeling Temporal Canopy Photosynthesis}
 }</code></pre>
 <p><code>bib2df</code>パッケージを使って読み込み。</p>
-<pre class="r"><code>library(tidyverse)
-library(bib2df)
+<pre class="r"><code>suppressMessages(library(tidyverse))
+suppressMessages(library(bib2df))
 
 bib_data &lt;-
   dir(&quot;~/Dropbox/r_packages/fudukue/bibtex/list_bib/&quot;, pattern = &quot;^mywork&quot;, full.names = T) %&gt;%
@@ -168,7 +168,7 @@ bib_data[1:4, 1:4] %&gt;%
 </tbody>
 </table>
 <p>データクレンジング。</p>
-<pre class="r"><code>library(janitor)
+<pre class="r"><code>suppressMessages(library(janitor))
 
 tidy_bib_data &lt;-
   bib_data %&gt;%
@@ -224,28 +224,9 @@ tidy_bib_data[1:4, 1:4] %&gt;%
 <div class="section level2">
 <h2>ネットワーク作成</h2>
 <p><code>igraph::graph_from_data_frame</code>は1列目と2列目を繋ぐので、列順が重要。 毎回ネットワークの形状が変わるので、一応<code>set.seed</code>しておく。</p>
-<pre class="r"><code>library(igraph)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;igraph&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     decompose, spectrum</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     as_data_frame, groups, union</code></pre>
-<pre><code>## The following objects are masked from &#39;package:purrr&#39;:
-## 
-##     compose, simplify</code></pre>
-<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
-## 
-##     crossing</code></pre>
-<pre><code>## The following object is masked from &#39;package:tibble&#39;:
-## 
-##     as_data_frame</code></pre>
-<pre><code>## The following object is masked from &#39;package:base&#39;:
-## 
-##     union</code></pre>
-<pre class="r"><code>set.seed(123)
+<pre class="r"><code>suppressMessages(library(igraph))
+
+set.seed(123)
 
 igraph_obj &lt;-
   igraph::graph_from_data_frame(d = tidy_bib_data, directed = F)
@@ -255,7 +236,7 @@ plot(igraph_obj)</code></pre>
 <pre class="r"><code>class(igraph_obj)</code></pre>
 <pre><code>## [1] &quot;igraph&quot;</code></pre>
 <p>見栄えをよくするべく、<code>ggnetwork</code>パッケージで<code>igprah</code>オブジェクトを<code>ggplot</code>用に整える。 <code>ggnetwork</code>は<a href="https://cran.r-project.org/web/packages/ggnetwork/vignettes/ggnetwork.html">このページ</a>がわかりやすかった。</p>
-<pre class="r"><code>library(ggnetwork)
+<pre class="r"><code>suppressMessages(library(ggnetwork))
 
 df_network &lt;-
   igraph_obj %&gt;%
@@ -430,7 +411,7 @@ head(df_network, 3) %&gt;%
 </tbody>
 </table>
 <pre class="r"><code># edge部分
-head(df_network, 3) %&gt;%
+tail(df_network, 3) %&gt;%
   knitr::kable()</code></pre>
 <table>
 <thead>
@@ -454,55 +435,55 @@ head(df_network, 3) %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">0.3564629</td>
-<td align="right">0.7606544</td>
+<td align="right">0.8445277</td>
+<td align="right">0.2662823</td>
 <td align="left">FALSE</td>
-<td align="left">book/chapter_001</td>
-<td align="right">0.3564629</td>
-<td align="right">0.7606544</td>
+<td align="left">conference_010</td>
+<td align="right">0.6359569</td>
+<td align="right">0.2937061</td>
+<td align="left">conference</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">NA</td>
-<td align="left">book</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2015</td>
+<td align="left">異なる分光分布の光照射下で成育した葉の光合成速度比較結果は測定光分光分布に影響される</td>
+<td align="left">Oral presentation</td>
+<td align="left">文部科学省研究交流センター</td>
+<td align="right">2015</td>
+<td align="left">conference</td>
 </tr>
 <tr class="even">
-<td align="right">0.5682415</td>
-<td align="right">1.0000000</td>
+<td align="right">0.8445277</td>
+<td align="right">0.2662823</td>
 <td align="left">FALSE</td>
-<td align="left">book/chapter_002</td>
-<td align="right">0.5682415</td>
-<td align="right">1.0000000</td>
+<td align="left">conference_010</td>
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">conference</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">NA</td>
-<td align="left">book</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2015</td>
+<td align="left">異なる分光分布の光照射下で成育した葉の光合成速度比較結果は測定光分光分布に影響される</td>
+<td align="left">Oral presentation</td>
+<td align="left">文部科学省研究交流センター</td>
+<td align="right">2015</td>
+<td align="left">conference</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1973102</td>
-<td align="right">0.6080856</td>
+<td align="right">1.0000000</td>
+<td align="right">0.4993646</td>
 <td align="left">FALSE</td>
-<td align="left">article_003</td>
-<td align="right">0.1973102</td>
-<td align="right">0.6080856</td>
+<td align="left">conference_012</td>
+<td align="right">0.9314290</td>
+<td align="right">0.3610911</td>
+<td align="left">conference</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">NA</td>
-<td align="left">article</td>
+<td align="left">FALSE</td>
+<td align="left">農業気象2016</td>
+<td align="left">サンプルサイズ (）の検定力分析による決定 —グロースチャンバでの植物栽培試験での例—</td>
+<td align="left">Poster presentation</td>
+<td align="left">津島キャンパス/岡山大学</td>
+<td align="right">2016</td>
+<td align="left">conference</td>
 </tr>
 </tbody>
 </table>
@@ -549,22 +530,9 @@ transmute(df_edge, vertex.names, year) %&gt;%
 <pre class="r"><code>fig_ggplot</code></pre>
 <p><img src="../../../../post/2018-06-24-research_network_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p><code>plotly</code>でinteractiveにして冒頭の図が完成。</p>
-<pre class="r"><code>library(plotly)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;plotly&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:igraph&#39;:
-## 
-##     groups</code></pre>
-<pre><code>## The following object is masked from &#39;package:stats&#39;:
-## 
-##     filter</code></pre>
-<pre><code>## The following object is masked from &#39;package:graphics&#39;:
-## 
-##     layout</code></pre>
-<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
-## 
-##     last_plot</code></pre>
-<pre class="r"><code>delete_axis &lt;- 
+<pre class="r"><code>suppressMessages(library(plotly))
+
+delete_axis &lt;- 
   list(title = &quot;&quot;, ticklen = 0, zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE)
 
 fig_plotly &lt;-
@@ -593,7 +561,7 @@ setwd(&quot;../post&quot;)</code></pre>
 ##  language (EN)                        
 ##  collate  en_US.UTF-8                 
 ##  tz       Australia/Brisbane          
-##  date     2018-06-24</code></pre>
+##  date     2018-06-26</code></pre>
 <pre><code>## Packages -----------------------------------------------------------------</code></pre>
 <pre><code>##  package        * version    date       source                            
 ##  assertthat       0.2.0      2017-04-11 CRAN (R 3.5.0)                    
@@ -620,7 +588,7 @@ setwd(&quot;../post&quot;)</code></pre>
 ##  evaluate         0.10.1     2017-06-24 CRAN (R 3.5.0)                    
 ##  forcats        * 0.3.0      2018-02-19 CRAN (R 3.5.0)                    
 ##  ggnetwork      * 0.5.1      2016-03-25 CRAN (R 3.5.0)                    
-##  ggplot2        * 2.2.1.9000 2018-06-21 Github (tidyverse/ggplot2@1c09bae)
+##  ggplot2        * 2.2.1.9000 2018-06-25 Github (tidyverse/ggplot2@1c09bae)
 ##  ggrepel          0.7.0      2017-09-29 CRAN (R 3.5.0)                    
 ##  glue             1.2.0      2017-10-29 CRAN (R 3.5.0)                    
 ##  graphics       * 3.5.0      2018-04-24 local                             
@@ -665,7 +633,7 @@ setwd(&quot;../post&quot;)</code></pre>
 ##  readxl           1.1.0      2018-04-20 CRAN (R 3.5.0)                    
 ##  reshape2         1.4.3      2017-12-11 CRAN (R 3.5.0)                    
 ##  rlang            0.2.1      2018-05-30 cran (@0.2.1)                     
-##  rmarkdown        1.9        2018-03-01 CRAN (R 3.5.0)                    
+##  rmarkdown        1.10       2018-06-11 cran (@1.10)                      
 ##  rprojroot        1.3-2      2018-01-03 CRAN (R 3.5.0)                    
 ##  rstudioapi       0.7        2017-09-07 CRAN (R 3.5.0)                    
 ##  rvest            0.3.2      2016-06-17 CRAN (R 3.5.0)                    
@@ -688,7 +656,7 @@ setwd(&quot;../post&quot;)</code></pre>
 ##  xfun             0.1        2018-01-22 CRAN (R 3.5.0)                    
 ##  xml2             1.2.0      2018-01-24 CRAN (R 3.5.0)                    
 ##  xtable           1.8-2      2016-02-05 CRAN (R 3.5.0)                    
-##  yaml             2.1.18     2018-03-08 CRAN (R 3.5.0)</code></pre>
+##  yaml             2.1.19     2018-05-01 cran (@2.1.19)</code></pre>
 </div>
 
     </div>

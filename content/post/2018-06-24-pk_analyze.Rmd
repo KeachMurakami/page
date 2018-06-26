@@ -1,10 +1,10 @@
 ---
 title: "VARでPKが増えた？ (Stan"
 date: 2018-06-24
+categories: ["Stan"]
 ---
 
-```{r setup}
-suppressMessages(library(tidyverse))
+```{r setup, warning = F, message = F, cache=T, include = F, echo = F}
 knitr::opts_chunk$set(echo = T, warning = F, message = F, results = "hold")
 ```
 
@@ -19,6 +19,7 @@ PK発生率のscraping結果を、Stan+状態空間モデルで解析して、VA
 GitHubを漁って[過去のデータ](https://github.com/openfootball/world-cup)を見つける。
 
 ```{r}
+suppressMessages(library(tidyverse))
 suppressMessages(library(rvest))
 
 html_openfootball <-
@@ -138,10 +139,8 @@ StanはNAに対応していない。
 
 stanコードを書いて、キックする。
 
-```{r}
+```{r, eval = F}
 suppressMessages(library(rstan))
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
 
 stan_code <-
   "
@@ -176,23 +175,25 @@ stan_code <-
 
 set.seed(2018)
  
-fit <- stan(
+stan_result <- stan(
   model_code = stan_code,
   data=list(n = nrow(df_input), pk = df_input$pk_per_match),
   iter = 10000, thin = 5)
+
+write_rds(stan_result, path = "~/Dropbox/page/data/pk_analyze/stan.rdata")
 
 # 収束診断
 # suppressMessages(library(bayesplot))
 # theme_set(theme_grey())
 #
-# summary(fit)$summary %>%
+# summary(stan_result)$summary %>%
 #   data.frame %>%
 #   rownames_to_column %>%
 #   slice(c(1:5, 89:93))
 # 
 # pars_shown <- c("sigma_sys", "sigma_obs", "mu[89]")
 #   
-# as.array(fit) %>%
+# as.array(stan_result) %>%
 #   {
 #   print(mcmc_trace(., pars = pars_shown) + guides(col = F))
 #   print(mcmc_dens_overlay(., pars = pars_shown) + guides(col = F))
@@ -203,7 +204,10 @@ fit <- stan(
 推定された真の状態である、1試合あたりPK発生数 ($\mu$) の中央値と50%・95%ベイズ信頼区間を示す。
 
 ```{r}
-mcmc_sample <- rstan::extract(fit)
+suppressMessages(library(rstan))
+
+stan_result <- read_rds("../../data/pk_analyze/stan.rdata")
+mcmc_sample <- rstan::extract(stan_result)
 
 quantile_mcmc <- 
   function(mcmc_sample, probs = c(.025, .25, .50, .75, .975), ...){

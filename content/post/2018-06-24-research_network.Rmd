@@ -52,8 +52,8 @@ knitr::opts_chunk$set(warning = F, message = F, cache = T, echo = T, results = "
 `bib2df`パッケージを使って読み込み。
 
 ```{r}
-library(tidyverse)
-library(bib2df)
+suppressMessages(library(tidyverse))
+suppressMessages(library(bib2df))
 
 bib_data <-
   dir("~/Dropbox/r_packages/fudukue/bibtex/list_bib/", pattern = "^mywork", full.names = T) %>%
@@ -66,7 +66,7 @@ bib_data[1:4, 1:4] %>%
 データクレンジング。
 
 ```{r}
-library(janitor)
+suppressMessages(library(janitor))
 
 tidy_bib_data <-
   bib_data %>%
@@ -90,7 +90,7 @@ tidy_bib_data[1:4, 1:4] %>%
 毎回ネットワークの形状が変わるので、一応`set.seed`しておく。
 
 ```{r}
-library(igraph)
+suppressMessages(library(igraph))
 
 set.seed(123)
 
@@ -105,7 +105,7 @@ class(igraph_obj)
 `ggnetwork`は[このページ](https://cran.r-project.org/web/packages/ggnetwork/vignettes/ggnetwork.html)がわかりやすかった。
 
 ```{r}
-library(ggnetwork)
+suppressMessages(library(ggnetwork))
 
 df_network <-
   igraph_obj %>%
@@ -182,7 +182,7 @@ head(df_network, 3) %>%
   knitr::kable()
 
 # edge部分
-head(df_network, 3) %>%
+tail(df_network, 3) %>%
   knitr::kable()
 ```
 
@@ -238,7 +238,7 @@ fig_ggplot
 `plotly`でinteractiveにして冒頭の図が完成。
 
 ```{r}
-library(plotly)
+suppressMessages(library(plotly))
 
 delete_axis <- 
   list(title = "", ticklen = 0, zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE)
