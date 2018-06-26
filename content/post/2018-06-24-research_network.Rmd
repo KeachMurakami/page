@@ -178,11 +178,11 @@ df_network <-
          group = if_else(group %in% c("article", "conference", "book"), group, "project")) # あとでカテゴリ別に色分けしたいので
 
 # node部分
-head(df_network, 3) %>%
+df_network[1:5, 1:8] %>%
   knitr::kable()
 
 # edge部分
-tail(df_network, 3) %>%
+df_network[30:34, 1:8] %>%
   knitr::kable()
 ```
 

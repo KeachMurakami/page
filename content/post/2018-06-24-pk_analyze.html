@@ -6,7 +6,7 @@ categories: ["Stan"]
 
 
 
-<p>VARでPKが増えたような気がする。</p>
+<p>VARでPKが増えたような気がする (20180626修正)。</p>
 <p>Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる得点数) を調べる。 PK発生率のscraping結果を、Stan+状態空間モデルで解析して、VARはPKを増やしたのか？に答える。</p>
 <div id="web-scraping" class="section level2">
 <h2>Web Scraping</h2>
@@ -140,73 +140,9 @@ knitr::kable(df_competitions)</code></pre>
 
 stat_wc &lt;-
   df_competitions %&gt;%
-  dplyr::mutate(pk = purrr::map_int(year, count_pk))</code></pre>
-<pre><code>## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
+  dplyr::mutate(pk = purrr::map_int(year, count_pk))
 
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing</code></pre>
-<pre class="r"><code>stat_wc %&gt;%
+stat_wc %&gt;%
   ggplot(aes(year, pk)) +
   geom_line() +
   geom_point() +
@@ -248,9 +184,9 @@ stat_wc %&gt;%
   geom_point() +
   labs(x = &quot;Year&quot;, y = &quot;PK&quot;)</code></pre>
 <p><img src="/post/2018-06-24-pk_analyze_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>大会ごとに試合回数が異なるので、補正する。 2018年大会は今日 (20180624) までに29試合消化している。</p>
+<p>大会ごとに試合回数が異なるので、補正する。 2018年大会は<del>今日 (20180624) までに29試合</del> (20180626現在までに36試合) 消化している。</p>
 <pre class="r"><code>num_match &lt;-
-  c(18, 17, 18, 22, 26, 35, rep(32, 3), rep(38, 2), rep(52, 4), rep(64, 5), 29)
+  c(18, 17, 18, 22, 26, 35, rep(32, 3), rep(38, 2), rep(52, 4), rep(64, 5), 36)
 
 stat_wc %&lt;&gt;%
   dplyr::mutate(match = num_match,
@@ -367,6 +303,7 @@ head(df_input, 10) %&gt;%
 <p>StanはNAに対応していない。 なので、<a href="http://kosugitti.net/archives/5786">このページ</a>を参考に、欠測値にはNAではなく適当な数字 (999)をいれ、if文でさばくようなmodelブロックを書く。</p>
 <p>stanコードを書いて、キックする。</p>
 <pre class="r"><code>suppressMessages(library(rstan))
+options(mc.cores = parallel::detectCores())
 
 stan_code &lt;-
   &quot;
@@ -459,15 +396,15 @@ stat_wc %&gt;%
 <pre class="r"><code>mcmc_sample_2018 &lt;-
   mcmc_sample[[&quot;mu&quot;]][,89]
 
-dnorm(stat_wc$pk_per_match[21], mean(mcmc_sample_2018), sd(mcmc_sample_2018))</code></pre>
-<pre><code>## [1] 7.714993e-08</code></pre>
+(prob &lt;- dnorm(stat_wc$pk_per_match[21], mean(mcmc_sample_2018), sd(mcmc_sample_2018)))</code></pre>
+<pre><code>## [1] 0.0002077665</code></pre>
 <div id="pk" class="section level3">
 <h3>PKの発生しやすさのトレンド</h3>
 <p>PKの発生しやすさの‘状態’は、1960年前後にピークを迎えたのちは低下傾向にある。 「昔の選手は倒れなかった」は正しいかもしれないが、「近頃のサッカーはすぐ転んでPKだ」というイメージは誤りだと思われる。 守備重視のセリエA全盛期の2000年前後はとくにジャッジが厳しかったのかもしれない。</p>
 </div>
 <div id="varpk" class="section level3">
 <h3>VARはPKを増やしている</h3>
-<p>このモデルが正しいという前提のもとでは、「もしVARがなければ、2018年のPK発生率が0.25が以下となる確率はおよそ95%」と予想された。 実際には、2018年大会では、いまのところ1試合平均0.4回弱のPK得点がある (赤プロット)。 現在のPK発生率はランダムウォークモデルでは、0.22%ほどの確率でしか生起しない事象らしい。 そこそこ強く「VARはPKを増やす」といってもいいのではないだろうか。 今後のデータがあれば、VARによるPK発生率の上昇量もわかりそう。</p>
+<p>このモデルが正しいという前提のもとでは、「もしVARがなければ、2018年のPK発生率が0.25が以下となる確率はおよそ95%」と予想された。 実際には、2018年大会では、いまのところ1試合平均0.4回のPK得点がある (赤プロット)。 現在のPK発生率はランダムウォークモデルでは、0.02%ほどの確率でしか生起しない事象らしい。 そこそこ強く「VARはPKを増やす」といってもいいのではないだろうか。 今後のデータがあれば、VARによるPK発生率の上昇量もわかりそう。</p>
 </div>
 <div class="section level3">
 <h3>可視化</h3>
