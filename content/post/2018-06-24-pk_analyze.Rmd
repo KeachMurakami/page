@@ -4,11 +4,15 @@ date: 2018-06-24
 categories: ["Stan"]
 ---
 
-```{r setup, warning = F, message = F, cache = T, include = F, echo = F}
+```{r setup, warning = F, message = F, include = F, echo = F}
 knitr::opts_chunk$set(echo = T, warning = F, message = F, results = "hold")
 ```
 
-VARでPKが増えたような気がする (20180626修正)。
+<div style="text-align: right; font-size: .7em">
+<FONT color="grey">Last update: `r lubridate::today()`  </FONT>
+</div>
+
+VARでPKが増えたような気がする。
 
 Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる得点数) を調べる。
 PK発生率のscraping結果を、Stan+状態空間モデルで解析して、VARはPKを増やしたのか？に答える。
@@ -67,7 +71,7 @@ stat_wc %>%
 2022年は未開催だからいいとして、1970年にPKが0回なのはおかしい。
 wikipediaの形式が揃っていなかった (70年大会だけ各グループ＋決勝トーナメント) ので、個別に対応する。
 
-```{r}
+```{r, warning = F}
 count_pk_1970 <-
   function(key){
     stringr::str_glue("https://en.wikipedia.org/wiki/1970_FIFA_World_Cup_{key}") %>%
@@ -259,6 +263,7 @@ PKの発生しやすさの‘状態’は、1960年前後にピークを迎え�
 暑いとダーティになる、みたいなトレンドはなさそう。
 
 ```{r}
+suppressMessages(library(maps))
 map_world <- ggplot2::map_data('world')
 
 stat_map <-

@@ -4,7 +4,7 @@ date: 2018-06-24
 categories: ["Infographic"]
 ---
 
-```{r setup, warning = F, message = F, cache=T, include = F, echo = F}
+```{r setup, warning = F, message = F, include = F, echo = F}
 knitr::opts_chunk$set(warning = F, message = F, cache = T, echo = T, results = "hold")
 ```
 

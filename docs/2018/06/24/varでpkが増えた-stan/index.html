@@ -89,7 +89,10 @@ ga('send', 'pageview');
     
 
     <div class="article-content">
-      <p>VARでPKが増えたような気がする (20180626修正)。</p>
+      <div style="text-align: right; font-size: .7em">
+<p><FONT color="grey">Last update: 2018-06-26 </FONT></p>
+</div>
+<p>VARでPKが増えたような気がする。</p>
 <p>Rでweb scrapingをして、1試合あたりのPK発生率 (厳密にはPKによる得点数) を調べる。 PK発生率のscraping結果を、Stan+状態空間モデルで解析して、VARはPKを増やしたのか？に答える。</p>
 <div id="web-scraping" class="section level2">
 <h2>Web Scraping</h2>
@@ -241,22 +244,9 @@ stat_wc %&gt;%
 
 num_pk_1970 &lt;-
   map_int(c(paste0(&quot;Group_&quot;, 1:4), &quot;knockout_stage&quot;), count_pk_1970) %&gt;%
-  sum</code></pre>
-<pre><code>## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
+  sum
 
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing
-
-## Warning in stri_count_regex(string, pattern, opts_regex = opts(pattern)):
-## argument is not an atomic vector; coercing</code></pre>
-<pre class="r"><code>stat_wc[stat_wc$year==1970, &quot;pk&quot;] &lt;- num_pk_1970
+stat_wc[stat_wc$year==1970, &quot;pk&quot;] &lt;- num_pk_1970
 
 # ついでに2022を除去
 stat_wc %&lt;&gt;% dplyr::filter(year != 2022)
@@ -472,9 +462,6 @@ stat_wc %&gt;%
   geom_line(col = &quot;magenta&quot;, linetype = 2) +
   geom_point(data = dplyr::filter(stat_wc, year == 2018), col = &quot;red&quot;) +
   labs(x = &quot;Year&quot;, y = &quot;PK/Match&quot;)</code></pre>
-<pre><code>## Warning: Ignoring unknown aesthetics: y
-
-## Warning: Ignoring unknown aesthetics: y</code></pre>
 <p><img src="../../../../post/2018-06-24-pk_analyze_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>mcmc_sample_2018 &lt;-
   mcmc_sample[[&quot;mu&quot;]][,89]
@@ -492,13 +479,10 @@ stat_wc %&gt;%
 <div class="section level3">
 <h3>可視化</h3>
 <p>ついでにPK発生率を世界地図にマッピング。 暑いとダーティになる、みたいなトレンドはなさそう。</p>
-<pre class="r"><code>map_world &lt;- ggplot2::map_data(&#39;world&#39;)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;maps&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     map</code></pre>
-<pre class="r"><code>stat_map &lt;-
+<pre class="r"><code>suppressMessages(library(maps))
+map_world &lt;- ggplot2::map_data(&#39;world&#39;)
+
+stat_map &lt;-
   stat_wc %&gt;%
   dplyr::mutate(country = if_else(country == &quot;west-germany&quot;, &quot;Germany&quot;, country),
                 country = if_else(country == &quot;united-states&quot;, &quot;USA&quot;, country),
@@ -530,7 +514,6 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 <div id="session-info" class="section level2">
 <h2>Session Info</h2>
 <pre class="r"><code>devtools::session_info()</code></pre>
-<pre><code>## Session info -------------------------------------------------------------</code></pre>
 <pre><code>##  setting  value                       
 ##  version  R version 3.5.0 (2018-04-23)
 ##  system   x86_64, darwin15.6.0        
@@ -538,9 +521,9 @@ ggplot(data = stat_map, aes(x = long, y = lat, group = group)) +
 ##  language (EN)                        
 ##  collate  en_US.UTF-8                 
 ##  tz       Australia/Brisbane          
-##  date     2018-06-26</code></pre>
-<pre><code>## Packages -----------------------------------------------------------------</code></pre>
-<pre><code>##  package     * version    date       source                            
+##  date     2018-06-26                  
+## 
+##  package     * version    date       source                            
 ##  assertthat    0.2.0      2017-04-11 CRAN (R 3.5.0)                    
 ##  backports     1.1.2      2017-12-13 CRAN (R 3.5.0)                    
 ##  base        * 3.5.0      2018-04-24 local                             
