@@ -1,0 +1,229 @@
+---
+title: "連続画像のある断面の時間変化を対話的にみる (R & Shiny)"
+date: 2018-06-27
+categories: ["Infographic"]
+---
+
+```{r setup, warning = F, message = F, include = F, echo = F}
+knitr::opts_chunk$set(warning = F, message = F, eval = T, echo = T, results = "hold")
+```
+
+データ可視化系。
+
+連続的にイメージングした2次元経時データ (=動画) から、任意のx/y断面の時系列を表示する。
+
+- `pixel値 ~ 切断面に沿った座標 * 時間`なので3次元可視化
+- 画像を小さく表示して切断位置を示し、切断位置をインタラクティブに変える
+
+という要件のもと、Shiny上で2次元画像と3次元散布図を連動させて表示する。
+
+## 成果物
+
+- 切断面固定なサンプル
+
+<iframe seamless src="../../../../plotly/crosssection_timecourse/index.html" width="100%" height="900"></iframe>
+
+- 以下のワンライナーで起動するShinyでは上の図の切断面が可変
+
+```{r, eval = F}
+# ~ 3.5MB
+shiny::runGist("f3e768cd0a06b7d3cee12e6dca37c152")
+```
+
+
+## データ読み込み
+
+```{r include = F, eval = F}
+# 自分用データソースのメモ
+
+data <-
+  readr::read_rds(path = "~/Dropbox/2018/hokushin01/data/heavy/id03_sigma1.rdata") %>%
+  .[[2]] %>%
+  dplyr::transmute(value = value + initial, row, col, time = z) %>%
+  pri::df2array() %>%
+  .[81:230, 81:230, seq(1, 59, by = 3)]
+
+readr::write_rds(data, path = paste0("~/Dropbox/page/data/crosssection_timecourse/data_array.rdata"))
+```
+
+使用するのは葉の分光反射画像の経時データで縦横時間の3次元配列。
+
+```{r, warning = F}
+suppressMessages(library(tidyverse))
+suppressMessages(library(imager))
+suppressMessages(library(plotly))
+
+temp <- tempfile()
+download.file("https://github.com/KeachMurakami/page/blob/master/data/crosssection_timecourse/data_array.rdata?raw=true", temp, mode = "wb")
+data <- read_rds(temp)
+
+(dim_data <- data %>% dim)
+
+# check first frame
+data %>%
+  as.cimg() %>%
+  plot()
+```
+
+## 関数づくり
+
+データを下拵えするための関数を書く。
+`array`だと扱いにくいので、long形式の`tibble`に変える。
+
+```{r}
+array_to_df <-
+  function(array){
+    dim_data <- dim(array)
+    dt <-
+      array %>%
+      as.vector %>%
+      tibble(value = .,
+             row = rep(1:dim_data[1], times = dim_data[3] * dim_data[2]),
+             col = rep(rep(1:dim_data[2], each = dim_data[1]), times = dim_data[3]),
+             time = rep(1:dim_data[3], each = dim_data[1] * dim_data[2]))
+    
+    # calculate changes from initial values
+    dt %>%
+      dplyr::filter(time == 1) %>%
+      dplyr::select(initial = value, row, col) %>%
+      dplyr::left_join(dt, ., by = c("row", "col")) %>%
+      dplyr::mutate(value = value - initial) %>%
+      return()
+  }
+
+data %>%
+  array_to_df %>%
+  head %>%
+  knitr::kable()
+```
+
+下拵えしたデータを図示する関数を書く。
+処理済みデータと切断情報を与えるとplotlyの出力を返す。
+Shinyに持っていきやすいように、切断情報は`input$XXX`のリスト形式で与える。
+2D画像は[plotly公式](https://plotly-book.cpsievert.me/raster-images.html)を参照しながら。
+
+- `as.raster %>% raster2uri`で数値をカラーコードに変えてhtmlで書く
+- `subplot`する前に不要な軸を消してしまう
+- `subplot`後にも`layout(scene1 = ..., scene2 = ...)`で各プロットにアクセスできるらしい
+
+```{r}
+
+### 3D
+
+plot_3d <-
+  function(dt, input){
+    if(input$cut_direction == "row"){
+      dt_for_3d <-
+        dt %>%
+        dplyr::filter(row == input$cut_index) %>%
+        dplyr::select(value, section = col, time)
+    } else {
+      dt_for_3d <-
+        dt %>%
+        dplyr::filter(col == input$cut_index) %>%
+        dplyr::select(value, section = row, time)
+    }
+    
+    dt_for_3d %>%
+      dplyr::group_by(section) %>%
+      dplyr::mutate(value = RcppRoll::roll_meanl(value, n = input$smooth)) %>% # smoothing
+      plot_ly(data = ., x =  ~ time, y = ~ section, z = ~ value, scene = "scene1",
+              color = ~ section, type = "scatter3d", mode = "lines") %>%
+      return()
+  }
+
+
+### 2D
+
+plot_2d <-
+  function(dt, input){
+  cutting_band <-
+    c(input$cut_index + (-input$band_width:input$band_width)) # to indicate cutting position
+
+  dt_initial <- 
+    dt %>%
+    dplyr::filter(time == 1) %>%
+    dplyr::mutate(initial = (initial - min(initial)) / (max(initial) - min(initial))) %>% # normalize to [0,1]
+    dplyr::select(initial, row, col)
+  
+  if(input$cut_direction == "row"){
+    dt_for_2d <-
+      dt_initial %>%
+      dplyr::mutate(initial = if_else(row %in% cutting_band, input$band_fill, initial))
+  } else {
+    dt_for_2d <-
+      dt_initial %>%
+      dplyr::mutate(initial = if_else(col %in% cutting_band, input$band_fill, initial))
+  }
+  
+  array_annotated <-
+    dt_for_2d$initial %>%
+    array(dim = c(max(dt$row), max(dt$col), 1))
+  
+  array_nonannotated <-
+    dt_initial$initial %>%
+    array(dim = c(max(dt$row), max(dt$col), 1))
+  
+  img_annotated <-
+    abind::abind(array_nonannotated, array_annotated, array_nonannotated) %>%
+    as.raster
+  
+  axis_set <- list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE)
+  
+  plot_ly(scene = "scene2") %>%
+    layout(images = list(
+    source = raster2uri(img_annotated),
+    x = 0, y = 1, sizex = .5, sizey = .25,
+    xanchor = "left", yanchor = "top"),
+    xaxis = axis_set, yaxis = axis_set) %>%
+    return()
+  }
+
+
+### merge
+
+plot_crosssection <-
+  function(dt, input){
+    subplot(plot_3d(dt, input), plot_2d(dt, input)) %>%
+    layout(showlegend = FALSE)
+  }
+```
+
+## Plotlyで図示
+
+切断条件を指定して、プロットする。
+冒頭の図がviewerに表示される。
+
+```{r, warning = F}
+input <- list(cut_direction = "col", cut_index = 30, smooth = 1, band_width = 1, band_fill = .5)
+
+fig_plotly <-
+  data %>%
+  array_to_df %>%
+  plot_crosssection(., input)
+
+# htmlwidgetとして保存
+setwd("../plotly")
+htmlwidgets::saveWidget(fig_plotly, "crosssection_timecourse.html", selfcontained = T)
+setwd("../post")
+```
+
+## Shinyでアプリケーション化
+
+上記の関数にファイルと切断条件の入力部分を加え、体裁を整えて完成。
+
+`r htmltools::htmlPreserve('<script src="https://gist.github.com/KeachMurakami/f3e768cd0a06b7d3cee12e6dca37c152.js"></script>')`
+
+## 雑感
+
+スライドで出したら見栄えはするけども、伝わるものはあまりない。
+
+## 参考
+
+[Raster images](https://plotly-book.cpsievert.me/raster-images.html)
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```

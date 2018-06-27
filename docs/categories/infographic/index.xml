@@ -6,10 +6,19 @@
     <description>Recent content in Infographic on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 24 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 27 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://keachmurakami.github.io/categories/infographic/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>連続画像のある断面の時間変化を対話的にみる (R &amp; Shiny)</title>
+      <link>https://keachmurakami.github.io/2018/06/27/%E9%80%A3%E7%B6%9A%E7%94%BB%E5%83%8F%E3%81%AE%E3%81%82%E3%82%8B%E6%96%AD%E9%9D%A2%E3%81%AE%E6%99%82%E9%96%93%E5%A4%89%E5%8C%96%E3%82%92%E5%AF%BE%E8%A9%B1%E7%9A%84%E3%81%AB%E3%81%BF%E3%82%8B-r--shiny/</link>
+      <pubDate>Wed, 27 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/06/27/%E9%80%A3%E7%B6%9A%E7%94%BB%E5%83%8F%E3%81%AE%E3%81%82%E3%82%8B%E6%96%AD%E9%9D%A2%E3%81%AE%E6%99%82%E9%96%93%E5%A4%89%E5%8C%96%E3%82%92%E5%AF%BE%E8%A9%B1%E7%9A%84%E3%81%AB%E3%81%BF%E3%82%8B-r--shiny/</guid>
+      <description>データ可視化系。 連続的にイメージングした2次元経時データ (=動画) から、任意のx/y断面の時系列を表示する。 pixel値 ~ 切断面に沿った座標</description>
+    </item>
     
     <item>
       <title>研究のつながりを可視化する (R</title>

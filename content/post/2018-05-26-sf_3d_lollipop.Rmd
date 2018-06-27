@@ -1,5 +1,5 @@
 ---
-title: "3D lollipop on map なアニメーション (R"
+title: "3D lollipop on map なアニメーション (R)"
 date: 2018-05-26
 ---
 
