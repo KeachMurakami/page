@@ -1,6 +1,7 @@
 ---
 title: "査読結果 (Regular_004)"
 date: 2017-02-14
+categories: ["research-journal"]
 ---
 
 [年始に投稿した論文](https://keachmurakami.github.io/2017/01/05/Pub2017a.html)の査読結果が帰ってきた

@@ -1,6 +1,7 @@
 ---
 title: "論文投稿 (Regular_006, 1誌目)"
 date: 2018-01-26
+categories: ["research-journal"]
 ---
 
 分光イメージングでの光合成量子収率の測定に関する論文を投稿しました  

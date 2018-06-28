@@ -1,6 +1,7 @@
 ---
 title: "論文受理 (Letter_001)"
 date: 2016-10-19
+categories: ["research-journal"]
 ---
 
 論文が受理されました  

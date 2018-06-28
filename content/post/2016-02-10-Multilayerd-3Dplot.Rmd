@@ -1,6 +1,7 @@
 ---
-title: "複数層の3次元プロットを1枚の図で"
+title: "複数層の3次元プロットを1枚の図で (R)"
 date: 2016-02-10
+categories: ["Infographic"]
 ---
 
 ```{r setup, eval = TRUE, echo = FALSE, message= F}

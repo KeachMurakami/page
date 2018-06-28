@@ -1,6 +1,7 @@
 ---
 title: "学会 (AusPheno16) のスライド完成・提出"
 date: 2016-09-09
+categories: ["research-symposium"]
 ---
 
 「円滑な進行のため、スライドを予め学会事務局に提出するように」とのことだったので  

@@ -1,6 +1,7 @@
 ---
 title: "論文掲載 (Regular_003)"
 date: 2016-09-27
+categories: ["research-journal"]
 ---
 
 論文が出版され、手元に印刷版が届いた  

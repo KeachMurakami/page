@@ -1,6 +1,7 @@
 ---
 title: "htmlwidget x (Hugo + Blogdown + GitHub Page)"
 date: 2018-05-19
+categories: ["Infographic", "leaflet", "plotly", "shiny"]
 ---
 
 [`{leaflet}`](https://leafletjs.com/)や[`{plotly}`](https://plot.ly/)で作成したインタラクティブなjavascript系コンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメモ。

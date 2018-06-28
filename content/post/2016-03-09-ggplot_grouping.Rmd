@@ -1,6 +1,7 @@
 ---
 title: "aes(group)"
 date: 2016-03-09
+categories: ["tidyverse"]
 ---
 
 ```{r setup, eval = TRUE, echo = FALSE, message= F}

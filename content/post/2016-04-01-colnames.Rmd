@@ -1,6 +1,7 @@
 ---
-title: "中間生成なしでカラム名を変更する５つの方法"
+title: "中間生成なしでカラム名を変更する５つの方法 (R)"
 date: 2016-04-01
+categories: ["tidyverse"]
 ---
 
 ```{r setup, eval = TRUE, echo = FALSE, message= F, cash = T}

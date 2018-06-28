@@ -1,6 +1,7 @@
 ---
-title: "学振PDを提出"
+title: "学振PD申請書を提出"
 date: 2016-05-12
+categories: ["grant"]
 ---
 
 第0稿が20160422。  

@@ -1,6 +1,7 @@
 ---
-title: "徐々に細くなる線を書く (Inkscape"
+title: "徐々に細くなる線を書く (Inkscape)"
 date: 2016-02-13
+categories: ["Inkscape"]
 ---
 
 # Inkscapeで先細りの線を書く (メモ

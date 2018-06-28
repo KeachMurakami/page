@@ -1,6 +1,7 @@
 ---
 title: "学振SPDの面接へ"
 date: 2016-12-06
+categories: ["grant"]
 ---
 
 学振SPDの面接を受けてきた <FONT color="green">(不採用 2016-12-26)</FONT>  

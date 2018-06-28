@@ -1,6 +1,7 @@
 ---
-title: "関数への全引数をmutateで追加する (R"
+title: "関数への全引数をmutateで追加する (R)"
 date: 2017-12-14
+categories: ["tidyverse"]
 ---
 
 ```{r setup, message = F, include = F, warning = F}

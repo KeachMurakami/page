@@ -1,6 +1,7 @@
 ---
 title: "光合成学会へ参加・発表の申込み"
 date: 2017-04-28
+categories: ["research-symposium"]
 ---
 
 5/27-28の光合成学会への参加を申込む。

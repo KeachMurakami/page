@@ -1,6 +1,7 @@
 ---
 title: "TensorFlow系のHMCパッケージ{greta}に触れる"
 date: 2018-06-02
+categories: ["stan"]
 ---
 
 ```{r setup, warning = F, message = F, include = F, echo = F}

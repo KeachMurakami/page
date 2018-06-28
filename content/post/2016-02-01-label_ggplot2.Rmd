@@ -1,6 +1,7 @@
 ---
-title: "図のラベルを楽に付けたい"
+title: "図のラベルを楽に付けたい (R)"
 date: 2016-02-01
+categories: ["tidyverse"]
 ---
 
 ```{r setup, eval = TRUE, echo = FALSE, message= F}

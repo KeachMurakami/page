@@ -1,6 +1,7 @@
 ---
 title: "Jekyll -> Hugo"
 date: 2018-05-03
+categories: ["others"]
 ---
 
 - Jekyll + servr体制からHugo + blogdown体制へ移行

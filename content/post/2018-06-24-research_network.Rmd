@@ -1,7 +1,7 @@
 ---
-title: "研究のつながりを可視化する (R"
+title: "研究のつながりを可視化する (R)"
 date: 2018-06-24
-categories: ["Infographic"]
+categories: ["Infographic", "plotly"]
 ---
 
 ```{r setup, warning = F, message = F, include = F, echo = F}

@@ -23,6 +23,9 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     name = "Publication"
     url = "/publication_list/"
 
+[taxsonomies]
+    category = "categories"
+    
 [params]
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.11.0"

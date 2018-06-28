@@ -1,6 +1,7 @@
 ---
 title: "論文掲載 (Letter_001)"
 date: 2017-02-01
+categories: ["research-journal"]
 ---
 
 解説記事のような論文 (letter) が公開されました  

@@ -1,6 +1,7 @@
 ---
-title: "RでDropboxからファイルを読み込む"
+title: "RでDropboxからファイルを読み込む (R)"
 date: 2016-04-30
+categories: ["R::base"]
 ---
 
 ```{r setup, eval = TRUE, echo = FALSE, message= F}

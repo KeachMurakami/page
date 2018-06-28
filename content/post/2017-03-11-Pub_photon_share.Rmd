@@ -1,6 +1,7 @@
 ---
 title: "論文投稿 (Regular_004, 再)"
 date: 2017-03-11
+categories: ["research-journal"]
 ---
 
 [先日、Reject Encouarge (再投稿可リジェクト) で戻ってきた光分配論文](https://keachmurakami.github.io/2017/02/14/Pub_photon_share.html)を改訂し、再投稿  

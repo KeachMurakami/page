@@ -1,6 +1,7 @@
 ---
 title: "pandoc経由で.Rmdから.docxを作る"
 date: 2016-03-07
+categories: ["documentation"]
 ---
 
 # knitrでRmdからMSwordファイル (docx) を作る (メモ  

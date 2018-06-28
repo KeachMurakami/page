@@ -1,6 +1,7 @@
 ---
 title: "査読結果 (Regular_005)"
 date: 2017-07-30
+categories: ["research-journal"]
 ---
 
 [週末に投稿した論文](https://keachmurakami.github.io/2017/07/27/pub_etr_model.html)がoutside the scope ということで、エディタ・リジェクト@Planta。

@@ -1,7 +1,7 @@
 ---
 title: "VARでPKが増えた？ (Stan)"
 date: 2018-06-24
-categories: ["Stan"]
+categories: ["stan", "時系列解析"]
 ---
 
 ```{r setup, warning = F, message = F, include = F, echo = F}

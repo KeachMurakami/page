@@ -1,6 +1,7 @@
 ---
 title: "IHC2018へ参加・発表の申込み"
 date: 2017-10-30
+categories: ["research-symposium"]
 ---
 
 2018/08/12--08/16にイスタンブールで開催されるIHC2018 (XXX International Horticultural Congress) に参加・ポスター発表を申し込みました。

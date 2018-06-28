@@ -1,6 +1,7 @@
 ---
-title: "二項演算子 %in% を改良したかった"
+title: "二項演算子 %in% を改良したかった (R)"
 date: 2016-03-10
+categories: ["R::base"]
 ---
 
 ```{r setup, eval = TRUE, echo = FALSE, message= F}
