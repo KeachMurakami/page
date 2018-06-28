@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Documentation on A plant researcher</title>
+    <link>https://keachmurakami.github.io/categories/documentation/</link>
+    <description>Recent content in Documentation on A plant researcher</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Tue, 04 Oct 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://keachmurakami.github.io/categories/documentation/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>knitr equation (数式に連番をつけて本文で呼び出す)</title>
+      <link>https://keachmurakami.github.io/2016/10/04/knitr-equation-%E6%95%B0%E5%BC%8F%E3%81%AB%E9%80%A3%E7%95%AA%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%E6%9C%AC%E6%96%87%E3%81%A7%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%99/</link>
+      <pubDate>Tue, 04 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2016/10/04/knitr-equation-%E6%95%B0%E5%BC%8F%E3%81%AB%E9%80%A3%E7%95%AA%E3%82%92%E3%81%A4%E3%81%91%E3%81%A6%E6%9C%AC%E6%96%87%E3%81%A7%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%99/</guid>
+      <description>knitr + Rmarkdown + pandocメモ 数式に連続番号 (タグ) を付けて、本文中でタグを呼び出す 連番作成用に関数を組む EqnNum_count &amp;lt;- 0 head &amp;lt;- &amp;quot;Eqn.&amp;quot; EqnNum &amp;lt;- function(head){ EqnNum_count &amp;lt;&amp;lt;- EqnNum_count + 1 return(paste0(head, EqnNum_count)) } Cha</description>
+    </item>
+    
+    <item>
+      <title>knitr figure</title>
+      <link>https://keachmurakami.github.io/2016/08/05/knitr-figure/</link>
+      <pubDate>Fri, 05 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2016/08/05/knitr-figure/</guid>
+      <description>knitr + Rmarkdown + pandocメモ YAML --- title: &amp;quot;MyYAML&amp;quot; author: &amp;quot;Keach Murakami&amp;quot; date: &amp;quot;2018-05-05 16:58:16&amp;quot; bibliography: ~/GitHub/BeeLabR/BibTex/Full.bib header-includes: - \setmainfont{Helvetica Neue} - \usepackage{zxjatype} # 日本語を使うためのパッケージ - \setjamainfont{Hiragino Kaku Gothic Pro} # 日本語フォントの指定 - \usepackage{lscape} # 図を回転する</description>
+    </item>
+    
+    <item>
+      <title>pandoc経由で.Rmdから.docxを作る</title>
+      <link>https://keachmurakami.github.io/2016/03/07/pandoc%E7%B5%8C%E7%94%B1%E3%81%A7.rmd%E3%81%8B%E3%82%89.docx%E3%82%92%E4%BD%9C%E3%82%8B/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2016/03/07/pandoc%E7%B5%8C%E7%94%B1%E3%81%A7.rmd%E3%81%8B%E3%82%89.docx%E3%82%92%E4%BD%9C%E3%82%8B/</guid>
+      <description>knitrでRmdからMSwordファイル (docx) を作る (メモ こんな感じでdocxを出力 コード</description>
+    </item>
+    
+  </channel>
+</rss>

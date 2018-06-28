@@ -30,7 +30,7 @@
     </item>
     
     <item>
-      <title>研究のつながりを可視化する (R</title>
+      <title>研究のつながりを可視化する (R)</title>
       <link>https://keachmurakami.github.io/2018/06/24/%E7%A0%94%E7%A9%B6%E3%81%AE%E3%81%A4%E3%81%AA%E3%81%8C%E3%82%8A%E3%82%92%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%99%E3%82%8B-r/</link>
       <pubDate>Sun, 24 Jun 2018 00:00:00 +0000</pubDate>
       
@@ -201,7 +201,7 @@
     </item>
     
     <item>
-      <title>関数への全引数をmutateで追加する (R</title>
+      <title>関数への全引数をmutateで追加する (R)</title>
       <link>https://keachmurakami.github.io/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</link>
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
@@ -264,7 +264,7 @@
     </item>
     
     <item>
-      <title>波長に応じた色でプロットする (R</title>
+      <title>波長に応じた色でプロットする (R)</title>
       <link>https://keachmurakami.github.io/2017/08/22/%E6%B3%A2%E9%95%B7%E3%81%AB%E5%BF%9C%E3%81%98%E3%81%9F%E8%89%B2%E3%81%A7%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%99%E3%82%8B-r/</link>
       <pubDate>Tue, 22 Aug 2017 00:00:00 +0000</pubDate>
       
@@ -480,47 +480,47 @@
     </item>
     
     <item>
-      <title>学振PDを提出</title>
-      <link>https://keachmurakami.github.io/2016/05/12/%E5%AD%A6%E6%8C%AFpd%E3%82%92%E6%8F%90%E5%87%BA/</link>
+      <title>学振PD申請書を提出</title>
+      <link>https://keachmurakami.github.io/2016/05/12/%E5%AD%A6%E6%8C%AFpd%E7%94%B3%E8%AB%8B%E6%9B%B8%E3%82%92%E6%8F%90%E5%87%BA/</link>
       <pubDate>Thu, 12 May 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/05/12/%E5%AD%A6%E6%8C%AFpd%E3%82%92%E6%8F%90%E5%87%BA/</guid>
+      <guid>https://keachmurakami.github.io/2016/05/12/%E5%AD%A6%E6%8C%AFpd%E7%94%B3%E8%AB%8B%E6%9B%B8%E3%82%92%E6%8F%90%E5%87%BA/</guid>
       <description>第0稿が20160422。 最終稿までに20日。</description>
     </item>
     
     <item>
-      <title>RでDropboxからファイルを読み込む</title>
-      <link>https://keachmurakami.github.io/2016/04/30/r%E3%81%A7dropbox%E3%81%8B%E3%82%89%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80/</link>
+      <title>RでDropboxからファイルを読み込む (R)</title>
+      <link>https://keachmurakami.github.io/2016/04/30/r%E3%81%A7dropbox%E3%81%8B%E3%82%89%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80-r/</link>
       <pubDate>Sat, 30 Apr 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/04/30/r%E3%81%A7dropbox%E3%81%8B%E3%82%89%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80/</guid>
+      <guid>https://keachmurakami.github.io/2016/04/30/r%E3%81%A7dropbox%E3%81%8B%E3%82%89%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80-r/</guid>
       <description>## Warning in system(&amp;quot;/usr/libexec/java_home&amp;quot;, intern = TRUE): running command ## &amp;#39;/usr/libexec/java_home&amp;#39; had status 1 ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; RでDropboxからデータ</description>
     </item>
     
     <item>
-      <title>中間生成なしでカラム名を変更する５つの方法</title>
-      <link>https://keachmurakami.github.io/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95/</link>
+      <title>中間生成なしでカラム名を変更する５つの方法 (R)</title>
+      <link>https://keachmurakami.github.io/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95-r/</link>
       <pubDate>Fri, 01 Apr 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95/</guid>
+      <guid>https://keachmurakami.github.io/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95-r/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; 中間生成なしでカラム名を変更する 中間生成的なことをせずに</description>
     </item>
     
     <item>
-      <title>データフレームからのベクトル出力</title>
-      <link>https://keachmurakami.github.io/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B/</link>
+      <title>データフレームからのベクトル出力 (R)</title>
+      <link>https://keachmurakami.github.io/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B-r/</link>
       <pubDate>Sun, 20 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B/</guid>
+      <guid>https://keachmurakami.github.io/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B-r/</guid>
       <description>dplyr::selectでvector出力はできない (メモ # デフォルトの列選択 iris[, &amp;quot;Species&amp;quot;] %&amp;gt;% head ## [1] setosa setosa setosa setosa setosa setosa ## Levels: setosa versicolor virginica # データフレーム構造を維持</description>
     </item>
     
     <item>
-      <title>二項演算子 %in% を改良したかった</title>
-      <link>https://keachmurakami.github.io/2016/03/10/%E4%BA%8C%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90-in-%E3%82%92%E6%94%B9%E8%89%AF%E3%81%97%E3%81%9F%E3%81%8B%E3%81%A3%E3%81%9F/</link>
+      <title>二項演算子 %in% を改良したかった (R)</title>
+      <link>https://keachmurakami.github.io/2016/03/10/%E4%BA%8C%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90-in-%E3%82%92%E6%94%B9%E8%89%AF%E3%81%97%E3%81%9F%E3%81%8B%E3%81%A3%E3%81%9F-r/</link>
       <pubDate>Thu, 10 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/03/10/%E4%BA%8C%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90-in-%E3%82%92%E6%94%B9%E8%89%AF%E3%81%97%E3%81%9F%E3%81%8B%E3%81%A3%E3%81%9F/</guid>
+      <guid>https://keachmurakami.github.io/2016/03/10/%E4%BA%8C%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90-in-%E3%82%92%E6%94%B9%E8%89%AF%E3%81%97%E3%81%9F%E3%81%8B%E3%81%A3%E3%81%9F-r/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; %in%をよく使う iris %&amp;gt;% filter(Species %in% &amp;quot;setosa&amp;quot;) %&amp;gt;% head ## Sepal.Length Sepal.Width Petal.Length Petal.Width Species ## 1 5.1 3.5 1.4 0.2</description>
     </item>
     
@@ -552,7 +552,7 @@
     </item>
     
     <item>
-      <title>徐々に細くなる線を書く (Inkscape</title>
+      <title>徐々に細くなる線を書く (Inkscape)</title>
       <link>https://keachmurakami.github.io/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</link>
       <pubDate>Sat, 13 Feb 2016 00:00:00 +0000</pubDate>
       
@@ -561,20 +561,20 @@
     </item>
     
     <item>
-      <title>複数層の3次元プロットを1枚の図で</title>
-      <link>https://keachmurakami.github.io/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7/</link>
+      <title>複数層の3次元プロットを1枚の図で (R)</title>
+      <link>https://keachmurakami.github.io/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7-r/</link>
       <pubDate>Wed, 10 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7/</guid>
+      <guid>https://keachmurakami.github.io/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7-r/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;akima&amp;#39; ## Warning in library(package, lib.loc = lib.loc,</description>
     </item>
     
     <item>
-      <title>図のラベルを楽に付けたい</title>
-      <link>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84/</link>
+      <title>図のラベルを楽に付けたい (R)</title>
+      <link>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84-r/</link>
       <pubDate>Mon, 01 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84/</guid>
+      <guid>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84-r/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; expression関数内に変数を動的に組み込みたかった</description>
     </item>
     

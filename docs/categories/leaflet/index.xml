@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Leaflet on A plant researcher</title>
+    <link>https://keachmurakami.github.io/categories/leaflet/</link>
+    <description>Recent content in Leaflet on A plant researcher</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Sat, 19 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://keachmurakami.github.io/categories/leaflet/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>htmlwidget x (Hugo &#43; Blogdown &#43; GitHub Page)</title>
+      <link>https://keachmurakami.github.io/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</link>
+      <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</guid>
+      <description>{leaflet}や{plotly}で作成したインタラクティブなjavascript系コンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメ</description>
+    </item>
+    
+  </channel>
+</rss>
