@@ -1,0 +1,77 @@
+---
+title: "関数名の衝突を避ける (R)"
+date: 2018-06-29
+categories: ["R::base"]
+---
+
+
+```{r setup, warning = F, message = F, include = F, echo = F}
+knitr::opts_chunk$set(warning = F, message = F, eval = T, echo = T, results = "hold")
+```
+
+R起動時の設定を少しいじったら嵌ったメモ。
+
+`.Rprofile`で`tidyverse`をロードしているのに、名前空間指定なしで`filter`とすると`stats::filter`から呼ばれる。
+dplyr系関数は使用頻度が高いので、安全だからといって`dplyr::filter`と繰り返し書くのは少し面倒。
+
+```
+# .Rprofile or Rprofile.site
+library(tidyverse)
+```
+
+```{r, eval = F}
+iris %>% filter(Species == "setosa") %>% head(3)
+#> Error in filter(., Species == "setosa") : object 'Species' not found
+
+iris %>% dplyr::filter(Species == "setosa") %>% head(3)
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> 3          4.7         3.2          1.3         0.2  setosa
+
+tidyverse_conflicts()
+#> ── Conflicts ─────────────────────── tidyverse_conflicts() ──
+#> ✖ stats::filter()       masks dplyr::filter()
+#> ✖ stats::lag()          masks dplyr::lag()
+```
+
+タイミングがわからないが、`tidyverse`をロードしたあとに`stats`がロードされて上書きされる。
+応急処置として、`.Rprofile`または`Rprofile.site`で先に`stats`をロードすると解決する。
+`MASS::select`と`dplyr::select`でも同様のことが稀に起こるので先手を打つ。
+
+必須パッケージを絞り、conflictを考慮して`Rprofile.site`を確定する。
+
+```
+# /Library/Frameworks/R.framework/Resources/etc/Rprofile.site
+
+library(stats) # to suppress filter() conflict
+library(MASS) # to suppress select() conflict
+  
+library(magrittr)
+library(knitr)
+library(broom)
+library(tidyverse)
+library(devtools)
+```
+
+conflict情報は以下の通り。
+
+```{r}
+tidyverse_conflicts()
+```
+
+名前空間指定なしでも`dplyr::filter`が呼ばれることを確認。
+
+```{r}
+filter
+```
+
+新たにパッケージを入れてそれをロードすると同様の問題が起こるので、対症療法でしかない。
+しばらくこれで使って、さらに上書きするパッケージがあれば`Rprofile.site`に追加する。
+理想的には、関数を他のパッケージからmaskさせないように守る関数を組むのがよさそう。
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```

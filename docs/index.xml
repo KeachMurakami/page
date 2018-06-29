@@ -6,10 +6,19 @@
     <description>Recent content on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Wed, 27 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 29 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://keachmurakami.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>関数名の衝突を避ける (R)</title>
+      <link>https://keachmurakami.github.io/2018/06/29/%E9%96%A2%E6%95%B0%E5%90%8D%E3%81%AE%E8%A1%9D%E7%AA%81%E3%82%92%E9%81%BF%E3%81%91%E3%82%8B-r/</link>
+      <pubDate>Fri, 29 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/06/29/%E9%96%A2%E6%95%B0%E5%90%8D%E3%81%AE%E8%A1%9D%E7%AA%81%E3%82%92%E9%81%BF%E3%81%91%E3%82%8B-r/</guid>
+      <description>R起動時の設定を少しいじったら嵌ったメモ。 .Rprofileでtidyverseをロードしているのに、名前空間指定なしでfilterとすると</description>
+    </item>
     
     <item>
       <title>連続画像のある断面の時間変化を対話的にみる (R &amp; Shiny)</title>
