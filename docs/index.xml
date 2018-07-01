@@ -709,7 +709,7 @@ Graduate School of Sciences and Technology for Innovation, Yamaguchi University,
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/publication_list/</guid>
-      <description>Last update: 2018-06-22 + -&amp;gt; Corresponding Author 1st - First Author -- Journal Articles {(First | Corresponding) &amp;amp; Original} papers Title Year Category Journal 006 New Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem II Keach Murakami+, Yasuomi Ibaraki In press Original Article Physiologia Plantarum 005 New A mathematical model of photosynthetic electron transport in response to light spectrum</description>
+      <description>Last update: 2018-07-01 library(bib2df) bib_data &amp;lt;- dir(&amp;quot;~/Dropbox/r_packages/fudukue/bibtex/list_bib/&amp;quot;, pattern = &amp;quot;^mywork&amp;quot;, full.names = T) %&amp;gt;% map_df(bib2df) %&amp;gt;% janitor::remove_empty(&amp;quot;cols&amp;quot;) %&amp;gt;% janitor::clean_names() %&amp;gt;% mutate_at(.vars = &amp;#39;category&amp;#39;, tolower) %&amp;gt;% mutate(category = if_else(category %in% c(&amp;quot;BOOK&amp;quot;, &amp;quot;INBOOK&amp;quot;, &amp;quot;INCOLLECTION&amp;quot;), &amp;quot;book/chapter&amp;quot;, tolower(category)), id = dplyr::row_number() %&amp;gt;% stringr::str_pad(width = 3, side = &amp;quot;left&amp;quot;, pad = &amp;quot;0&amp;quot;) %&amp;gt;% paste0(category, &amp;quot;_&amp;quot;, .)) %&amp;gt;% dplyr::select(id, project, category, type, title, year, doi, short = short_symposium, venue) %&amp;gt;% tidyr::separate_rows(project, sep = &amp;quot;, &amp;quot;) bib_data</description>
     </item>
     
   </channel>

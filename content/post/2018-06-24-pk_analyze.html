@@ -383,7 +383,7 @@ stat_wc %&gt;%
 <pre class="r"><code>mcmc_sample_2018 &lt;-
   mcmc_sample[[&quot;mu&quot;]][,89]
 
-(prob &lt;- dnorm(stat_wc$pk_per_match[21], mean(mcmc_sample_2018), sd(mcmc_sample_2018)))</code></pre>
+(prob &lt;- pnorm(stat_wc$pk_per_match[21], mean(mcmc_sample_2018), sd(mcmc_sample_2018), lower.tail = F))</code></pre>
 <pre><code>## [1] 0.0002077665</code></pre>
 <div id="pk" class="section level3">
 <h3>PKの発生しやすさのトレンド</h3>
@@ -391,7 +391,7 @@ stat_wc %&gt;%
 </div>
 <div id="varpk" class="section level3">
 <h3>VARはPKを増やしている</h3>
-<p>このモデルが正しいという前提のもとでは、「もしVARがなければ、2018年のPK発生率が0.25が以下となる確率はおよそ95%」と予想された。 実際には、2018年大会では、いまのところ1試合平均0.4回のPK得点がある (赤プロット)。 現在のPK発生率はランダムウォークモデルでは、0.02%ほどの確率でしか生起しない事象らしい。 そこそこ強く「VARはPKを増やす」といってもいいのではないだろうか。 今後のデータがあれば、VARによるPK発生率の上昇量もわかりそう。</p>
+<p>このモデルが正しいという前提のもとでは、「もしVARがなければ、2018年のPK発生率が0.25が以下となる確率はおよそ95%」と予想された。 実際には、2018年大会では、いまのところ1試合平均0.4回のPK得点がある (赤プロット)。 現在のPK発生率はランダムウォークモデルでは、0.000295%ほどの確率でしか生起しない事象らしい。 そこそこ強く「VARはPKを増やす」といってもいいのではないだろうか。 今後のデータがあれば、VARによるPK発生率の上昇量もわかりそう。</p>
 </div>
 <div class="section level3">
 <h3>可視化</h3>
