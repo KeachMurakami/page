@@ -1,0 +1,21 @@
+key,venue,from,short_symposium,lon,lat
+domest001,中百舌鳥キャンパス/大阪府立大学,Univ._Tokyo,農業気象2012,135.5068517,34.5454666
+domest002,弥生キャンパス/東京大学,Univ._Tokyo,生環工2012,139.7602662,35.7167891
+domest003,幸町キャンパス/香川大学,Univ._Tokyo,生環工2013,134.037969,34.342774
+domest004,札幌キャンパス/北海道大学,Univ._Tokyo,農業気象2014,141.340013,43.0779575
+domest005,札幌キャンパス/北海道大学,Univ._Tokyo,農業気象2014,141.340013,43.0779575
+domest006,奈良キャンパス/近畿大学,Univ._Tokyo,光合成学会2014,135.732505,34.672025
+domest007,文部科学省研究交流センター,Univ._Tokyo,農業気象2015,140.117862,36.07465699999999
+domest008,シーガイア,Univ._Tokyo,生環工2015,131.4682382,31.953333400000002
+domest009,津島キャンパス/岡山大学,Univ._Tokyo,農業気象2016,133.9222225,34.6873868
+domest010,津島キャンパス/岡山大学,Univ._Tokyo,農業気象2016,133.9222225,34.6873868
+domest011,瀬田キャンパス/龍谷大学,Yamaguchi_Univ.,光合成学会2017,135.9404576,34.9642382
+domest012,樽味キャンパス/愛媛大学,Yamaguchi_Univ.,生環工2017,132.7930699,33.8395277
+domest013,湖山キャンパス/鳥取大学,Yamaguchi_Univ.,中四国農業気象2017,134.1733553,35.5152072
+domest014,伊都キャンパス/九州大学,Yamaguchi_Univ.,農業気象2018,130.2235683,33.5974825
+domest015,伊都キャンパス/九州大学,Yamaguchi_Univ.,農業気象2018,130.2235683,33.5974825
+intl001,Wageningen Unversity/Wageningen,Univ._Tokyo,LightSym2012,5.6657696,51.9845558
+intl002,Universidade Évora/Évora,Univ._Tokyo,GreenSys2015,-7.9056599,38.5731454
+intl003,CSIRO/Canberra,Univ._Tokyo,ICEC/AusPheno 2016,149.115243,-35.2732675
+intl004,Istanbul Congress Center/Istanbul,ANU,IHC2018,28.9886615,41.0463909
+intl005,International Convention Centre Sydney/Sydney,ANU,ComBio2018,151.1990971,-33.873425
