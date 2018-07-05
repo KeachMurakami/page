@@ -6,554 +6,400 @@ title: " "
 <FONT color="grey">Last update: `r lubridate::today()`  </FONT>
 </div>
 
-```{r, message = F, echo = F, warning = F}
-library(fudukue)
+```{r functions, echo = F, message = F, warning = F}
+preprocessing <-
+  function(str){
+    stringr::str_split(str, pattern = " ")[[1]] %>%
+    stringr::str_replace_all("\\$|\\\\textrm", "") %>%
+    stringr::str_replace_all("\\\\textit", "ITALIC") %>%
+    tibble(string = ., id = seq_along(string))
+  }
 
-del_link <- F
-add_if <- F
-
-  # Record generator
-ToRecord <-
-  function(number = "", title, authors, year, in_what, type, url = NULL){
-    if(url == "" | del_link) {
-      c(No = number,
-        Title = paste0(title, "<br>&emsp;", authors),
-        Year = year,
-        In = in_what,
-        Type = type)
+unnest_braces <-
+  function(.tbl){
+    nested_index <-
+      .tbl$string %>%
+      stringr::str_detect("\\{[^\\}]*\\{")
+    
+    if(sum(nested_index) == 0){
+      return(.tbl)
     } else {
-      c(No = number,
-        Title = paste0("<a href = '", url, "' target='_blank'>", title, "</a><br>&emsp;", authors),
-        Year = year,
-        In = in_what,
-        Type = type)
+      .tbl %>%
+        tidyr::extract(string, into = c("pre", "inner", "post"), regex = "([^\\{]*\\{{1})([^\\{]*\\{{1}[^\\{]*?\\})(.*)") %>%
+        transmute(id, string = paste(pre, inner, post, sep = ":::")) %>%
+        separate_rows(string, sep = ":::") %>%
+        left_join(., .tbl, by = "id") %>%
+        transmute(id, string = if_else(string.x == "NA", string.y, string.x)) %>%
+        distinct(id, string) %>%
+        unnest_braces() %>%
+        return()
     }
   }
 
-# Table generator
-ToKable <-
-  function(PublicationList, in_what){
-  PublicationList %<>%
-      matrix(byrow = T, ncol = 5)
-  colnames(PublicationList) = c('No', 'Title', 'Year', 'Category', in_what)
-  PublicationList %>%
-    data.frame %>%
-    # arrange(desc(Year), Category) %>%
-    arrange(desc(No), desc(Year), Category) %>%
-    rename(` ` = No) %>%
-    kable
+expand_latex <-
+  function(.tbl){
+    
+    closed_index <-
+      .tbl %>%
+      mutate(left = str_detect(string, "\\{"), right = str_detect(string, "\\}"),
+             close = as.logical(left * right)) %$%
+      close
+    
+    if(sum(closed_index) == 0){
+      final_check <-
+        .tbl$string %>%
+        str_detect("\\{") %>%
+        sum
+      if(final_check == 0){
+        return(.tbl)
+      } else {
+        .tbl$string %>%
+          str_c(collapse = " ") %>%
+          tibble(string = .) %>%
+          tidyr::extract(string, into = c("pre", "inner", "post"), regex = "([^\\{]*\\{{1})([^\\}]*)(\\}.*)") %>%
+          list() %>%
+          map_df(function(single_row){
+            if(str_detect(single_row$pre, "ITALIC\\{")){
+              single_row %>%
+                mutate(pre = str_replace(pre, "ITALIC\\{", "<i>"),
+                       post = str_replace(post, "\\}", "</i>"))
+            } else if(str_detect(single_row$pre, "_\\{")){
+              single_row %>%
+                mutate(pre = str_replace(pre, "_\\{", "<sub>"),
+                       post = str_replace(post, "\\}", "</sub>"))
+            } else if(str_detect(single_row$pre, "\\^\\{")){
+              single_row %>%
+                mutate(pre = str_replace(pre, "\\^\\{", "<sup>"),
+                       post = str_replace(post, "\\}", "</sup>"))
+            } else {
+              single_row %>%
+                mutate(pre = str_replace(pre, "\\{", ""),
+                       post = str_replace(post, "\\}", ""))
+            }
+          }) %>%
+        transmute(string = paste0(pre, inner, post), id = 0)
+      }
+    } else {
+      df_expanded <-
+        .tbl[closed_index,] %>%
+        tidyr::extract(string, into = c("pre", "inner", "post"), regex = "([^\\{]*\\{{1})([^\\}]*)(\\}.*)") %>%
+        mutate(xx = row_number()) %>%
+        split(.$xx) %>%
+        map_df(function(single_row){
+          if(str_detect(single_row$pre, "ITALIC\\{")){
+            single_row %>%
+              mutate(pre = str_replace(pre, "ITALIC\\{", "<i>"),
+                     post = str_replace(post, "\\}", "</i>"))
+          } else if(str_detect(single_row$pre, "_\\{")){
+            single_row %>%
+              mutate(pre = str_replace(pre, "_\\{", "<sub>"),
+                     post = str_replace(post, "\\}", "</sub>"))
+          } else if(str_detect(single_row$pre, "\\^\\{")){
+            single_row %>%
+              mutate(pre = str_replace(pre, "\\^\\{", "<sup>"),
+                     post = str_replace(post, "\\}", "</sup>"))
+          } else {
+            single_row %>%
+              mutate(pre = str_replace(pre, "\\{", ""),
+                     post = str_replace(post, "\\}", ""))
+          }
+        }) %>%
+        transmute(string = paste0(pre, inner, post), id)
+        
+      bind_rows(df_expanded, .tbl[!closed_index,]) %>%
+        arrange(id) %>%
+        split(.$id) %>%
+        map_df(~ tibble(string = str_c(.$string, collapse = "")), .id = "id") %>%
+        expand_latex %>%
+        return()
+    }
   }
 
-speaker <- function(text) paste0("<sup>○</sup>", text)
-correspond <- function(text) paste0(text, "<sup>+</sup>")
-new_item <- function(text) paste0("<FONT color='red'><sup>New </sup></FONT>", text)
-coming_item <- function(text) paste0("<FONT color='grey'>", text, "</FONT>")
+to_html_title <-
+  function(vec_str){
+    vec_str %>%
+      map_chr(~ preprocessing(.) %>%
+      unnest_braces %>%
+      expand_latex %$%
+      string %>%
+      str_c(collapse = " ")
+      )}
 
-# Frequently appears
-KM <- "<FONT color='green'>Keach Murakami</FONT>"
-RM <- "Ryo Matsuda"
-KF <- "Kazuhiro Fujiwara"
-YI <- "Yasuomi Ibaraki"
-WSC <- "Wah Soon Chow"
+journal_abbreviation <-
+  read_csv("~/Dropbox/r_packages/fudukue/bibtex/MyAbbrvList.csv", col_types = cols()) %>%
+  select(journal = Abbrv, Full)
 
-KM_ <- "<FONT color='green'>村上 貴一</FONT>"
-RM_ <- "松田 怜"
-KF_ <- "富士原 和宏"
-YI_ <- "荊木 康臣"
+to_full_journal <-
+  function(.tbl, col){
+    .tbl %>%
+      left_join(., journal_abbreviation, by = "journal") %>%
+      mutate(journal = Full, Full = NULL)
+  }
 
-```
+indicate_me <-
+  function(.tbl){
+    .tbl %>%
+      mutate(author = str_replace(author, "Keach Murakami", "<FONT color='green'>Keach Murakami</FONT>"),
+             author = str_replace(author, "村上 貴一", "<FONT color='green'>村上 貴一</FONT>"))
+  }
 
-
-```{r journal, message = F, echo = F, warning = F}
-impacts <-
-  Vectorize(ifelse)(add_if, paste0("<br><FONT color='grey'>IF: ", c(0.467, 2.216, 3.520, 1.538, NA, 6.169, 3.330, 4.760), "</FONT>"), "")
-
-original_articles <-
-  c(
-    ToRecord(
-      "001",
-      "Effects of supplemental lighting to a lower leaf using light-emitting diodes with different spectra on the leaf photosynthetic rate in sweet pepper",
-      paste(KM, correspond(RM), KF, sep = ", "),
-      "2013",
-      "Original Article",
-      paste0("Journal of Agricultural Meteorology", impacts[1]),
-      "https://www.jstage.jst.go.jp/article/agrmet/69/2/69_69.2.2/_article"),
+indicate_author <-
+  function(.tbl, indicating_column, mark){
+    indicated <-
+      pull(.tbl, !! enquo(indicating_column)) %>%
+      str_split(pattern = " and ")
     
-     ToRecord(
-       "002",
-       "Light-induced systemic regulation of photosynthesis in primary and trifoliate leaves of <i>Phaseolus vulgaris</i>: effects of photosynthetic photon flux density (PPFD) <i>versus</i> spectrum",
-       paste(KM, correspond(RM), KF, sep = ", "),
-       "2014",
-       "Original Article",
-       paste0("Plant Biology", impacts[2]),
-       "http://onlinelibrary.wiley.com/wol1/doi/10.1111/plb.12055/abstract"),
-     
-    ToRecord(
-      "003",
-      "Interaction between the spectral photon flux density distributions of light during growth and for measurements in net photosynthetic rates of cucumber leaves",
-      paste(correspond(KM), RM, KF, sep = ", "),
-      "2016",
-      "Original Article",
-      paste0("Physiologia Plantarum", impacts[3]),
-      "http://onlinelibrary.wiley.com/wol1/doi/10.1111/ppl.12421/abstract"),
-    
-    ToRecord(
-      "004",
-      "Quantification of excitation energy distribution between photosystems based on a mechanistic model of photosynthetic electron transport",
-      paste(correspond(KM), correspond(RM), KF, sep = ", "),
-      "2018",
-      "Original Article",
-      paste0("Plant, Cell & Environment", impacts[6]),
-      "http://onlinelibrary.wiley.com/wol1/doi/10.1111/pce.12986/abstract"),
-    
-    ToRecord(
-      "005",
-      new_item("A mathematical model of photosynthetic electron transport in response to light spectrum based on excitation energy distributed to photosystems"),
-      paste(correspond(KM), correspond(RM), KF, sep = ", "),
-      "In press",
-      "Original Article",
-      paste0("Plan and Cell Physiology", impacts[7]),
-      "http://dx.doi.org/10.1093/pcp/pcy085"),
-
-    ToRecord(
-      "006",
-      new_item("Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem II"),
-      paste(correspond(KM), YI, sep = ", "),
-      "In press",
-      "Original Article",
-      paste0("Physiologia Plantarum", impacts[8]),
-      "http://dx.doi.org/10.1111/ppl.12745")
-  )
-
-other_articles <-
-  c(
-    ToRecord(
-      "",
-      "Effects of spectral distribution and photosynthetic photon flux density for overnight LED light irradiation on tomato seedling growth and leaf injury",
-      paste(correspond(RM), "Takuto Yamano", KM, KF, sep = ", "),
-      "2016",
-      "Original Article",
-      paste0("Scientia Horticulturae", impacts[4]),
-      "http://www.sciencedirect.com/science/article/pii/S0304423815303198"),
-      
-    ToRecord(
-      "",
-      "A basis for selecting light spectral distribution for evaluating leaf photosynthetic rates of plants grown under different light spectral distributions",
-      paste(correspond(KM), RM, KF, sep = ", "),
-      "2017",
-      "letter",
-      paste0("Environmental Control in Biology", impacts[5]),
-      "https://www.jstage.jst.go.jp/article/ecb/55/1/55_1/_article")
-  )
-```
-
-```{r books, message = F, echo = F}
-books <-
-  c(
-    ToRecord(
-      "01",
-      "Light- and CO<sub>2</sub>-dependent systemic regulation of photosynthesis",
-      paste(correspond(RM), KM, sep = ", "),
-      "2016",
-      "Book chapter<br>(peer-reviewd)",
-      "Progress in Botany",
-      "http://www.springer.com/in/book/9783319256863"),
-    
-    ToRecord(
-      "02",
-      "Optical and physiological properties of a leaf",
-      paste(correspond(KM), RM, sep = ", "),
-      "2016",
-      "Book chapter",
-      "LED Lighting for Urban Agriculture",
-      "http://www.springer.com/us/book/9789811018466")
-    
-    # ToRecord(
-    #   "03",
-    #   "人工光環境と植物の光合成 (Artificial light environments and photosynthesis of plants)",
-    #   paste(correspond(YI_), KM_, sep = ", "),
-    #   "2018 (in press)",
-    #   "Book chapter",
-    #   "アグリフォトニクスIII",
-    #   "")
-  )
-```
-
-```{r symposiums_international, message = F, echo = F}
-symp_int <-
-  c(  
-    ToRecord(
-      "05",
-      new_item("Time course of leaf content of cytochrome *b*<sub>6</sub>*f* complex and photosynthetic capacity after changes in growth irradiance"),
-      paste(speaker(KM), "Hui Zhu", "Ling-Da Zeng", "Xiao-Ping Yi", "Chang-Lian Peng", "Wang-Feng Zhang", WSC, sep = ", "),
-      "2018",
-      "Poster",
-      "ComBio2018.<br>Sydney, Australia, 2018/09/23-2018/09/26",
-      ""),
-    
-    ToRecord(
-      "04",
-      new_item("Spectral imaging for evaluation of spatial distributions of leaf photosynthetic light use efficiency"),
-      paste(speaker(KM), YI, sep = ", "),
-      "2018",
-      "Oral",
-      "IHC2018.<br>Istanbul, Turkey, 2018/08/12-2018/08/16",
-      ""),
-    
-    ToRecord(
-      "03",
-      "Non-destructive estimation of light energy distribution between photosystems",
-      paste(speaker(KM), RM, KF, sep = ", "),
-      "2016",
-      "Oral",
-      "ICEC/AusPheno 2016.<br>Canberra, Australia. 2016/09/18-2016/09/23",
-      ""),
-    
-    ToRecord(
-      "02",
-      "A difference in net photosynthetic rate between leaves grown with and without far-red light depends on the spectral distribution of measuring light",
-      paste(speaker(KM), RM, KF, sep = ", "),
-      "2015",
-      "Poster",
-      "GreenSys 2015.<br>Évora, Portugal. 2015/07/19-2015/07/23",
-      ""),
-    
-    ToRecord(
-      "01",
-      "Effect of supplemental lighting to a lower leaf using LEDs with different wavelengths on leaf photosynthetic characteristics in sweet pepper",
-      paste(speaker(KM), RM, KF, sep = ", "),
-      "2012",
-      "Poster",
-      "7th International Symposium on Light in Horticultural Systems (LightSym 2012).<br>Wageningen, The Netherlands. 2012/10/15-2012/10/18",
-      "")
-  )
-```
-
-```{r symposiums_domestic, message = F, echo = F}
-symp_domestic <-
-  c(
-    ToRecord(
-      "014",
-      "深層学習を用いた葉面積推定に関する研究",
-      paste(speaker(YI_), "水畑 順太", KM_, sep = ", "),
-      "2018",
-      "Oral",
-      "日本農業気象学会 2018 年全国大会<br>@九大伊都, 2018/03/13-2018/03/17",
-      ""),
-    
-    ToRecord(
-      "015",
-      "分光画像計測による光合成速度分布解析の試み",
-      paste(speaker(KM_), YI_, sep = ", "),
-      "2018",
-      "Oral",
-      "日本農業気象学会 2018 年全国大会<br>@九大伊都, 2018/03/13-2018/03/17",
-      ""),
-
-    ToRecord(
-      "013",
-      "分光反射画像計測による葉位別光合成速度推定にむけて: PRIの光応答の評価",
-      paste(speaker(KM_), YI_, sep = ", "),
-      "2017",
-      "Oral",
-      "日本農業気象学会 中国四国支部大会<br>@鳥大, 2017/12/07-2017/12/08",
-      ""),
-    
-    ToRecord(
-      "012",
-      "葉面反射画像計測による光合成光利用効率の光環境変化に対する応答の評価の試み",
-      paste(speaker(KM_), YI_, sep = ", "),
-      "2017",
-      "Oral",
-      "日本生物環境工学会 2017 年松山大会<br>@愛媛大樽味, 2017/08/30-2017/09/04",
-      ""),
-
-    ToRecord(
-      "011",
-      "光化学系I・II間での励起エネルギー分配比の非破壊定量法の開発",
-      paste(speaker(KM_), RM_, KF_, sep = ", "),
-      "2017",
-      "Poster",
-      "第 8 回日本光合成学会年会<br>@龍谷大瀬田, 2017/05/27-2017/05/28",
-      ""),
-
-    ToRecord(
-      "010",
-      "夜間に照射する LED 光の分光分布および PPFD がトマト苗の成育および可視障害に及ぼす影響",
-      paste(speaker(RM_), "山埜 拓人", KM_, KF_, sep = ", "),
-      "2016",
-      "Oral",
-      "日本農業気象学会 2016 年全国大会<br>@岡山大, 2016/03/14-2016/03/17",
-      ""),
-    
-    ToRecord(
-      "009",
-      "サンプルサイズ（<i>n</i>）の検定力分析による決定 ―グロースチャンバでの植物栽培試験での例—",
-      paste(speaker(KM_), RM_, KF_, sep = ", "),
-      "2016",
-      "Poster",
-      "日本農業気象学会 2016 年全国大会<br>@岡山大, 2016/03/14-2016/03/17",
-      ""),
-    
-    ToRecord(
-      "008",
-      "栽培中の遠赤色光添加は栽培後の葉の光合成速度を小さくするのか？",
-      paste(speaker(KM_), RM_, KF_, sep = ", "),
-      "2015",
-      "Oral",
-      "日本生物環境工学会 2015 年宮崎大会<br>@シーガイア(宮崎), 2015/09/08-2015/09/11",
-      ""),
-    
-    ToRecord(
-      "007",
-      "異なる分光分布の光照射下で成育した葉の光合成速度比較結果は測定光分光分布に影響される",
-      paste(speaker(KM_), RM_, KF_, sep = ", "),
-      "2015",
-      "Oral",
-      "日本農業気象学会 2015 年全国大会<br>@文部科学省研究交流センター(つくば), 2015/03/16-2015/03/19",
-      ""),
-    
-    ToRecord(
-      "006",
-      "異なる狭波長帯 LED 光の混合照射下における個葉の総光合成速度の推定",
-      paste(speaker(KM_), RM_, KF_, sep = ", "),
-      "2014",
-      "Poster",
-      "第 5 回日本光合成学会年会<br>@近畿大奈良, 2014/05/30-2014/05/31",
-      ""),
+    author <- .tbl$author
+    who <- map2(author, indicated, ~ .x %in% .y)
   
-    ToRecord(
-      "005",
-      "下位葉補光・終夜補光の光質が植物の光合成特性と成育に及ぼす影響",
-      paste(speaker(RM_), "山埜 拓人", KM_, KF_, sep = ", "),
-      "2014",
-      "Oral",
-      "日本農業気象学会 2014 年全国大会<br>@北大, 2014/03/18-2014/03/21",
-      ""),
-    
-    ToRecord(
-      "004",
-      "種々のピーク波長の LED を用いた混合光照射下におけるコスレタス葉の光合成量子収率",
-      paste(speaker(KM_), RM_, KF_, sep = ", "),
-      "2014",
-      "Oral",
-      "日本農業気象学会 2014 年全国大会<br>@北大, 2014/03/18-2014/03/21",
-      ""),
-    
-    ToRecord(
-      "003",
-      "異なるピーク波長の LED を用いた混合光照射下における個葉の光合成量子収率",
-      paste(speaker(KM_), RM_, KF_, sep = ", "),
-      "2013",
-      "Oral",
-      "日本生物環境工学会 2013 年香川大会<br>@香川大, 2013/09/02-2013/09/05",
-      ""),
-    
-    ToRecord(
-      "002",
-      "インゲンマメ下位葉への単色 LED 光照射が上位葉の光合成特性に及ぼす影響",
-      paste(speaker(KM_), RM_, KF_, sep = ", "),
-      "2012",
-      "Oral",
-      "日本生物環境工学会 2012 年東京大会<br>@東大弥生, 2012/09/04-2012/09/07",
-      ""),
-    
-    ToRecord(
-      "001",
-      "トマト養液栽培における葉面積指数推定モデルの構築: 気孔コンダクタンスモデルの検討",
-      paste(speaker(RM_), KM_, KF_, sep = ", "),
-      "2012",
-      "Poster",
-      "日本農業気象学会 2012 年全国大会<br>@大阪府大中百舌鳥, 2012/03/13-2012/03/17",
-      "")
-  )
+    map2_chr(author, who, function(.x, .y){
+      str_split(.x, pattern = ", ") %>%
+      map2(.y, function(.x, .y){
+        if(str_detect(.x[[1]], pattern = "^[a-zA-Z]")){
+          names <- str_c(.x[2], " ", .x[1], if_else(.y, mark, "")) # english record
+        } else {
+          names <- str_c(.x[1], " ", .x[2], if_else(.y, mark, "")) # japanese record
+        }
+        names}) %>%
+          str_c(collapse = ", ")}) %>%
+          mutate(.tbl, author = .) %>%
+          indicate_me() %>%
+        return()
+  }
+
+kable_styler <-
+  function(.tbl, digit, sub, ...){
+    .tbl %>%
+      mutate(title = paste0(title, "<FONT size = '3'><br>&emsp;", author, "<br>&emsp;<i>", UQ(enquo(sub)), "</i></FONT>"),
+             ` ` = str_pad(row_number(), width = digit, side = "left", pad = "0")) %>%
+      arrange(desc(` `)) %>%
+      select(...) %>%
+      knitr::kable()
+  }
 ```
 
+```{r load_bibtex, echo = F, message = F, warning = F}
+library(bib2df)
 
-<br>
-<sup>+</sup> -> Corresponding Author  
-<!-- <sup>1st</sup> -> First Author -->
+bib_data <-
+  dir("~/Dropbox/r_packages/fudukue/bibtex/list_bib/", pattern = "^mywork", full.names = T) %>%
+  purrr::map_df(bib2df) %>%
+  janitor::remove_empty("cols") %>%
+  janitor::clean_names() %>%
+  dplyr::mutate_at(.vars = 'category', tolower) %>%
+  dplyr::mutate(title = to_html_title(title))
+
+papers <-
+  bib_data %>%
+  dplyr::filter(category == 'article') %>%
+  dplyr::transmute(title = str_glue('<a href="http://doi.org/{doi}">{title}</a>'),
+                   author, year, type, journal, corresponding, bibtexkey) %>%
+  indicate_author(corresponding, mark = "<sup>+</sup>") %>%
+  {
+    is_main <-
+      mutate(., is_main = (type == 'Original article') & str_detect(bibtexkey, '^Murakami'))$is_main
+    
+    list(paper_main = .[is_main,], paper_other = .[!is_main,]) %>%
+      map(to_full_journal) %>%
+      map_at(1, mutate, type = "") %>%
+      map_at(2, mutate, type = paste0("; ", type)) %>%
+      map(mutate, journal = paste0(journal, " (", year, type, ")")) %>%
+      return()
+  }
+
+books <-
+  bib_data %>%
+  dplyr::filter(category %in% c("book", "inbook", "incollection")) %>%
+  dplyr::transmute(title = str_glue('<a href="http://doi.org/{doi}">{title}</a>'),
+                   author, corresponding, bibtexkey, booktitle = paste0(booktitle, " (", year, ")")) %>%
+  indicate_author(corresponding, mark = "<sup>+</sup>")
+
+talks <-
+  bib_data %>%
+  dplyr::filter(category == 'conference') %>%
+  indicate_author(speaker, mark = "<sup>o</sup>") %>%
+  dplyr::mutate(time = lubridate::ymd(paste0(year, "-", month, "-1")),
+                from = case_when(
+                  time < "2017-03-31" ~ "Univ._Tokyo",
+                  time < "2018-05-31" ~ "Yamaguchi_Univ.",
+                  time < "2019-01-31" ~ "ANU"
+                ),
+                short_symposium = paste0(type, " in ", short_symposium, "\\@", venue),
+                symposium = paste0(type, " in ", symposium, "\\@", venue)) %>%
+  {
+    domest <-
+      filter(., str_detect(bibtexkey, "^domest"))
+    intl <-
+      filter(., str_detect(bibtexkey, "^intl"))
+    
+    list(talks_domestic = domest, talks_intl = intl)
+  }
+
+biblio <-
+  list(
+    papers1 = papers$paper_main %>%
+      kable_styler(digit = 3, sub = journal, ` `, `  ` = title),
+    papers2 = papers$paper_other %>%
+      kable_styler(digit = 2, sub = journal, `  ` = title),
+    books = books %>%
+      kable_styler(digit = 2, sub = booktitle, ` `, ` ` = title),
+    talks1 = talks$talks_intl %>%
+      kable_styler(digit = 3, sub = short_symposium, ` `, `  ` = title),
+    talks2 = talks$talks_domestic %>%
+      kable_styler(digit = 3, sub = symposium, ` `, `  ` = title)
+  )
+```
 
 ### Journal Articles
+
+<sup>+</sup> -> Corresponding Author  
 
 #### {(First | Corresponding) & Original} papers
 
 ```{r, message = F, echo = F, warning = F}
-original_articles %>%
-  ToKable(in_what = "Journal")
+biblio$papers1
 ```
-
-<br>
 
 #### Other papers
 
 ```{r, message = F, echo = F, warning = F}
-other_articles %>%
-  ToKable(in_what = "Journal")
+biblio$papers2
 ```
-
-<br>
 
 -----
 
 ### Book Chapters
 
 ```{r, message = F, echo = F}
-books %>%
-  ToKable(in_what = "Book")
+biblio$books
 ```
   
-<br>
-
 --------------
 
 ### Presentations
 
+<sup>o</sup> -> Speaker  
+
+#### International Academic Conferences
+
+```{r, message = F, echo = F}
+biblio$talks1
+```
+
+#### Domestic Academic Conferences
+
+```{r, message = F, echo = F}
+biblio$talks2
+```
+
+
 ```{r map, echo = F, message = F, warning = F, out.width="100%"}
-work_location <-
-  data.frame(
-    name = c("東大環境研", "山口大荊木研"),
-    lat = c(35.7167, 34.1492),
-    lng = c(139.7616, 131.4691),
-    from = c("2012/Apr", "2017/Apr"),
-    to = c("2017/Mar", "2020/Mar")
-  ) %>%
-  mutate(popup=paste(name, "<br/>", from, "--", to))
-  # mutate(popup=paste(sprintf('<a href="%s">%s</a>', url, name), opens, major, sep="<br/>"))
 
+geos <- 
+  "~/Dropbox/page/data/misc/symposium_addresses.csv" %>%
+  read_csv(col_types = cols())
+symps <-
+  map_df(talks, select, key = bibtexkey, venue, from, short_symposium)
+is_new_record <-
+  symps[!(symps$key %in% geos$key), ] %>%
+  nrow
 
-# name, lat, lng, from, to, url
+if(is_new_record > 0){
+  library(ggmap)
+  geos <-
+    symps %>%
+    mutate(geo = map(venue, function(x) geocode(x))) %>%
+    unnest %>%
+    bind_rows(., geos) %>%
+    arrange(key)
+  geos %>%
+    write_csv("~/Dropbox/page/data/misc/symposium_addresses.csv")
+}
 
-# checker for me
-# symp_domestic %>%
-#   str_subset("@") %>%
-#   str_extract("@+.*")
+geos_from <-
+  list(Univ._Tokyo = c(139.762, 35.71268),
+       Yamaguchi_Univ. = c(131.4691, 34.14923),
+       ANU = c(149.1185, -35.2777))
 
-Sys.unsetenv("ftp_proxy")
-Sys.unsetenv("http_proxy")
-Sys.unsetenv("https_proxy")
+work_locations <-
+  geos_from %>%
+  map_df(~ tibble(lon = .[1], lat = .[2]), .id = "from") %>%
+  mutate(from = str_replace(from, "_", " "),
+         span = c("April/2008&ndash;March/2017",
+                  "April/2017&ndash;March/2020",
+                  "May/2018&ndash;Feb/2019"),
+         from = str_c(from, "<br>", span))
 
-library(ggmap)
-
-venue_domestic <-
-  c("伊都キャンパス",
-    "伊都キャンパス",
-    "鳥取大",
-    "愛媛大学農学部",
-    "龍谷大学瀬田キャンパス",
-    "岡山大学",
-    "岡山大学",
-    "シーガイア",
-    "文部科学省研究交流センター",
-    "近畿大学奈良キャンパス",
-    "北海道大学",
-    "北海道大学",
-    "香川大",
-    "東京大学弥生キャンパス",
-    "大阪府立大学中百舌鳥キャンパス")
-
-venue_int <-
-  c("Sydney",
-    "Istanbul",
-    "Canberra",
-    "Evora",
-    "Wageningen")
-
-symposium_location_domestic <-
-  symp_domestic %>%
-  str_subset("@") %>%
-  as.list() %>%
-  map2(.x = .,
-       .y = venue_domestic,
-       function(x, y){
-         geos <- geocode(y)
-         tibble(name = x, lat = geos$lat, lng = geos$lon)
-       }) %>%
-  bind_rows()
-
-symposium_location_int <-
-  symp_int %>%
-  str_subset("[0-9]{4}/[0-9]{2}/[0-9]{2}") %>%
-  as.list() %>%
-  map2(.x = .,
-       .y = venue_int,
-       function(x, y){
-         geos <- geocode(y)
-         tibble(name = x, lat = geos$lat, lng = geos$lon)
-       }) %>%
-  bind_rows()
-
-fill_na_recursive <-
-  function(tbl, venue){
-    na_index <- is.na(tbl$lat)
-      
-    for(xxx in which(na_index)){
-      geo <- geocode(venue[xxx])
-      tbl[xxx, "lat"] <- geo$lat
-      tbl[xxx, "lng"] <- geo$lon
-    }
-    
-    if(sum(is.na(tbl$lat)) != 0){
-      fill_na_recursive(tbl, venue)
-    } else {
-      return(tbl)
-    }
-  }
-
-symposium_location_domestic <-
-  fill_na_recursive(tbl = symposium_location_domestic, venue = venue_domestic)
-symposium_location_int <-
-  fill_na_recursive(tbl = symposium_location_int, venue = venue_int)
 
 library(leaflet)
 library(geosphere)
 library(htmlwidgets)
-library(widgetframe)
 
-#
-geos_univ <- list(UT = c(139.762, 35.71268),
-                  YU = c(131.4691, 34.14923),
-                  ANU = c(149.1185, -35.2777))
-
-flight_lines_ut <-
-  map(3:5, function(xxx){
-    xy_end <- c(symposium_location_int[xxx,]$lng, symposium_location_int[xxx,]$lat)
-    
-    gcIntermediate(geos_univ$UT, xy_end, n = 300, addStartEnd = T)
+flight_lines <-
+  geos %>%
+  split(.$from) %>%
+  map(function(.tbl){
+    map(seq_along(.tbl$key), function(.tbl2){
+      xy_start <- geos_from[[.tbl$from[.tbl2]]]
+      xy_end <- c(.tbl$lon[.tbl2], .tbl$lat[.tbl2])
+      gcIntermediate(xy_start, xy_end, n = 300, addStartEnd = T)
     })
+  })
 
-flight_lines_anu <-
-  map(1:2, function(xxx){
-    xy_end <- c(symposium_location_int[xxx,]$lng, symposium_location_int[xxx,]$lat)
-    
-    gcIntermediate(geos_univ$ANU, xy_end, n = 300, addStartEnd = T)
-    })
-
+color_set <-
+  c("orange", "cyan", "magenta")
 color_set_map <-
-  list(domestic = "<FONT color='pink'>Domestic</FONT>",
-       int = "<FONT color='skyblue'>International</FONT>")
+  list(A = "<FONT color='{color_set[1]}'>ANU</FONT>",
+       B = "<FONT color='{color_set[2]}'>Univ. Tokyo</FONT>",
+       C = "<FONT color='{color_set[3]}'>Yamaguchi Univ.</FONT>")
 
-color_flight_path <- "white"
+add_flight <-
+  function(map, flight, ...){
+    for(i in seq_along(flight)){
+      map %<>%
+        addPolylines(data = flight[[i]], weight = 1, ...)
+    }
+    return(map)
+  }
+
 
 symposium_map <-
-  symposium_location_domestic %>%
-  leaflet %>%
+  leaflet() %>%
   addProviderTiles(providers$CartoDB.DarkMatter) %>%
-  addPolylines(data = flight_lines_ut[[1]], color = color_flight_path, group = color_set_map[[2]]) %>%
-  addPolylines(data = flight_lines_ut[[2]], color = color_flight_path, group = color_set_map[[2]]) %>%
-  addPolylines(data = flight_lines_ut[[3]], color = color_flight_path, group = color_set_map[[2]]) %>%
-  addPolylines(data = flight_lines_anu[[1]], color = color_flight_path, group = color_set_map[[2]]) %>%
-  addPolylines(data = flight_lines_anu[[2]], color = color_flight_path, group = color_set_map[[2]]) %>%
-  addCircleMarkers(lng = ~lng, lat = ~lat, popup = ~name, group = color_set_map[[1]], col = "pink", opacity = .9) %>%
-  addCircleMarkers(data = symposium_location_int,
-                   lng = ~lng, lat = ~lat, popup = ~name, group = color_set_map[[2]], col = "skyblue", opacity = .9) %>%
+  add_flight(flight_lines[[1]], color = color_set[1], group = color_set_map[[1]]) %>%
+  add_flight(flight_lines[[2]], color = color_set[2], group = color_set_map[[2]]) %>%
+  add_flight(flight_lines[[3]], color = color_set[3], group = color_set_map[[3]]) %>%
+  addCircleMarkers(data = work_locations,
+                   lng = ~lon, lat = ~lat,
+                   stroke = F, radius = 8.5, fillOpacity = .05, color = "white") %>%
+  addCircleMarkers(data = work_locations,
+                   lng = ~lon, lat = ~lat,
+                   stroke = F, radius = 8, fillOpacity = .10, color = "white") %>%
+  addCircleMarkers(data = work_locations,
+                   lng = ~lon, lat = ~lat,
+                   stroke = F, radius = 7.5, fillOpacity = .25, color = "white") %>%
+  addCircleMarkers(data = work_locations,
+                   lng = ~lon, lat = ~lat, popup = ~ from,
+                   stroke = F, radius = 7, fillOpacity = 1, color = "black") %>%
+
+  addCircleMarkers(data = filter(geos, from == "ANU"),
+                   lng = ~lon, lat = ~lat, popup = ~ short_symposium,
+                   stroke = F, radius = 5, fillOpacity = .5,
+                   color = color_set[1], group = color_set_map[[1]]) %>%
+  addCircleMarkers(data = filter(geos, from == "Univ._Tokyo"),
+                   lng = ~lon, lat = ~lat, popup = ~ short_symposium,
+                   stroke = F, radius = 5, fillOpacity = .5,
+                   color = color_set[2], group = color_set_map[[2]]) %>%
+  addCircleMarkers(data = filter(geos, from == "Yamaguchi_Univ."),
+                   lng = ~lon, lat = ~lat, popup = ~ short_symposium,
+                   stroke = F, radius = 5, fillOpacity = .5,
+                   color = color_set[3], group = color_set_map[[3]]) %>%
   addLayersControl(
-    overlayGroups = c(color_set_map[[1]], color_set_map[[2]]),
+    overlayGroups = c(color_set_map[[1]], color_set_map[[2]], color_set_map[[3]]),
     options = layersControlOptions(collapsed = T)
   )
 
 # symposium_map
-
 dir.create("leaflet", showWarnings = FALSE)
 setwd("leaflet")
 saveWidget(symposium_map, "symposium_map.html", selfcontained = T)
@@ -561,22 +407,3 @@ setwd("..")
 ```
 
 <iframe seamless src="../leaflet/symposium_map/index.html" width="100%" height="500"></iframe>
-
-<br>
-<sup>○</sup> -> Speaker  
-
-#### International Academic Conferences
-
-```{r, message = F, echo = F}
-symp_int %>%
-  ToKable(in_what = "Venue Date")
-```
-
-<br>
-
-#### Domestic Academic Conferences
-
-```{r, message = F, echo = F}
-symp_domestic %>%
-  ToKable(in_what = "Venue Date")
-```
