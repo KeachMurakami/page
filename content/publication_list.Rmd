@@ -120,7 +120,8 @@ to_html_title <-
     vec_str %>%
       map_chr(~ preprocessing(.) %>%
       unnest_braces %>%
-      expand_latex %$%
+      expand_latex %>%
+      arrange(as.numeric(id)) %$%
       string %>%
       str_c(collapse = " ")
       )}
@@ -314,7 +315,6 @@ if(is_new_record > 0){
     arrange(key)
   geos %>%
     write_csv("~/Dropbox/page/data/misc/symposium_addresses.csv")
-}
 
 geos_from <-
   list(Univ._Tokyo = c(139.762, 35.71268),
@@ -404,6 +404,7 @@ dir.create("leaflet", showWarnings = FALSE)
 setwd("leaflet")
 saveWidget(symposium_map, "symposium_map.html", selfcontained = T)
 setwd("..")
+}
 ```
 
 <iframe seamless src="../leaflet/symposium_map/index.html" width="100%" height="500"></iframe>
