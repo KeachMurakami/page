@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.40" />
+
+
+<title>内向きティックの付け方 (ggplot2) - A plant researcher</title>
+<meta property="og:title" content="内向きティックの付け方 (ggplot2) - A plant researcher">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="../../../../css/fonts.css" media="all">
+<link rel="stylesheet" href="../../../../css/main.css" media="all">
+
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="../../../../" class="nav-logo">
+    <img src="../../../../images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="../../../../cv_eng/">About (Eng)</a></li>
+    
+    <li><a href="../../../../cv_jpn/">About (Jpn)</a></li>
+    
+    <li><a href="../../../../publication_list/">Publication</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">1 min read</span>
+    
+
+    <h1 class="article-title">内向きティックの付け方 (ggplot2)</h1>
+
+    
+    <span class="article-date">2018/07/18</span>
+    
+
+    <div class="article-content">
+      <p><code>ggplot2</code>でtickを内向きにする方法のメモ。</p>
+<p>tickの長さを負にして、marginを2倍とる。</p>
+<pre class="r"><code>length_tick &lt;- .2
+
+theme_set(
+  theme_bw() +
+  theme(axis.ticks.length = unit(-length_tick, &quot;cm&quot;),
+        axis.text.x = element_text(margin = unit(c(length_tick * 2, 0, 0, 0), &quot;cm&quot;)),
+        axis.text.y = element_text(margin = unit(c(0, length_tick * 2, 0, 0), &quot;cm&quot;))
+        )
+  )
+
+mtcars %&gt;%
+  ggplot(aes(mpg, cyl, col = factor(cyl))) +
+  geom_point()</code></pre>
+<p><img src="../../../../post/2018-07-18-inward_tick_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<div class="section level2">
+<h2>雑感</h2>
+<p>出身ラボは内向き原理主義だった。 見栄えだけなら、内向きの方がスッキリしていて好ましく感じる。 ただ、散布図などで軸付近にプロットがある場合に重なりが生じることを考えると、外向きの方が安全なデザインだと思う。 そもそも「グリッドなしでティックのみ」という技術文書の文化は、「モノクロかつ低解像度な印刷で誤解を産まないように」という理由が主だろうから、そろそろグリッドでもいい気もする。</p>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="../../../../index.xml" type="application/rss+xml" target="_blank"><i class="fas fa-rss"></i></a>
+          </li>
+          <li>
+            <a href="https://github.com/KeachMurakami/page" class="footer-link"><i class="fab fa-github"></i></a>
+          </li>
+          <li>
+            Powered by <a href="https://gohugo.io/" class="footer-link">Hugo</a>, <a href="https://github.com/rstudio/blogdown" class="footer-link">blogdown</a>, and <a href="https://pages.github.com/" class="footer-link">GitHub Pages</a>.
+          </li>
+        </ul>
+        <ul class="footer-links">
+          <li>
+            Except where otherwise noted, content on this site is licensed under a<a href="https://creativecommons.org/licenses/by/4.0/" class="footer-link">Creative Commons Attribution 4.0 International license</a>.
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
+

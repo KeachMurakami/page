@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://keachmurakami.github.io/2018/07/18/%E5%86%85%E5%90%91%E3%81%8D%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9-ggplot2/</loc>
+    <lastmod>2018-07-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/2018/06/29/%E9%96%A2%E6%95%B0%E5%90%8D%E3%81%AE%E8%A1%9D%E7%AA%81%E3%82%92%E9%81%BF%E3%81%91%E3%82%8B-r/</loc>
     <lastmod>2018-06-29T00:00:00+00:00</lastmod>
   </url>
@@ -379,7 +384,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/</loc>
-    <lastmod>2018-06-29T00:00:00+00:00</lastmod>
+    <lastmod>2018-07-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -454,7 +459,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/post/</loc>
-    <lastmod>2018-06-29T00:00:00+00:00</lastmod>
+    <lastmod>2018-07-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -507,7 +512,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/categories/tidyverse/</loc>
-    <lastmod>2017-12-14T00:00:00+00:00</lastmod>
+    <lastmod>2018-07-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

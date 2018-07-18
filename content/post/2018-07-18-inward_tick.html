@@ -1,0 +1,28 @@
+---
+title: "内向きティックの付け方 (ggplot2)"
+date: 2018-07-18
+categories: ["tidyverse"]
+---
+
+
+
+<p><code>ggplot2</code>でtickを内向きにする方法のメモ。</p>
+<p>tickの長さを負にして、marginを2倍とる。</p>
+<pre class="r"><code>length_tick &lt;- .2
+
+theme_set(
+  theme_bw() +
+  theme(axis.ticks.length = unit(-length_tick, &quot;cm&quot;),
+        axis.text.x = element_text(margin = unit(c(length_tick * 2, 0, 0, 0), &quot;cm&quot;)),
+        axis.text.y = element_text(margin = unit(c(0, length_tick * 2, 0, 0), &quot;cm&quot;))
+        )
+  )
+
+mtcars %&gt;%
+  ggplot(aes(mpg, cyl, col = factor(cyl))) +
+  geom_point()</code></pre>
+<p><img src="/post/2018-07-18-inward_tick_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<div class="section level2">
+<h2>雑感</h2>
+<p>出身ラボは内向き原理主義だった。 見栄えだけなら、内向きの方がスッキリしていて好ましく感じる。 ただ、散布図などで軸付近にプロットがある場合に重なりが生じることを考えると、外向きの方が安全なデザインだと思う。 そもそも「グリッドなしでティックのみ」という技術文書の文化は、「モノクロかつ低解像度な印刷で誤解を産まないように」という理由が主だろうから、そろそろグリッドでもいい気もする。</p>
+</div>
