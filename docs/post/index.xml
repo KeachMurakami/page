@@ -6,10 +6,19 @@
     <description>Recent content in Posts on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Wed, 18 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 20 Jul 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://keachmurakami.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>関数を繰り返し適用するpurrr::reduce</title>
+      <link>https://keachmurakami.github.io/2018/07/20/%E9%96%A2%E6%95%B0%E3%82%92%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8Bpurrrreduce/</link>
+      <pubDate>Fri, 20 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/07/20/%E9%96%A2%E6%95%B0%E3%82%92%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8Bpurrrreduce/</guid>
+      <description>purrr::reduceがしっくりこないメモ。 check_query &amp;lt;- function (data, query){ data %&amp;gt;% mutate(UQ(query) := ifelse(str_detect(Species, query), TRUE, FALSE)) } qs &amp;lt;- c(&amp;quot;s&amp;quot;, &amp;quot;ver&amp;quot;, &amp;quot;col&amp;quot;) # 引数を変えながらループする処理 result_base &amp;lt;- iris[48:52,] %&amp;gt;% check_query(qs[1]) %&amp;gt;% check_query(qs[2]) %&amp;gt;% check_query(qs[3]) %&amp;gt;% knitr::kable()</description>
+    </item>
     
     <item>
       <title>内向きティックの付け方 (ggplot2)</title>

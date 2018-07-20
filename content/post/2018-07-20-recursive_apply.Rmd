@@ -1,0 +1,73 @@
+---
+title: "関数を繰り返し適用するpurrr::reduce"
+date: 2018-07-20
+categories: ["tidyverse"]
+---
+
+```{r setup, warning = F, message = F, include = F, echo = F}
+library(tidyverse)
+knitr::opts_chunk$set(warning = F, message = F, echo = T, results = "hold")
+```
+
+purrr::reduceがしっくりこないメモ。
+
+```{r}
+check_query <-
+  function (data, query){
+    data %>%
+      mutate(UQ(query) := ifelse(str_detect(Species, query), TRUE, FALSE))
+  }
+
+qs <- c("s", "ver", "col")
+
+# 引数を変えながらループする処理
+
+result_base <-
+  iris[48:52,] %>%
+  check_query(qs[1]) %>%
+  check_query(qs[2]) %>%
+  check_query(qs[3]) %>%
+  knitr::kable()
+
+result_base
+
+# 等価なreduce
+
+result_reduce <-
+  iris[48:52,] %>%
+  list() %>%
+  append(., as.list(qs)) %>%
+  reduce(.x = ., .f = check_query) %>%
+  knitr::kable()
+
+identical(result_base, result_reduce)
+```
+
+`reduce(.x = list(a, b, c, d), .f = fun)`は`fun(fun(fun(a, b), c), d)`と等価。
+`.x`の第一要素に第二要素以降を引数として`fun`を繰り返すイメージ。
+
+関数の被適用オブジェクト (`a`) と引数 (`b–d`) が同レベルで収納されているのは気持ち悪いうえに、pipeでつなぐと手数が増える。
+
+`a`と`b–d`を切り分けるような形であってほしかった。
+
+```{r}
+REDUCE <-
+  function(.x, .arg, .f){
+    lst(.x) %>%
+      append(.arg) %>%
+      reduce(.f)
+  }
+
+set.seed(4347)
+(query <- as.list(paste0(sample(letters, size = 10), sample(letters, size = 10))))
+
+iris[48:52,] %>%
+  REDUCE(.arg = query, .f = check_query) %>%
+  knitr::kable()
+```
+
+## Session Info
+
+```{r informations}
+session_info()
+```
