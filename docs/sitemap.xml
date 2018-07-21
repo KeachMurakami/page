@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://keachmurakami.github.io/2018/07/21/ggplot2%E3%81%AE%E5%9B%B3%E3%82%92%E3%83%91%E3%83%8D%E3%83%AB%E7%8A%B6%E3%81%AB%E4%B8%A6%E3%81%B9%E3%82%8B-cowplot-patchwork-egg-ggpubr/</loc>
+    <lastmod>2018-07-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/2018/07/20/%E9%96%A2%E6%95%B0%E3%82%92%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8Bpurrrreduce/</loc>
     <lastmod>2018-07-20T00:00:00+00:00</lastmod>
   </url>
@@ -389,7 +394,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/</loc>
-    <lastmod>2018-07-20T00:00:00+00:00</lastmod>
+    <lastmod>2018-07-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -401,6 +406,12 @@
   <url>
     <loc>https://keachmurakami.github.io/categories/documentation/</loc>
     <lastmod>2016-10-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://keachmurakami.github.io/categories/ggplot2/</loc>
+    <lastmod>2018-07-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -464,7 +475,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/post/</loc>
-    <lastmod>2018-07-20T00:00:00+00:00</lastmod>
+    <lastmod>2018-07-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -517,7 +528,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/categories/tidyverse/</loc>
-    <lastmod>2018-07-20T00:00:00+00:00</lastmod>
+    <lastmod>2018-07-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

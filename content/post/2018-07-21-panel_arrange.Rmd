@@ -1,0 +1,281 @@
+---
+title: "ggplot2の図をパネル状に並べる (cowplot, patchwork, egg, ggpubr)"
+date: 2018-07-21
+categories: ["tidyverse", "ggplot2"]
+---
+
+```{r setup, warning = F, message = F, include = F, echo = F}
+library(tidyverse)
+knitr::opts_chunk$set(warning = F, message = F, echo = T, results = "hold")
+```
+
+ggplot2パネル表示のメモ
+
+とくに論文書きでは関係する図をパネル状に並べて表示する機会が多い。
+ggplot2のfacetファミリーでどうにかできる場合はいいが、そうでないとパネル分けでいつももたつく。
+いくつかのパネル作成パッケージを比較して頭の中を整理する。
+
+## packages
+
+現行でパネル作成可能なパッケージなうち、以下の４パッケージを試す。
+
+- [cowplot](https://github.com/wilkelab/cowplot)
+- [patchwork](https://github.com/thomasp85/patchwork)
+- [egg](https://github.com/baptiste/egg/)
+- [ggpubr](https://github.com/kassambara/ggpubr)
+
+そのほかにもまだいくつかあるが省略。
+
+- grid
+    - R core
+    - どのパッケージも内部的にはgrid経由で表示している
+    - `viewport`/`grid.layout`
+- gridExtra & gtable
+    - [Arranging multiple grobs on a page | vignette](https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html)
+    - [Qiitaのhoxo_bさんの記事](https://qiita.com/hoxo_b/items/0382ae9055838b05ad9b)が詳しい
+    - 一昔前はこれ一択だったが、積極的に開発されることはもうないだろう、という感じ
+- multipanelplot
+- Rcookbook
+
+## 要件
+
+上から順に優先度が高い。
+
+1. パネル間で軸位置を一致させられる
+    - 縦に並んだ２つのパネルでy軸がずれているとがっかりするので
+2. insetが可能
+    - 図の中に小さい図を書くことがままあるので
+3. パネルへのラベル付記
+    - Fig. 1aと本文で触れるので
+    - あれば少し便利くらい
+4. 凡例を共有できる
+    - あれば少し便利くらい
+
+各パッケージの仕様を比較する。
+
+```{r, echo = FALSE}
+essentials <-
+  tibble(
+    packages     = c('base (ggplot2+gridExtra)',
+                     'cowplot',
+                     'patchwork',
+                     'egg',
+                     'ggpubr'),
+    adjust_axes  = c('-',
+                     'plot_grid(..., align = "hv")',
+                     'default',
+                     'default',
+                     'ggarrange(..., align = "hv")'),
+    add_inset    = c('annotation_custom()',
+                     'draw_plot()',
+                     '-',
+                     '-',
+                     '-'),
+    label_panels = c('-',
+                     'plot_grid(..., labels), draw_plot_label()',
+                     '-',
+                     'ggarrange(..., labels)',
+                     'ggarrange(..., labels)'),
+    share_legend = c('-',
+                     '-',
+                     '-',
+                     '-',
+                     'ggarrange(..., common.legend)'))
+    
+
+knitr::kable(essentials)
+```
+
+## 試用
+
+### 下準備
+
+結合するパネルをggplot2で作る。
+散布図 + inset用２次元確率密度 + 周辺分布を準備。
+
+```{r}
+set.seed(2018070001)
+dt <- sample_n(diamonds, 200)
+scat <-
+  ggplot(dt, aes(carat, price, fill = cut)) +
+  geom_point(shape = 21, col = "grey") +
+  theme(legend.position = c(.1, .9), legend.justification = c(0, 1))
+
+dens_carat <-
+  ggplot(dt, aes(carat, fill = cut)) +
+  geom_density(position = "identity", alpha = .5) +
+  theme(axis.title.x = element_blank(), axis.ticks.x = element_blank(), axis.text.x = element_blank())
+
+dens_price <-
+  ggplot(dt, aes(price, fill = cut)) +
+  geom_density(position = "identity", alpha = .5) +
+  theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), axis.text.y = element_blank()) +
+  coord_flip()
+
+dens_2d <-
+  ggplot(dt, aes(carat, price)) +
+  geom_density2d(col = "black")
+```
+
+
+### cowplot
+
+- [Introduction to cowplot | vignette](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html)
+- 進化生物学系の研究室 (Wilke lab) が管理者
+- パッケージ読み込み時に`theme_cowplot()`を強制
+    - `theme_classic`をベースに背景を透過にしてあるため重ね書きに適している
+- 以下の利点があるため、図の保存には`ggsave`の代わりに`save_plot`を使うのがよいとある
+    - cowplot用に調整済みのサイズ
+    - 個別に作った図を`plot_grid`で並べて保存するときに適した仕様らしい
+    - アスペクト比の調節が容易
+
+```{r cowplot}
+packageVersion("cowplot")
+
+cowplot::plot_grid(dens_carat + guides(fill = F), # (1, 1)
+                   NULL,                          # (1, 2)
+                   scat,                          # (2, 1)
+                   dens_price + guides(fill = F), # (2, 2)
+                   nrow = 2, align = "hv",
+                   rel_widths = c(.8, .2), rel_heights = c(.2, .8),
+                   labels = c("a", NA, "b", "c"), label_x = .1, label_y = .95) +
+  cowplot::draw_plot(dens_2d + cowplot::theme_cowplot(), x = .45, y = .05, width = .3, height = .3)
+```
+
+- 軸位置合わせ: `plot_grid(..., align = c("h", "v", "hv"))`
+- inset: `draw_plot`
+- label: デフォルトで左上
+- legend: 完全に事前設定
+
+
+### patchwork
+
+- [The Composer of ggplots | README](The Composer of ggplots)
+- gganimateなどのthomasp85氏が管理者
+- 二項演算子でネストしたパネルわけをする
+- レイアウトの変更が簡単でスピーディ
+- 並べることに特化したパッケージで、二項演算子でプロットを並べる (e.g. `p1`+`p2`, (`p1` | `p2`) / `p3`) が可能
+- 現行で明らかにバグ ([Plot assembly fails on minimal plots](https://github.com/thomasp85/patchwork/issues/61)) がある
+    - `plot_layout(..., guides)`がバグっているような気がする
+
+```{r patchwork}
+library(patchwork)
+packageVersion("patchwork")
+
+  dens_carat + guides(fill = F) +
+  patchwork::plot_spacer() +
+  scat + ggplot2::annotation_custom(grob = ggplotGrob(dens_2d + theme_minimal()), xmin = 1.5, xmax = 2.5, ymin = 0, ymax = 8000) +
+ dens_price + guides(fill = F) +
+  plot_layout(ncol = 2, heights = c(.2, .8), widths = c(.8, .2))
+```
+
+挙動が怪しい。
+凡例を消すと動く。
+
+```{r}
+  dens_carat + guides(fill = F) +
+  patchwork::plot_spacer() +
+  scat + ggplot2::annotation_custom(grob = ggplotGrob(dens_2d + theme_minimal()), xmin = 1.5, xmax = 2.5, ymin = 0, ymax = 8000) + guides(fill = F) + # legendを消すと動く, legend.position = "right"なんかでも動く
+ dens_price + guides(fill = F) +
+  plot_layout(ncol = 2, heights = c(.2, .8), widths = c(.8, .2))
+```
+
+- 軸位置合わせ: デフォルトで揃っている
+- inset: なし (`ggplo2::annotation_custom`で処理)
+    - `ggplo2::annotation_custom`であとづけ不可？
+- label: なし
+- legend: 完全に事前設定
+- 備考: バグ多し
+
+
+### egg
+
+- [(fragile) extensions for ggplot2 | README](https://github.com/baptiste/egg/)
+- gridExtraのBaptiste氏が管理者
+- ggplotオブジェクトをプロット部と周辺部 (軸・タイトルなど) からなる3x3の要素に分割して並べる
+
+```{r egg}
+
+scat_with_inset <- 
+  scat +
+  ggplot2::annotation_custom(grob = ggplotGrob(dens_2d + theme_minimal()),
+                             xmin = 1.5, xmax = 2.5, ymin = 0, ymax = 8000)
+
+egg::ggarrange(dens_carat + guides(fill = F), # (1, 1)
+               ggplot() + theme_minimal(),    # (1, 2)
+               scat_with_inset,               # (2, 1)
+               dens_price + guides(fill = F), # (2, 2)
+               nrow = 2,
+               widths = c(.8, .2), heights = c(.2, .8),
+               labels = c("a", "", "b", "c"),
+               label.args = list(gp = grid::gpar(font = 1), 
+                                 x = unit(1, "line"),
+                                 hjust = 0))
+```
+
+- 軸位置合わせ: デフォルトで揃っている
+- inset: なし
+    - `ggplo2::annotation_custom`であとづけ不可？
+- label: デフォルトで左上にボールドイタリック
+- legend: 完全に事前設定
+
+
+### ggpubr
+  
+- [ggpubr: ‘ggplot2’ Based Publication Ready Plots](http://www.sthda.com/english/rpkgs/ggpubr/)
+- バイオ系研究者のkassambara氏が管理者
+- publication readyな図を作るために、という謳い文句
+- 各種geomに対応したワンライナー (e.g. `ggbarplot`) がある
+    - 独自のエコシステムを作り上げている感じ
+
+```{r ggpubr}
+packageVersion("ggpubr")
+
+ggpubr::ggarrange(dens_carat, # (1, 1)
+                  NULL,       # (1, 2)
+                  scat,       # (2, 1)
+                  dens_price, # (2, 2)
+                  nrow = 2, ncol = 2, align = "hv",
+                  widths = c(.8, .2), heights = c(.2, .8),
+                  labels = c("a", NA, "b", "c"),
+                  common.legend = TRUE) +
+  ggplot2::annotation_custom(grob = ggplotGrob(dens_2d + theme_minimal()),
+                             xmin = .45, xmax = .75, ymin = .05, ymax = .35)
+```
+
+- 軸位置合わせ: `ggarrange(..., align = c("h", "v", "hv"))`
+- inset: なし (`ggplo2::annotation_custom`で事後処理可能)
+- label: デフォルトで左上
+- legend: 共有あり
+    - プロット領域外の上下左右に配置
+- 備考: `nrow`・`ncol`とも指定しないと動作しない
+
+
+## 雑感
+
+patchwork以外の使い勝手はさほど変わらない。
+開発者的に主流になりそうなeggに乗っておいて、patchworkを様子見する。
+labelの位置はどのパッケージでも微調整が必要そうなので、annotateでぱぱっと書いた方が楽かもしれない。
+
+
+## 参考ページ 
+
+- [散布図と周辺分布をあわせて描きたい (scatterplot with marginal distributions)](https://qiita.com/hoxo_b/items/0382ae9055838b05ad9b)  
+
+- GitHub repositories
+    - [wilkelab/cowplot](https://github.com/wilkelab/cowplot)
+    - [kassambara/ggpubr](https://github.com/kassambara/ggpubr)
+    - [thomasp85/patchwork](The Composer of ggplots)
+    - [baptiste/egg](https://github.com/baptiste/egg/)
+    
+- vignettes etc.
+    - [Arranging multiple grobs on a page | gridExtra](https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html)
+    - [Introduction to cowplot | cowplot](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html)
+    - [Laying out multiple plots on a page | egg](https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html)
+    - [ggpubr: ‘ggplot2’ Based Publication Ready Plots | ggpubr](http://www.sthda.com/english/rpkgs/ggpubr/)
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```

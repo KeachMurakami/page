@@ -1,0 +1,397 @@
+---
+title: "ggplot2の図をパネル状に並べる (cowplot, patchwork, egg, ggpubr)"
+date: 2018-07-21
+categories: ["tidyverse", "ggplot2"]
+---
+
+
+
+<p>ggplot2パネル表示のメモ</p>
+<p>とくに論文書きでは関係する図をパネル状に並べて表示する機会が多い。 ggplot2のfacetファミリーでどうにかできる場合はいいが、そうでないとパネル分けでいつももたつく。 いくつかのパネル作成パッケージを比較して頭の中を整理する。</p>
+<div id="packages" class="section level2">
+<h2>packages</h2>
+<p>現行でパネル作成可能なパッケージなうち、以下の４パッケージを試す。</p>
+<ul>
+<li><a href="https://github.com/wilkelab/cowplot">cowplot</a></li>
+<li><a href="https://github.com/thomasp85/patchwork">patchwork</a></li>
+<li><a href="https://github.com/baptiste/egg/">egg</a></li>
+<li><a href="https://github.com/kassambara/ggpubr">ggpubr</a></li>
+</ul>
+<p>そのほかにもまだいくつかあるが省略。</p>
+<ul>
+<li>grid
+<ul>
+<li>R core</li>
+<li>どのパッケージも内部的にはgrid経由で表示している</li>
+<li><code>viewport</code>/<code>grid.layout</code></li>
+</ul></li>
+<li>gridExtra &amp; gtable
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html">Arranging multiple grobs on a page | vignette</a></li>
+<li><a href="https://qiita.com/hoxo_b/items/0382ae9055838b05ad9b">Qiitaのhoxo_bさんの記事</a>が詳しい</li>
+<li>一昔前はこれ一択だったが、積極的に開発されることはもうないだろう、という感じ</li>
+</ul></li>
+<li>multipanelplot</li>
+<li>Rcookbook</li>
+</ul>
+</div>
+<div class="section level2">
+<h2>要件</h2>
+<p>上から順に優先度が高い。</p>
+<ol style="list-style-type: decimal">
+<li>パネル間で軸位置を一致させられる
+<ul>
+<li>縦に並んだ２つのパネルでy軸がずれているとがっかりするので</li>
+</ul></li>
+<li>insetが可能
+<ul>
+<li>図の中に小さい図を書くことがままあるので</li>
+</ul></li>
+<li>パネルへのラベル付記
+<ul>
+<li>Fig. 1aと本文で触れるので</li>
+<li>あれば少し便利くらい</li>
+</ul></li>
+<li>凡例を共有できる
+<ul>
+<li>あれば少し便利くらい</li>
+</ul></li>
+</ol>
+<p>各パッケージの仕様を比較する。</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">packages</th>
+<th align="left">adjust_axes</th>
+<th align="left">add_inset</th>
+<th align="left">label_panels</th>
+<th align="left">share_legend</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">base (ggplot2+gridExtra)</td>
+<td align="left">-</td>
+<td align="left">annotation_custom()</td>
+<td align="left">-</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="left">cowplot</td>
+<td align="left">plot_grid(…, align = “hv”)</td>
+<td align="left">draw_plot()</td>
+<td align="left">plot_grid(…, labels), draw_plot_label()</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="left">patchwork</td>
+<td align="left">default</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="left">egg</td>
+<td align="left">default</td>
+<td align="left">-</td>
+<td align="left">ggarrange(…, labels)</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="left">ggpubr</td>
+<td align="left">ggarrange(…, align = “hv”)</td>
+<td align="left">-</td>
+<td align="left">ggarrange(…, labels)</td>
+<td align="left">ggarrange(…, common.legend)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level2">
+<h2>試用</h2>
+<div class="section level3">
+<h3>下準備</h3>
+<p>結合するパネルをggplot2で作る。 散布図 + inset用２次元確率密度 + 周辺分布を準備。</p>
+<pre class="r"><code>set.seed(2018070001)
+dt &lt;- sample_n(diamonds, 200)
+scat &lt;-
+  ggplot(dt, aes(carat, price, fill = cut)) +
+  geom_point(shape = 21, col = &quot;grey&quot;) +
+  theme(legend.position = c(.1, .9), legend.justification = c(0, 1))
+
+dens_carat &lt;-
+  ggplot(dt, aes(carat, fill = cut)) +
+  geom_density(position = &quot;identity&quot;, alpha = .5) +
+  theme(axis.title.x = element_blank(), axis.ticks.x = element_blank(), axis.text.x = element_blank())
+
+dens_price &lt;-
+  ggplot(dt, aes(price, fill = cut)) +
+  geom_density(position = &quot;identity&quot;, alpha = .5) +
+  theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), axis.text.y = element_blank()) +
+  coord_flip()
+
+dens_2d &lt;-
+  ggplot(dt, aes(carat, price)) +
+  geom_density2d(col = &quot;black&quot;)</code></pre>
+</div>
+<div id="cowplot" class="section level3">
+<h3>cowplot</h3>
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html">Introduction to cowplot | vignette</a></li>
+<li>進化生物学系の研究室 (Wilke lab) が管理者</li>
+<li>パッケージ読み込み時に<code>theme_cowplot()</code>を強制
+<ul>
+<li><code>theme_classic</code>をベースに背景を透過にしてあるため重ね書きに適している</li>
+</ul></li>
+<li>以下の利点があるため、図の保存には<code>ggsave</code>の代わりに<code>save_plot</code>を使うのがよいとある
+<ul>
+<li>cowplot用に調整済みのサイズ</li>
+<li>個別に作った図を<code>plot_grid</code>で並べて保存するときに適した仕様らしい</li>
+<li>アスペクト比の調節が容易</li>
+</ul></li>
+</ul>
+<pre class="r"><code>packageVersion(&quot;cowplot&quot;)
+
+cowplot::plot_grid(dens_carat + guides(fill = F), # (1, 1)
+                   NULL,                          # (1, 2)
+                   scat,                          # (2, 1)
+                   dens_price + guides(fill = F), # (2, 2)
+                   nrow = 2, align = &quot;hv&quot;,
+                   rel_widths = c(.8, .2), rel_heights = c(.2, .8),
+                   labels = c(&quot;a&quot;, NA, &quot;b&quot;, &quot;c&quot;), label_x = .1, label_y = .95) +
+  cowplot::draw_plot(dens_2d + cowplot::theme_cowplot(), x = .45, y = .05, width = .3, height = .3)</code></pre>
+<p><img src="/post/2018-07-21-panel_arrange_files/figure-html/cowplot-1.png" width="672" /></p>
+<pre><code>## [1] &#39;0.9.2&#39;</code></pre>
+<ul>
+<li>軸位置合わせ: <code>plot_grid(..., align = c(&quot;h&quot;, &quot;v&quot;, &quot;hv&quot;))</code></li>
+<li>inset: <code>draw_plot</code></li>
+<li>label: デフォルトで左上</li>
+<li>legend: 完全に事前設定</li>
+</ul>
+</div>
+<div id="patchwork" class="section level3">
+<h3>patchwork</h3>
+<ul>
+<li><a href="The%20Composer%20of%20ggplots">The Composer of ggplots | README</a></li>
+<li>gganimateなどのthomasp85氏が管理者</li>
+<li>二項演算子でネストしたパネルわけをする</li>
+<li>レイアウトの変更が簡単でスピーディ</li>
+<li>並べることに特化したパッケージで、二項演算子でプロットを並べる (e.g. <code>p1</code>+<code>p2</code>, (<code>p1</code> | <code>p2</code>) / <code>p3</code>) が可能</li>
+<li>現行で明らかにバグ (<a href="https://github.com/thomasp85/patchwork/issues/61">Plot assembly fails on minimal plots</a>) がある
+<ul>
+<li><code>plot_layout(..., guides)</code>がバグっているような気がする</li>
+</ul></li>
+</ul>
+<pre class="r"><code>library(patchwork)
+packageVersion(&quot;patchwork&quot;)
+
+  dens_carat + guides(fill = F) +
+  patchwork::plot_spacer() +
+  scat + ggplot2::annotation_custom(grob = ggplotGrob(dens_2d + theme_minimal()), xmin = 1.5, xmax = 2.5, ymin = 0, ymax = 8000) +
+ dens_price + guides(fill = F) +
+  plot_layout(ncol = 2, heights = c(.2, .8), widths = c(.8, .2))</code></pre>
+<p><img src="/post/2018-07-21-panel_arrange_files/figure-html/patchwork-1.png" width="672" /></p>
+<pre><code>## [1] &#39;0.0.1&#39;</code></pre>
+<p>挙動が怪しい。 凡例を消すと動く。</p>
+<pre class="r"><code>  dens_carat + guides(fill = F) +
+  patchwork::plot_spacer() +
+  scat + ggplot2::annotation_custom(grob = ggplotGrob(dens_2d + theme_minimal()), xmin = 1.5, xmax = 2.5, ymin = 0, ymax = 8000) + guides(fill = F) + # legendを消すと動く, legend.position = &quot;right&quot;なんかでも動く
+ dens_price + guides(fill = F) +
+  plot_layout(ncol = 2, heights = c(.2, .8), widths = c(.8, .2))</code></pre>
+<p><img src="/post/2018-07-21-panel_arrange_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<ul>
+<li>軸位置合わせ: デフォルトで揃っている</li>
+<li>inset: なし (<code>ggplo2::annotation_custom</code>で処理)
+<ul>
+<li><code>ggplo2::annotation_custom</code>であとづけ不可？</li>
+</ul></li>
+<li>label: なし</li>
+<li>legend: 完全に事前設定</li>
+<li>備考: バグ多し</li>
+</ul>
+</div>
+<div id="egg" class="section level3">
+<h3>egg</h3>
+<ul>
+<li><a href="https://github.com/baptiste/egg/">(fragile) extensions for ggplot2 | README</a></li>
+<li>gridExtraのBaptiste氏が管理者</li>
+<li>ggplotオブジェクトをプロット部と周辺部 (軸・タイトルなど) からなる3x3の要素に分割して並べる</li>
+</ul>
+<pre class="r"><code>scat_with_inset &lt;- 
+  scat +
+  ggplot2::annotation_custom(grob = ggplotGrob(dens_2d + theme_minimal()),
+                             xmin = 1.5, xmax = 2.5, ymin = 0, ymax = 8000)
+
+egg::ggarrange(dens_carat + guides(fill = F), # (1, 1)
+               ggplot() + theme_minimal(),    # (1, 2)
+               scat_with_inset,               # (2, 1)
+               dens_price + guides(fill = F), # (2, 2)
+               nrow = 2,
+               widths = c(.8, .2), heights = c(.2, .8),
+               labels = c(&quot;a&quot;, &quot;&quot;, &quot;b&quot;, &quot;c&quot;),
+               label.args = list(gp = grid::gpar(font = 1), 
+                                 x = unit(1, &quot;line&quot;),
+                                 hjust = 0))</code></pre>
+<p><img src="/post/2018-07-21-panel_arrange_files/figure-html/egg-1.png" width="672" /></p>
+<ul>
+<li>軸位置合わせ: デフォルトで揃っている</li>
+<li>inset: なし
+<ul>
+<li><code>ggplo2::annotation_custom</code>であとづけ不可？</li>
+</ul></li>
+<li>label: デフォルトで左上にボールドイタリック</li>
+<li>legend: 完全に事前設定</li>
+</ul>
+</div>
+<div id="ggpubr" class="section level3">
+<h3>ggpubr</h3>
+<ul>
+<li><a href="http://www.sthda.com/english/rpkgs/ggpubr/">ggpubr: ‘ggplot2’ Based Publication Ready Plots</a></li>
+<li>バイオ系研究者のkassambara氏が管理者</li>
+<li>publication readyな図を作るために、という謳い文句</li>
+<li>各種geomに対応したワンライナー (e.g. <code>ggbarplot</code>) がある
+<ul>
+<li>独自のエコシステムを作り上げている感じ</li>
+</ul></li>
+</ul>
+<pre class="r"><code>packageVersion(&quot;ggpubr&quot;)
+
+ggpubr::ggarrange(dens_carat, # (1, 1)
+                  NULL,       # (1, 2)
+                  scat,       # (2, 1)
+                  dens_price, # (2, 2)
+                  nrow = 2, ncol = 2, align = &quot;hv&quot;,
+                  widths = c(.8, .2), heights = c(.2, .8),
+                  labels = c(&quot;a&quot;, NA, &quot;b&quot;, &quot;c&quot;),
+                  common.legend = TRUE) +
+  ggplot2::annotation_custom(grob = ggplotGrob(dens_2d + theme_minimal()),
+                             xmin = .45, xmax = .75, ymin = .05, ymax = .35)</code></pre>
+<p><img src="/post/2018-07-21-panel_arrange_files/figure-html/ggpubr-1.png" width="672" /></p>
+<pre><code>## [1] &#39;0.1.6&#39;</code></pre>
+<ul>
+<li>軸位置合わせ: <code>ggarrange(..., align = c(&quot;h&quot;, &quot;v&quot;, &quot;hv&quot;))</code></li>
+<li>inset: なし (<code>ggplo2::annotation_custom</code>で事後処理可能)</li>
+<li>label: デフォルトで左上</li>
+<li>legend: 共有あり
+<ul>
+<li>プロット領域外の上下左右に配置</li>
+</ul></li>
+<li>備考: <code>nrow</code>・<code>ncol</code>とも指定しないと動作しない</li>
+</ul>
+</div>
+</div>
+<div class="section level2">
+<h2>雑感</h2>
+<p>patchwork以外の使い勝手はさほど変わらない。 開発者的に主流になりそうなeggに乗っておいて、patchworkを様子見する。 labelの位置はどのパッケージでも微調整が必要そうなので、annotateでぱぱっと書いた方が楽かもしれない。</p>
+</div>
+<div class="section level2">
+<h2>参考ページ</h2>
+<ul>
+<li><p><a href="https://qiita.com/hoxo_b/items/0382ae9055838b05ad9b">散布図と周辺分布をあわせて描きたい (scatterplot with marginal distributions)</a></p></li>
+<li>GitHub repositories
+<ul>
+<li><a href="https://github.com/wilkelab/cowplot">wilkelab/cowplot</a></li>
+<li><a href="https://github.com/kassambara/ggpubr">kassambara/ggpubr</a></li>
+<li><a href="The%20Composer%20of%20ggplots">thomasp85/patchwork</a></li>
+<li><a href="https://github.com/baptiste/egg/">baptiste/egg</a></li>
+</ul></li>
+<li>vignettes etc.
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html">Arranging multiple grobs on a page | gridExtra</a></li>
+<li><a href="https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html">Introduction to cowplot | cowplot</a></li>
+<li><a href="https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html">Laying out multiple plots on a page | egg</a></li>
+<li><a href="http://www.sthda.com/english/rpkgs/ggpubr/">ggpubr: ‘ggplot2’ Based Publication Ready Plots | ggpubr</a></li>
+</ul></li>
+</ul>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Brisbane          
+##  date     2018-07-21                  
+## 
+##  package     * version    date       source                              
+##  assertthat    0.2.0      2017-04-11 CRAN (R 3.5.0)                      
+##  backports     1.1.2      2017-12-13 CRAN (R 3.5.0)                      
+##  base        * 3.5.0      2018-04-24 local                               
+##  bindr         0.1.1      2018-03-13 CRAN (R 3.5.0)                      
+##  bindrcpp      0.2.2      2018-03-29 CRAN (R 3.5.0)                      
+##  blogdown      0.6        2018-04-18 CRAN (R 3.5.0)                      
+##  bookdown      0.7        2018-02-18 CRAN (R 3.5.0)                      
+##  broom       * 0.4.4.9000 2018-06-21 Github (tidyverse/broom@2721de4)    
+##  cellranger    1.1.0      2016-07-27 CRAN (R 3.5.0)                      
+##  cli           1.0.0      2017-11-05 CRAN (R 3.5.0)                      
+##  colorspace    1.3-2      2016-12-14 CRAN (R 3.5.0)                      
+##  compiler      3.5.0      2018-04-24 local                               
+##  cowplot       0.9.2      2017-12-17 CRAN (R 3.5.0)                      
+##  crayon        1.3.4      2017-09-16 CRAN (R 3.5.0)                      
+##  datasets    * 3.5.0      2018-04-24 local                               
+##  devtools    * 1.13.5     2018-02-18 CRAN (R 3.5.0)                      
+##  digest        0.6.15     2018-01-28 CRAN (R 3.5.0)                      
+##  dplyr       * 0.7.5      2018-05-19 CRAN (R 3.5.0)                      
+##  egg           0.4.0      2018-06-17 CRAN (R 3.5.0)                      
+##  evaluate      0.10.1     2017-06-24 CRAN (R 3.5.0)                      
+##  forcats     * 0.3.0      2018-02-19 CRAN (R 3.5.0)                      
+##  ggplot2     * 3.0.0.9000 2018-07-16 Github (hadley/ggplot2@79e8b45)     
+##  ggpubr        0.1.6      2017-11-14 CRAN (R 3.5.0)                      
+##  glue          1.2.0      2017-10-29 CRAN (R 3.5.0)                      
+##  graphics    * 3.5.0      2018-04-24 local                               
+##  grDevices   * 3.5.0      2018-04-24 local                               
+##  grid          3.5.0      2018-04-24 local                               
+##  gridExtra     2.3        2017-09-09 CRAN (R 3.5.0)                      
+##  gtable        0.2.0      2016-02-26 CRAN (R 3.5.0)                      
+##  haven         1.1.1      2018-01-18 CRAN (R 3.5.0)                      
+##  highr         0.6        2016-05-09 CRAN (R 3.5.0)                      
+##  hms           0.4.2      2018-03-10 CRAN (R 3.5.0)                      
+##  htmltools     0.3.6      2017-04-28 CRAN (R 3.5.0)                      
+##  httr          1.3.1      2017-08-20 CRAN (R 3.5.0)                      
+##  jsonlite      1.5        2017-06-01 CRAN (R 3.5.0)                      
+##  knitr       * 1.20       2018-02-20 CRAN (R 3.5.0)                      
+##  labeling      0.3        2014-08-23 CRAN (R 3.5.0)                      
+##  lattice       0.20-35    2017-03-25 CRAN (R 3.5.0)                      
+##  lazyeval      0.2.1      2017-10-29 CRAN (R 3.5.0)                      
+##  lubridate   * 1.7.4      2018-04-11 CRAN (R 3.5.0)                      
+##  magrittr    * 1.5        2014-11-22 CRAN (R 3.5.0)                      
+##  MASS        * 7.3-49     2018-02-23 CRAN (R 3.5.0)                      
+##  memoise       1.1.0      2017-04-21 CRAN (R 3.5.0)                      
+##  methods     * 3.5.0      2018-04-24 local                               
+##  modelr        0.1.2      2018-05-11 cran (@0.1.2)                       
+##  munsell       0.4.3      2016-02-13 CRAN (R 3.5.0)                      
+##  nlme          3.1-137    2018-04-07 CRAN (R 3.5.0)                      
+##  patchwork   * 0.0.1      2018-07-16 Github (thomasp85/patchwork@7fb35b1)
+##  pillar        1.2.3      2018-05-25 cran (@1.2.3)                       
+##  pkgconfig     2.0.1      2017-03-21 CRAN (R 3.5.0)                      
+##  plyr          1.8.4      2016-06-08 CRAN (R 3.5.0)                      
+##  purrr       * 0.2.5      2018-05-29 CRAN (R 3.5.0)                      
+##  R6            2.2.2      2017-06-17 CRAN (R 3.5.0)                      
+##  Rcpp          0.12.17    2018-05-18 cran (@0.12.17)                     
+##  readr       * 1.1.1      2017-05-16 CRAN (R 3.5.0)                      
+##  readxl        1.1.0      2018-04-20 CRAN (R 3.5.0)                      
+##  reshape2      1.4.3      2017-12-11 CRAN (R 3.5.0)                      
+##  rlang         0.2.1      2018-05-30 cran (@0.2.1)                       
+##  rmarkdown     1.10       2018-06-11 cran (@1.10)                        
+##  rprojroot     1.3-2      2018-01-03 CRAN (R 3.5.0)                      
+##  rstudioapi    0.7        2017-09-07 CRAN (R 3.5.0)                      
+##  rvest         0.3.2      2016-06-17 CRAN (R 3.5.0)                      
+##  scales        0.5.0      2017-08-24 CRAN (R 3.5.0)                      
+##  stats       * 3.5.0      2018-04-24 local                               
+##  stringi       1.2.3      2018-06-12 cran (@1.2.3)                       
+##  stringr     * 1.3.1      2018-05-10 cran (@1.3.1)                       
+##  tibble      * 1.4.2      2018-01-22 CRAN (R 3.5.0)                      
+##  tidyr       * 0.8.1      2018-05-18 cran (@0.8.1)                       
+##  tidyselect    0.2.4      2018-02-26 CRAN (R 3.5.0)                      
+##  tidyverse   * 1.2.1      2017-11-14 CRAN (R 3.5.0)                      
+##  tools         3.5.0      2018-04-24 local                               
+##  utils       * 3.5.0      2018-04-24 local                               
+##  viridisLite   0.3.0      2018-02-01 CRAN (R 3.5.0)                      
+##  withr         2.1.2      2018-03-15 CRAN (R 3.5.0)                      
+##  xfun          0.1        2018-01-22 CRAN (R 3.5.0)                      
+##  xml2          1.2.0      2018-01-24 CRAN (R 3.5.0)                      
+##  yaml          2.1.19     2018-05-01 cran (@2.1.19)</code></pre>
+</div>
