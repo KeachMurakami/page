@@ -152,9 +152,8 @@ cowplot::plot_grid(dens_carat + guides(fill = F), # (1, 1)
 
 - [The Composer of ggplots | README](The Composer of ggplots)
 - gganimateなどのthomasp85氏が管理者
-- 二項演算子でネストしたパネルわけをする
+- 二項演算子を多用してネストしたパネルわけが可能
 - レイアウトの変更が簡単でスピーディ
-- 並べることに特化したパッケージで、二項演算子でプロットを並べる (e.g. `p1`+`p2`, (`p1` | `p2`) / `p3`) が可能
 - 現行で明らかにバグ ([Plot assembly fails on minimal plots](https://github.com/thomasp85/patchwork/issues/61)) がある
     - `plot_layout(..., guides)`がバグっているような気がする
 
