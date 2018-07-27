@@ -1,0 +1,139 @@
+---
+title: "Rからtinypng APIで画像圧縮"
+date: 2018-07-27
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(magrittr)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, results = "hold")
+```
+
+スライドづくりの過程でファイルを圧縮する必要があったので。
+Rから[tinypng](https://tinypng.com/)のAPIを使う。
+
+- 一ヶ月あたり500枚まで圧縮可能
+- アップロードするファイルは5MBまで
+
+APIキーを発行して、環境変数に入れる。
+
+```{r eval = F}
+# set API key
+Sys.setenv(tinypng_api = "YOUR_API_KEY")
+```
+
+## 関数
+
+1. `system(intern = T)`でコマンドをshellに投げて返り値を取ってくる
+2. 返り値から圧縮されたファイルがアップロードされているURLをとってくる
+3. ダウンロードする
+
+```{r}
+tinify <-
+  function(path, overwrite = FALSE) 
+  {
+      if (!file.exists(path)) {
+        stop("File was not found.\n")
+      } else if(file.size(path) > 1024^2){
+        stop("File size should be < 5MB.\n")
+      } else {
+        api_key <- Sys.getenv("tinypng_api")
+        catch_response <-
+          system(intern = T, paste0("curl --user api:", api_key,
+                                    " --data-binary @", path,
+                                    " -i https://api.tinify.com/shrink"))
+        image_url <-
+          catch_response[stringr::str_detect(catch_response, "Location")] %>%
+          stringr::str_extract("output/[a-zA-Z0-9]*")
+        if (length(image_url) == 0) {
+          # exception handling: 500 img limit?
+            stop(paste0(catch_response))
+        } else {
+          if(overwrite == FALSE){
+            path <- paste0(fs::path_ext_remove(path), "_tiny.", fs::path_ext(path))
+          }
+          download.file(url = paste0("https://api.tinify.com/", image_url), destfile = path)
+          cat(stringr::str_glue("image was appropriately tinified.\noutput: {path}\n"))
+          }
+      }
+  }
+```
+
+
+## テスト
+
+どうせなのできれいな絵を書く。
+
+- [marcusvolz/marhart | GitHub](https://github.com/marcusvolz/mathart)
+
+```{r}
+library(mathart)
+
+n <- 25000
+
+params <- data.frame(
+  a <- c(0, 0.85, 0.2, -0.15),
+  b <- c(0, 0.02, -0.26, 0.28),
+  c <- c(0, -0.04, 0.23, 0.26),
+  d <- c(0.16, 0.85, 0.22, 0.24),
+  e <- c(0, 0, 0, 0),
+  f <- c(0, 1.6, 1.6, 0.44),
+  p <- c(0.01, 0.85, 0.07, 0.07)
+)
+
+sample_plot <-
+  fractal_fern(n = n, a = params$a, b = params$b, c_ = params$c, d = params$d, e = params$e,
+             f = params$f, p = params$p) %>%
+  ggplot(aes(x, y)) +
+  geom_point(size = 0.03, alpha = 0.2, col = "orange") +
+  theme_void() +
+  coord_equal()
+
+sample_plot
+```
+
+```{r}
+# 一時パス作成
+imgpath <- tempfile(fileext = "png")
+
+# 画像保存
+png(filename = imgpath, width = 10, height = 10, units = "cm", res = 300)
+print(sample_plot)
+dev.off()
+
+# 圧縮前サイズ
+size_before <- file.size(imgpath)
+# 上書き圧縮する
+tinify(imgpath, overwrite = TRUE)
+# 圧縮後サイズ
+size_after <- file.size(imgpath)
+# ファイル削除
+file.remove(imgpath)
+```
+
+確認する。
+
+```{r}
+paste0(size_before, " -> ", size_after)
+```
+
+
+## To Do
+
+- `verbose = FALSE`する
+- 500枚を超えたときの挙動の処理がまだなので月末に使い切って確認
+- バックグラウンドに回して圧縮処理中にRを動かせるようにする？
+
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```
+
+## 雑記
+
+- 昼食にエミューとワニとカンガルーを食べた
+    - くさみが強い
+    - 品種改良は偉大だ
+- ８月半ばの学会の発表時間がまだアナウンスされない...

@@ -1,0 +1,209 @@
+---
+title: "Rからtinypng APIで画像圧縮"
+date: 2018-07-27
+---
+
+
+
+<p>スライドづくりの過程でファイルを圧縮する必要があったので。 Rから<a href="https://tinypng.com/">tinypng</a>のAPIを使う。</p>
+<ul>
+<li>一ヶ月あたり500枚まで圧縮可能</li>
+<li>アップロードするファイルは5MBまで</li>
+</ul>
+<p>APIキーを発行して、環境変数に入れる。</p>
+<pre class="r"><code># set API key
+Sys.setenv(tinypng_api = &quot;YOUR_API_KEY&quot;)</code></pre>
+<div class="section level2">
+<h2>関数</h2>
+<ol style="list-style-type: decimal">
+<li><code>system(intern = T)</code>でコマンドをshellに投げて返り値を取ってくる</li>
+<li>返り値から圧縮されたファイルがアップロードされているURLをとってくる</li>
+<li>ダウンロードする</li>
+</ol>
+<pre class="r"><code>tinify &lt;-
+  function(path, overwrite = FALSE) 
+  {
+      if (!file.exists(path)) {
+        stop(&quot;File was not found.\n&quot;)
+      } else if(file.size(path) &gt; 1024^2){
+        stop(&quot;File size should be &lt; 5MB.\n&quot;)
+      } else {
+        api_key &lt;- Sys.getenv(&quot;tinypng_api&quot;)
+        catch_response &lt;-
+          system(intern = T, paste0(&quot;curl --user api:&quot;, api_key,
+                                    &quot; --data-binary @&quot;, path,
+                                    &quot; -i https://api.tinify.com/shrink&quot;))
+        image_url &lt;-
+          catch_response[stringr::str_detect(catch_response, &quot;Location&quot;)] %&gt;%
+          stringr::str_extract(&quot;output/[a-zA-Z0-9]*&quot;)
+        if (length(image_url) == 0) {
+          # exception handling: 500 img limit?
+            stop(paste0(catch_response))
+        } else {
+          if(overwrite == FALSE){
+            path &lt;- paste0(fs::path_ext_remove(path), &quot;_tiny.&quot;, fs::path_ext(path))
+          }
+          download.file(url = paste0(&quot;https://api.tinify.com/&quot;, image_url), destfile = path)
+          cat(stringr::str_glue(&quot;image was appropriately tinified.\noutput: {path}\n&quot;))
+          }
+      }
+  }</code></pre>
+</div>
+<div class="section level2">
+<h2>テスト</h2>
+<p>どうせなのできれいな絵を書く。</p>
+<ul>
+<li><a href="https://github.com/marcusvolz/mathart">marcusvolz/marhart | GitHub</a></li>
+</ul>
+<pre class="r"><code>library(mathart)
+
+n &lt;- 25000
+
+params &lt;- data.frame(
+  a &lt;- c(0, 0.85, 0.2, -0.15),
+  b &lt;- c(0, 0.02, -0.26, 0.28),
+  c &lt;- c(0, -0.04, 0.23, 0.26),
+  d &lt;- c(0.16, 0.85, 0.22, 0.24),
+  e &lt;- c(0, 0, 0, 0),
+  f &lt;- c(0, 1.6, 1.6, 0.44),
+  p &lt;- c(0.01, 0.85, 0.07, 0.07)
+)
+
+sample_plot &lt;-
+  fractal_fern(n = n, a = params$a, b = params$b, c_ = params$c, d = params$d, e = params$e,
+             f = params$f, p = params$p) %&gt;%
+  ggplot(aes(x, y)) +
+  geom_point(size = 0.03, alpha = 0.2, col = &quot;orange&quot;) +
+  theme_void() +
+  coord_equal()
+
+sample_plot</code></pre>
+<p><img src="/post/2018-07-27-tinify_api_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code># 一時パス作成
+imgpath &lt;- tempfile(fileext = &quot;png&quot;)
+
+# 画像保存
+png(filename = imgpath, width = 10, height = 10, units = &quot;cm&quot;, res = 300)
+print(sample_plot)
+dev.off()
+
+# 圧縮前サイズ
+size_before &lt;- file.size(imgpath)
+# 上書き圧縮する
+tinify(imgpath, overwrite = TRUE)
+# 圧縮後サイズ
+size_after &lt;- file.size(imgpath)
+# ファイル削除
+file.remove(imgpath)</code></pre>
+<pre><code>## quartz_off_screen 
+##                 2 
+## image was appropriately tinified.
+## output: /var/folders/xx/3qn68gh54b591b7yjpc5m1dm0000gn/T//RtmplAD4eJ/file52ae4474ad1dpng[1] TRUE</code></pre>
+<p>確認する。</p>
+<pre class="r"><code>paste0(size_before, &quot; -&gt; &quot;, size_after)</code></pre>
+<pre><code>## [1] &quot;492075 -&gt; 163492&quot;</code></pre>
+</div>
+<div id="to-do" class="section level2">
+<h2>To Do</h2>
+<ul>
+<li><code>verbose = FALSE</code>する</li>
+<li>500枚を超えたときの挙動の処理がまだなので月末に使い切って確認</li>
+<li>バックグラウンドに回して圧縮処理中にRを動かせるようにする？</li>
+</ul>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Brisbane          
+##  date     2018-07-27                  
+## 
+##  package    * version    date       source                             
+##  assertthat   0.2.0      2017-04-11 CRAN (R 3.5.0)                     
+##  backports    1.1.2      2017-12-13 CRAN (R 3.5.0)                     
+##  base       * 3.5.0      2018-04-24 local                              
+##  bindr        0.1.1      2018-03-13 CRAN (R 3.5.0)                     
+##  bindrcpp     0.2.2      2018-03-29 CRAN (R 3.5.0)                     
+##  blogdown     0.6        2018-04-18 CRAN (R 3.5.0)                     
+##  bookdown     0.7        2018-02-18 CRAN (R 3.5.0)                     
+##  broom      * 0.4.4.9000 2018-06-21 Github (tidyverse/broom@2721de4)   
+##  cellranger   1.1.0      2016-07-27 CRAN (R 3.5.0)                     
+##  cli          1.0.0      2017-11-05 CRAN (R 3.5.0)                     
+##  colorspace   1.3-2      2016-12-14 CRAN (R 3.5.0)                     
+##  compiler     3.5.0      2018-04-24 local                              
+##  crayon       1.3.4      2017-09-16 CRAN (R 3.5.0)                     
+##  datasets   * 3.5.0      2018-04-24 local                              
+##  devtools   * 1.13.6     2018-06-27 CRAN (R 3.5.0)                     
+##  digest       0.6.15     2018-01-28 CRAN (R 3.5.0)                     
+##  dplyr      * 0.7.6      2018-06-29 cran (@0.7.6)                      
+##  evaluate     0.10.1     2017-06-24 CRAN (R 3.5.0)                     
+##  forcats    * 0.3.0      2018-02-19 CRAN (R 3.5.0)                     
+##  ggplot2    * 3.0.0      2018-07-03 CRAN (R 3.5.0)                     
+##  glue         1.3.0      2018-07-17 cran (@1.3.0)                      
+##  graphics   * 3.5.0      2018-04-24 local                              
+##  grDevices  * 3.5.0      2018-04-24 local                              
+##  grid         3.5.0      2018-04-24 local                              
+##  gtable       0.2.0      2016-02-26 CRAN (R 3.5.0)                     
+##  haven        1.1.1      2018-01-18 CRAN (R 3.5.0)                     
+##  hms          0.4.2      2018-03-10 CRAN (R 3.5.0)                     
+##  htmltools    0.3.6      2017-04-28 CRAN (R 3.5.0)                     
+##  httr         1.3.1      2017-08-20 CRAN (R 3.5.0)                     
+##  jsonlite     1.5        2017-06-01 CRAN (R 3.5.0)                     
+##  knitr      * 1.20       2018-02-20 CRAN (R 3.5.0)                     
+##  labeling     0.3        2014-08-23 CRAN (R 3.5.0)                     
+##  lattice      0.20-35    2017-03-25 CRAN (R 3.5.0)                     
+##  lazyeval     0.2.1      2017-10-29 CRAN (R 3.5.0)                     
+##  lubridate  * 1.7.4      2018-04-11 CRAN (R 3.5.0)                     
+##  magrittr   * 1.5        2014-11-22 CRAN (R 3.5.0)                     
+##  MASS       * 7.3-49     2018-02-23 CRAN (R 3.5.0)                     
+##  mathart    * 0.0.0.9000 2018-07-22 Github (marcusvolz/mathart@b19d7d6)
+##  memoise      1.1.0      2017-04-21 CRAN (R 3.5.0)                     
+##  methods    * 3.5.0      2018-04-24 local                              
+##  modelr       0.1.2      2018-05-11 cran (@0.1.2)                      
+##  munsell      0.4.3      2016-02-13 CRAN (R 3.5.0)                     
+##  nlme         3.1-137    2018-04-07 CRAN (R 3.5.0)                     
+##  pillar       1.2.3      2018-05-25 cran (@1.2.3)                      
+##  pkgconfig    2.0.1      2017-03-21 CRAN (R 3.5.0)                     
+##  plyr         1.8.4      2016-06-08 CRAN (R 3.5.0)                     
+##  purrr      * 0.2.5      2018-05-29 CRAN (R 3.5.0)                     
+##  R6           2.2.2      2017-06-17 CRAN (R 3.5.0)                     
+##  Rcpp         0.12.17    2018-05-18 cran (@0.12.17)                    
+##  readr      * 1.1.1      2017-05-16 CRAN (R 3.5.0)                     
+##  readxl       1.1.0      2018-04-20 CRAN (R 3.5.0)                     
+##  reshape2     1.4.3      2017-12-11 CRAN (R 3.5.0)                     
+##  rlang        0.2.1      2018-05-30 cran (@0.2.1)                      
+##  rmarkdown    1.10       2018-06-11 cran (@1.10)                       
+##  rprojroot    1.3-2      2018-01-03 CRAN (R 3.5.0)                     
+##  rstudioapi   0.7        2017-09-07 CRAN (R 3.5.0)                     
+##  rvest        0.3.2      2016-06-17 CRAN (R 3.5.0)                     
+##  scales       0.5.0      2017-08-24 CRAN (R 3.5.0)                     
+##  stats      * 3.5.0      2018-04-24 local                              
+##  stringi      1.2.3      2018-06-12 cran (@1.2.3)                      
+##  stringr    * 1.3.1      2018-05-10 cran (@1.3.1)                      
+##  tibble     * 1.4.2      2018-01-22 CRAN (R 3.5.0)                     
+##  tidyr      * 0.8.1      2018-05-18 cran (@0.8.1)                      
+##  tidyselect   0.2.4      2018-02-26 CRAN (R 3.5.0)                     
+##  tidyverse  * 1.2.1      2017-11-14 CRAN (R 3.5.0)                     
+##  tools        3.5.0      2018-04-24 local                              
+##  utils      * 3.5.0      2018-04-24 local                              
+##  withr        2.1.2      2018-03-15 CRAN (R 3.5.0)                     
+##  xfun         0.1        2018-01-22 CRAN (R 3.5.0)                     
+##  xml2         1.2.0      2018-01-24 CRAN (R 3.5.0)                     
+##  yaml         2.1.19     2018-05-01 cran (@2.1.19)</code></pre>
+</div>
+<div class="section level2">
+<h2>雑記</h2>
+<ul>
+<li>昼食にエミューとワニとカンガルーを食べた
+<ul>
+<li>くさみが強い</li>
+<li>品種改良は偉大だ</li>
+</ul></li>
+<li>８月半ばの学会の発表時間がまだアナウンスされない…</li>
+</ul>
+</div>
