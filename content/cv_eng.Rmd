@@ -51,7 +51,7 @@ data.frame(
 
 ### Works
 
-- [Publications](https://keachmurakami.github.io/publications/)
+- [Publications](https://keachmurakami.github.io/page/publication_list/)
 - [`r icon::ai("google-scholar", size=2)`](https://scholar.google.co.jp/citations?user=IgtMr-oAAAAJ&hl=en) / [`r icon::ai("orcid", size=2)`](https://orcid.org/0000-0001-8150-9535) / [`r icon::ai("researchgate", size=2)`](https://www.researchgate.net/profile/Keach_Murakami) 
 
 ### Professional Experience

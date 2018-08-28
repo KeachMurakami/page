@@ -131,7 +131,7 @@ setwd("..")
 
 ### 論文など
 
-- [Publications](https://keachmurakami.github.io/publications/)
+- [Publications](https://keachmurakami.github.io/page/publication_list/)
 - [`r icon::ai("google-scholar", size=2)`](https://scholar.google.co.jp/citations?user=IgtMr-oAAAAJ&hl=en) / [`r icon::ai("orcid", size=2)`](https://orcid.org/0000-0001-8150-9535) / [`r icon::ai("researchgate", size=2)`](https://www.researchgate.net/profile/Keach_Murakami) 
 
 ### 職歴
@@ -194,6 +194,7 @@ data.frame(
     - 都リーグ社会人4部 (2015--2016)  
     - サッカー審判員4級 (2015--2016)  
     - 観るだけ (2017--)
+    - 
 - `r icon::fa("bicycle")`  
     - Fuji (2代目)
     - TREK (Canberra滞在中)

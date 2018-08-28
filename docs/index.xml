@@ -6,10 +6,21 @@
     <description>Recent content on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Fri, 27 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 09 Aug 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://keachmurakami.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Pea cultivation protocol (ver. 1.0.0)</title>
+      <link>https://keachmurakami.github.io/protocols/pea_cultivation/pea_cultivation_protocol/</link>
+      <pubDate>Thu, 09 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/protocols/pea_cultivation/pea_cultivation_protocol/</guid>
+      <description>General information Pea (Pisum sativum L., cv. Greenfeast) cultivation protocol for ANU works. This protocol is based on Chow &amp;amp; Anderson, 1987 and Zhu et al., 2016 with some minor modifications.
+ Protocol Sowing (Day 0) Germination rate is approximately 85–90%. x1.5 seeds should be sown.
+ soak seeds in water for ~ 5 h sow seeds into cylinders filled with PAC soil  cylinder diameter: ~ 37 mm cylinder height: ~ 70 mm  arrange cylinders in round-hole plug-tray (8 x 5 holes) place plug-trays in a growth cabinet  temp: 20C RH: 60% PPFD: 360 umol m-2 s-1 (photoperiod: 16 h) CO2: ambient  supply water until germination   Transplant (~ Day 6) Transplant seedlings to pots.</description>
+    </item>
     
     <item>
       <title>Rからtinypng APIで画像圧縮</title>
@@ -705,12 +716,23 @@
     </item>
     
     <item>
+      <title></title>
+      <link>https://keachmurakami.github.io/protocols/pea_cultivation/pea_cultivation_protocol/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/protocols/pea_cultivation/pea_cultivation_protocol/</guid>
+      <description>General information Pea (Pisum sativum L., cv. Greenfeast) cultivation protocol for ANU works. This protocol is based on Chow &amp;amp; Anderson, 1987 and Zhu et al., 2016 with some minor modifications.
+Protocol Sowing (Day 0) Germination rate is approximately 85–90%. x1.5 seeds should be sown.
+ soak seeds in water for ~ 5 h sow seeds into cylinders filled with PAC soil  cylinder diameter: ~ 37 mm cylinder height: ~ 70 mm  arrange cylinders in round-hole plug-tray (8 x 5 holes) place plug-trays in a growth cabinet  temp: 20C RH: 60% PPFD: 360 umol m-2 s-1 (photoperiod: 16 h) CO2: ambient  supply water until germination  Transplant (~ Day 6) Transplant seedlings to pots.</description>
+    </item>
+    
+    <item>
       <title> </title>
       <link>https://keachmurakami.github.io/cv_eng/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/cv_eng/</guid>
-      <description>Last update: 2018-06-09 
+      <description>Last update: 2018-08-28 
  Author Contact  Keach MURAKAMI (Ph.D.)  mail: keach.murakamigmail.com CV:     Affiliation 2018.05–2019.01
 Chow laboratory, Research School of Biology, The Australian National University, Australia
 2017.04–2020.03
@@ -724,7 +746,7 @@ Graduate School of Sciences and Technology for Innovation, Yamaguchi University,
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/cv_jpn/</guid>
-      <description>Last update: 2018-06-09 人物 著者 村上（むらかみ） 貴一（きいち） 博士 (農学); Keach MURAKAMI (Ph.D.) mail: keach.murakamigmail.com CV: 所属 2018.05–2019.01 The Australian National UniversityのChow</description>
+      <description>Last update: 2018-08-28 人物 著者 村上（むらかみ） 貴一（きいち） 博士 (農学); Keach MURAKAMI (Ph.D.) mail: keach.murakamigmail.com CV: 所属 2018.05–2019.01 The Australian National UniversityのChow</description>
     </item>
     
     <item>
@@ -745,7 +767,7 @@ Graduate School of Sciences and Technology for Innovation, Yamaguchi University,
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/publication_list/</guid>
-      <description>Last update: 2018-07-07 Journal Articles + -&amp;gt; Corresponding Author {(First | Corresponding) &amp;amp; Original} papers 006 Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem IIKeach Murakami+, Yasuomi Ibaraki Physiologia Plantarum (2018) 005 A mathematical model of photosynthetic electron transport in response to light spectrum based on excitation energy distributed to photosystemsKeach Murakami+, Ryo Matsuda+, Kazuhiro Fujiwara Plant and Cell</description>
+      <description>Last update: 2018-08-28 Add link: IHC2018 slide Journal Articles + -&amp;gt; Corresponding Author {(First | Corresponding) &amp;amp; Original} papers 006 Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem IIKeach Murakami+, Yasuomi Ibaraki Physiologia Plantarum (2018) 005 A mathematical model of photosynthetic electron transport in response to light spectrum based on excitation energy distributed to photosystemsKeach Murakami+, Ryo Matsuda+, Kazuhiro</description>
     </item>
     
   </channel>

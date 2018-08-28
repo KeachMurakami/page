@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://keachmurakami.github.io/protocols/pea_cultivation/pea_cultivation_protocol/</loc>
+    <lastmod>2018-08-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/2018/07/27/r%E3%81%8B%E3%82%89tinypng-api%E3%81%A7%E7%94%BB%E5%83%8F%E5%9C%A7%E7%B8%AE/</loc>
     <lastmod>2018-07-27T00:00:00+00:00</lastmod>
   </url>
@@ -382,6 +387,10 @@
   </url>
   
   <url>
+    <loc>https://keachmurakami.github.io/protocols/pea_cultivation/pea_cultivation_protocol/</loc>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/cv_eng/</loc>
   </url>
   
@@ -399,7 +408,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/</loc>
-    <lastmod>2018-07-27T00:00:00+00:00</lastmod>
+    <lastmod>2018-08-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -481,6 +490,12 @@
   <url>
     <loc>https://keachmurakami.github.io/post/</loc>
     <lastmod>2018-07-27T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://keachmurakami.github.io/protocols/</loc>
+    <lastmod>2018-08-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

@@ -3,7 +3,7 @@ title: " "
 ---
 
 <div style="text-align: right; font-size: .7em">
-<FONT color="grey">Last update: `r lubridate::today()`  </FONT>
+<FONT color="grey">Last update: `r lubridate::today()`  <br>Add link: IHC2018 slide</FONT>
 </div>
 
 ```{r functions, echo = F, message = F, warning = F}
@@ -226,7 +226,8 @@ talks <-
                   time < "2019-01-31" ~ "ANU"
                 ),
                 short_symposium = paste0(type, " in ", short_symposium, "\\@", venue),
-                symposium = paste0(type, " in ", symposium, "\\@", venue)) %>%
+                symposium = paste0(type, " in ", symposium, "\\@", venue),
+                title = if_else(is.na(url), title, paste0('<a href="', url, '">', title, '</a>'))) %>%
   {
     domest <-
       filter(., str_detect(bibtexkey, "^domest"))
