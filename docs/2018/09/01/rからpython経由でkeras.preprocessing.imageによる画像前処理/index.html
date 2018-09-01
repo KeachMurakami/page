@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.40" />
+
+
+<title>RからPython経由でkeras.preprocessing.imageによる画像前処理 - A plant researcher</title>
+<meta property="og:title" content="RからPython経由でkeras.preprocessing.imageによる画像前処理 - A plant researcher">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="../../../../css/fonts.css" media="all">
+<link rel="stylesheet" href="../../../../css/main.css" media="all">
+
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="../../../../" class="nav-logo">
+    <img src="../../../../images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="../../../../cv_eng/">About (Eng)</a></li>
+    
+    <li><a href="../../../../cv_jpn/">About (Jpn)</a></li>
+    
+    <li><a href="../../../../publication_list/">Publication</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">RからPython経由でkeras.preprocessing.imageによる画像前処理</h1>
+
+    
+    <span class="article-date">2018/09/01</span>
+    
+
+    <div class="article-content">
+      <p>型に厳密でないRに慣れたせいではまったメモ</p>
+<hr />
+<p>画像を回転・移動させて画像増殖する機械学習の定石をとるにあたり、<code>keras.preprocessing.image</code>というPythonモジュールが便利そう (<a href="http://www.mathgram.xyz/entry/keras/preprocess/img">参照</a>)。 Rから呼べればなお幸せなので<code>reticulate</code>で呼び出す。</p>
+<pre class="r"><code>library(reticulate, quietly = TRUE)
+library(imager)
+
+reticulate::use_virtualenv(&quot;r-tensorflow&quot;)
+kpi &lt;- reticulate::import(&quot;keras.preprocessing.image&quot;)
+
+
+names(kpi)
+names(kpi$image)</code></pre>
+<pre><code>##  [1] &quot;absolute_import&quot;        &quot;apply_affine_transform&quot;
+##  [3] &quot;apply_brightness_shift&quot; &quot;apply_channel_shift&quot;   
+##  [5] &quot;array_to_img&quot;           &quot;DirectoryIterator&quot;     
+##  [7] &quot;division&quot;               &quot;image&quot;                 
+##  [9] &quot;ImageDataGenerator&quot;     &quot;img_to_array&quot;          
+## [11] &quot;Iterator&quot;               &quot;load_img&quot;              
+## [13] &quot;NumpyArrayIterator&quot;     &quot;print_function&quot;        
+## [15] &quot;random_brightness&quot;      &quot;random_channel_shift&quot;  
+## [17] &quot;random_rotation&quot;        &quot;random_shear&quot;          
+## [19] &quot;random_shift&quot;           &quot;random_zoom&quot;           
+## [21] &quot;save_img&quot;              
+##  [1] &quot;absolute_import&quot;                &quot;apply_affine_transform&quot;        
+##  [3] &quot;apply_brightness_shift&quot;         &quot;apply_channel_shift&quot;           
+##  [5] &quot;array_to_img&quot;                   &quot;backend&quot;                       
+##  [7] &quot;DirectoryIterator&quot;              &quot;division&quot;                      
+##  [9] &quot;flip_axis&quot;                      &quot;get_keras_submodule&quot;           
+## [11] &quot;ImageDataGenerator&quot;             &quot;ImageEnhance&quot;                  
+## [13] &quot;img_to_array&quot;                   &quot;Iterator&quot;                      
+## [15] &quot;keras_utils&quot;                    &quot;list_pictures&quot;                 
+## [17] &quot;load_img&quot;                       &quot;multiprocessing&quot;               
+## [19] &quot;np&quot;                             &quot;NumpyArrayIterator&quot;            
+## [21] &quot;os&quot;                             &quot;partial&quot;                       
+## [23] &quot;pil_image&quot;                      &quot;print_function&quot;                
+## [25] &quot;random_brightness&quot;              &quot;random_channel_shift&quot;          
+## [27] &quot;random_rotation&quot;                &quot;random_shear&quot;                  
+## [29] &quot;random_shift&quot;                   &quot;random_zoom&quot;                   
+## [31] &quot;range&quot;                          &quot;re&quot;                            
+## [33] &quot;save_img&quot;                       &quot;scipy&quot;                         
+## [35] &quot;threading&quot;                      &quot;transform_matrix_offset_center&quot;
+## [37] &quot;warnings&quot;</code></pre>
+<p>パッケージが階層っぽく管理されている。 ほしいのは<code>kpi$image$random_rotation</code>。</p>
+<div class="section level2">
+<h2>下準備</h2>
+<pre class="r"><code># ライセンスフリーの画像をローカル一時フォルダに保存
+temp_file &lt;- tempfile()
+img_url &lt;- &quot;https://cdn.pixabay.com/photo/2012/04/13/00/19/copyright-free-31208_640.png&quot;
+download.file(img_url, destfile = temp_file, quiet = TRUE)
+
+# 画像を読み込む
+(img_raw &lt;- kpi$load_img(temp_file))
+
+# 画像をRでも扱えるarrayに変換
+img_raw %&lt;&gt;% kpi$img_to_array()
+
+img_raw %&gt;% dim
+img_raw[1:3, 1:3, 1]
+
+img &lt;- 
+  img_raw %&gt;%
+  aperm(perm = c(2, 1, 3)) %&gt;% # 画像が転地状態になるので、１−２次元目を入れ替え
+  `*`(1/255)
+
+img %&gt;%
+  as.cimg %&gt;%
+  plot(axes = FALSE)</code></pre>
+<p><img src="../../../../post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre><code>## &lt;PIL.Image.Image image mode=RGB size=585x640 at 0x123294AD0&gt;
+## [1] 640 585   3
+##      [,1] [,2] [,3]
+## [1,]  255  255  255
+## [2,]  255  255  255
+## [3,]  255  255  255</code></pre>
+</div>
+<div class="section level2">
+<h2>回転</h2>
+<p>サンプル画像に対してランダム回転処理を試す。 とりあえずでやってみると、回転されずに歪む。</p>
+<pre class="r"><code>img_rot &lt;-
+  img %&gt;%
+  kpi$random_rotation(rg = 360) %&gt;% # rg: ランダム回転の許容角度 (degree)
+  as.cimg
+
+plot(img_rot, axes = FALSE)</code></pre>
+<p><img src="../../../../post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><a href="http://nahareport.blogspot.com/2018/04/keraspreprocessingrandomrotation.html"><code>random_rotation</code>の回転のaxisはデフォルトでは変なことになっているので明示的に指定しないとダメ</a> という記事を見て、解決したかと思えば今度はエラー。</p>
+<pre class="r"><code>img_rot &lt;-
+  img %&gt;%
+  kpi$random_rotation(rg = 360, row_axis = 0, col_axis = 1, channel_axis = 2) %&gt;%
+  as.cimg
+
+#&gt; Error in py_call_impl(callable, dots$args, dots$keywords) : 
+#&gt;  TypeError: integer argument expected, got float</code></pre>
+<p>RからPythonへの変換中に型変換でも起こっているのかと思っていじったり、 <a href="https://rstudio.github.io/reticulate/articles/arrays.html">R-Python間でのarray扱いの違い</a> が原因かと思っていじったりしたが、結局はarrayのインデックスをinteger型に指定してPythonに送る必要があるだけだった。 以下の通り、row_axisほかを<code>1L</code>で送ればいい。</p>
+<pre class="r"><code>img_rot &lt;-
+  img %&gt;%
+  kpi$random_rotation(rg = 360, row_axis = 0L, col_axis = 1L, channel_axis = 2L) %&gt;%
+  as.cimg
+
+plot(img_rot, axes = FALSE)</code></pre>
+<p><img src="../../../../post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>ランダムに回転角度を決めるので、実行するたびに結果が変わる。 画像端に回転処理で見切れた部分が延長されて表示されるので、ランダム回転 → 余白をcropping、が必要そう。 croppingで取り除く領域のサイズは、45°回転した場合に最大で元画像の<span class="math inline">\(1-1/\sqrt2 \simeq 0.293\)</span>なので、3割増で画像を切り出ししておくといい。</p>
+<pre class="r"><code># rotate
+img_rot &lt;-
+  img %&gt;%
+  kpi$random_rotation(rg = 360, row_axis = 0L, col_axis = 1L, channel_axis = 2L)
+
+# cropping
+dims &lt;- dim(img)
+cnt &lt;- round(dims[1:2]/2) # center x-y px
+frm &lt;- round(dims[1:2] / sqrt(8)) # x-y px from center
+img_crop &lt;- 
+  img_rot[(cnt[1]-frm[1]):(cnt[1]+frm[1]), (cnt[2]-frm[2]):(cnt[2]+frm[2]),]
+
+
+par(mfrow=c(1, 3), mar = c(0, 0, 0, 0))
+img %&gt;%
+  as.cimg %&gt;%
+  plot(axes = FALSE)
+img_rot %&gt;%
+  as.cimg %&gt;%
+  plot(axes = FALSE)
+img_crop %&gt;%
+  as.cimg %&gt;%
+  plot(axes = FALSE)</code></pre>
+<p><img src="../../../../post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>関数化して葉片をランダムに回転させる。</p>
+<pre class="r"><code># 関数科
+random_rotate &lt;-
+  function(img){
+    library(reticulate, quietly = TRUE)
+    reticulate::use_virtualenv(&quot;r-tensorflow&quot;)
+    kpi &lt;- import(&quot;keras.preprocessing.image&quot;)
+
+    dims &lt;- dim(img)
+    if(length(dims) == 2){
+      dim(img) &lt;- c(dims, 1)
+    }
+    
+    rot &lt;-
+      img %&gt;%
+      kpi$random_rotation(rg = 360, row_axis = 0L, col_axis = 1L, channel_axis = 2L)
+    
+    cnt &lt;- round(dims[1:2]/2) # center x-y px
+    frm &lt;- round(dims[1:2] / sqrt(8)) # x-y px from center
+
+    rot[(cnt[1]-frm[1]):(cnt[1]+frm[1]), (cnt[2]-frm[2]):(cnt[2]+frm[2]),] %&gt;%
+      return()
+  }
+
+# データ読み込み
+leaf_disc &lt;-
+  &quot;~/Dropbox/2018/ANU/disc_images/P04_id01_2.jpg&quot; %&gt;%
+  load.image() %&gt;%
+  as.array %&gt;%
+  .[,,1,]
+
+# plot
+par(mfrow = c(4, 4), mar = c(0, 0, 0, 0))
+for(i in 1:16){
+  leaf_disc %&gt;%
+    random_rotate %&gt;%
+    as.cimg %&gt;%
+    plot(axes = FALSE)
+}</code></pre>
+<p><img src="../../../../post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div class="section level2">
+<h2>その他</h2>
+<p>型曖昧で危険といえばコレ</p>
+<pre class="r"><code># NG
+factor(c(&quot;1&quot;, &quot;1.1&quot;, &quot;0.9&quot;)) %&gt;% as.numeric
+# OK
+factor(c(&quot;1&quot;, &quot;1.1&quot;, &quot;0.9&quot;)) %&gt;% as.character %&gt;% as.numeric</code></pre>
+<pre><code>## [1] 2 3 1
+## [1] 1.0 1.1 0.9</code></pre>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li><a href="http://www.mathgram.xyz/entry/keras/preprocess/img">Keras tips: 様々な画像の前処理をカンタンにやってくれるkeras.preprocessingのまとめ | MATHGRAM</a><br />
+</li>
+<li><a href="http://nahareport.blogspot.com/2018/04/keraspreprocessingrandomrotation.html">keras.preprocessingのrandom_rotationが回転してくれない時の対処 | 那覇レポート</a><br />
+</li>
+<li><a href="https://rstudio.github.io/reticulate/articles/arrays.html">Arrays in R and Python | vignette/reticulate</a></li>
+</ul>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Sydney            
+##  date     2018-09-01                  
+## 
+##  package    * version    date       source                             
+##  assertthat   0.2.0      2017-04-11 CRAN (R 3.5.0)                     
+##  backports    1.1.2      2017-12-13 CRAN (R 3.5.0)                     
+##  base       * 3.5.0      2018-04-24 local                              
+##  bindr        0.1.1      2018-03-13 CRAN (R 3.5.0)                     
+##  bindrcpp     0.2.2      2018-03-29 CRAN (R 3.5.0)                     
+##  blogdown     0.6        2018-04-18 CRAN (R 3.5.0)                     
+##  bmp          0.3        2017-09-11 CRAN (R 3.5.0)                     
+##  bookdown     0.7        2018-02-18 CRAN (R 3.5.0)                     
+##  broom      * 0.4.4.9000 2018-06-21 Github (tidyverse/broom@2721de4)   
+##  cellranger   1.1.0      2016-07-27 CRAN (R 3.5.0)                     
+##  cli          1.0.0      2017-11-05 CRAN (R 3.5.0)                     
+##  colorspace   1.3-2      2016-12-14 CRAN (R 3.5.0)                     
+##  compiler     3.5.0      2018-04-24 local                              
+##  crayon       1.3.4      2017-09-16 CRAN (R 3.5.0)                     
+##  datasets   * 3.5.0      2018-04-24 local                              
+##  devtools   * 1.13.6     2018-06-27 CRAN (R 3.5.0)                     
+##  digest       0.6.15     2018-01-28 CRAN (R 3.5.0)                     
+##  dplyr      * 0.7.6      2018-06-29 cran (@0.7.6)                      
+##  evaluate     0.10.1     2017-06-24 CRAN (R 3.5.0)                     
+##  forcats    * 0.3.0      2018-02-19 CRAN (R 3.5.0)                     
+##  ggplot2    * 3.0.0      2018-07-03 CRAN (R 3.5.0)                     
+##  glue         1.3.0      2018-07-17 cran (@1.3.0)                      
+##  graphics   * 3.5.0      2018-04-24 local                              
+##  grDevices  * 3.5.0      2018-04-24 local                              
+##  grid         3.5.0      2018-04-24 local                              
+##  gtable       0.2.0      2016-02-26 CRAN (R 3.5.0)                     
+##  haven        1.1.1      2018-01-18 CRAN (R 3.5.0)                     
+##  hms          0.4.2      2018-03-10 CRAN (R 3.5.0)                     
+##  htmltools    0.3.6      2017-04-28 CRAN (R 3.5.0)                     
+##  httr         1.3.1      2017-08-20 CRAN (R 3.5.0)                     
+##  imager     * 0.40.2     2017-04-24 CRAN (R 3.5.0)                     
+##  jpeg         0.1-8      2014-01-23 CRAN (R 3.5.0)                     
+##  jsonlite     1.5        2017-06-01 CRAN (R 3.5.0)                     
+##  knitr      * 1.20       2018-02-20 CRAN (R 3.5.0)                     
+##  lattice      0.20-35    2017-03-25 CRAN (R 3.5.0)                     
+##  lazyeval     0.2.1      2017-10-29 CRAN (R 3.5.0)                     
+##  lubridate  * 1.7.4      2018-04-11 CRAN (R 3.5.0)                     
+##  magrittr   * 1.5        2014-11-22 CRAN (R 3.5.0)                     
+##  MASS       * 7.3-49     2018-02-23 CRAN (R 3.5.0)                     
+##  Matrix       1.2-14     2018-04-09 CRAN (R 3.5.0)                     
+##  memoise      1.1.0      2017-04-21 CRAN (R 3.5.0)                     
+##  methods    * 3.5.0      2018-04-24 local                              
+##  modelr       0.1.2      2018-05-11 cran (@0.1.2)                      
+##  munsell      0.4.3      2016-02-13 CRAN (R 3.5.0)                     
+##  nlme         3.1-137    2018-04-07 CRAN (R 3.5.0)                     
+##  pillar       1.2.3      2018-05-25 cran (@1.2.3)                      
+##  pkgconfig    2.0.1      2017-03-21 CRAN (R 3.5.0)                     
+##  plyr       * 1.8.4      2016-06-08 CRAN (R 3.5.0)                     
+##  png          0.1-7      2013-12-03 CRAN (R 3.5.0)                     
+##  purrr      * 0.2.5      2018-05-29 CRAN (R 3.5.0)                     
+##  R6           2.2.2      2017-06-17 CRAN (R 3.5.0)                     
+##  Rcpp         0.12.18    2018-07-23 cran (@0.12.18)                    
+##  readbitmap   0.1-4      2014-09-05 CRAN (R 3.5.0)                     
+##  readr      * 1.1.1      2017-05-16 CRAN (R 3.5.0)                     
+##  readxl       1.1.0      2018-04-20 CRAN (R 3.5.0)                     
+##  reshape2     1.4.3      2017-12-11 CRAN (R 3.5.0)                     
+##  reticulate * 1.9.0.9003 2018-08-03 Github (rstudio/reticulate@b01b7c9)
+##  rlang        0.2.1      2018-05-30 cran (@0.2.1)                      
+##  rmarkdown    1.10       2018-06-11 cran (@1.10)                       
+##  rprojroot    1.3-2      2018-01-03 CRAN (R 3.5.0)                     
+##  rstudioapi   0.7        2017-09-07 CRAN (R 3.5.0)                     
+##  rvest        0.3.2      2016-06-17 CRAN (R 3.5.0)                     
+##  scales       0.5.0      2017-08-24 CRAN (R 3.5.0)                     
+##  stats      * 3.5.0      2018-04-24 local                              
+##  stringi      1.2.3      2018-06-12 cran (@1.2.3)                      
+##  stringr    * 1.3.1      2018-05-10 cran (@1.3.1)                      
+##  tibble     * 1.4.2      2018-01-22 CRAN (R 3.5.0)                     
+##  tidyr      * 0.8.1      2018-05-18 cran (@0.8.1)                      
+##  tidyselect   0.2.4      2018-02-26 CRAN (R 3.5.0)                     
+##  tidyverse  * 1.2.1      2017-11-14 CRAN (R 3.5.0)                     
+##  tools        3.5.0      2018-04-24 local                              
+##  utils      * 3.5.0      2018-04-24 local                              
+##  withr        2.1.2      2018-03-15 CRAN (R 3.5.0)                     
+##  xfun         0.1        2018-01-22 CRAN (R 3.5.0)                     
+##  xml2         1.2.0      2018-01-24 CRAN (R 3.5.0)                     
+##  yaml         2.2.0      2018-07-25 cran (@2.2.0)</code></pre>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="../../../../index.xml" type="application/rss+xml" target="_blank"><i class="fas fa-rss"></i></a>
+          </li>
+          <li>
+            <a href="https://github.com/KeachMurakami/page" class="footer-link"><i class="fab fa-github"></i></a>
+          </li>
+          <li>
+            Powered by <a href="https://gohugo.io/" class="footer-link">Hugo</a>, <a href="https://github.com/rstudio/blogdown" class="footer-link">blogdown</a>, and <a href="https://pages.github.com/" class="footer-link">GitHub Pages</a>.
+          </li>
+        </ul>
+        <ul class="footer-links">
+          <li>
+            Except where otherwise noted, content on this site is licensed under a<a href="https://creativecommons.org/licenses/by/4.0/" class="footer-link">Creative Commons Attribution 4.0 International license</a>.
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="../../../../js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
+

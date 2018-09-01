@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Image Processing on A plant researcher</title>
+    <link>https://keachmurakami.github.io/categories/image-processing/</link>
+    <description>Recent content in Image Processing on A plant researcher</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Sat, 01 Sep 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://keachmurakami.github.io/categories/image-processing/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>RからPython経由でkeras.preprocessing.imageによる画像前処理</title>
+      <link>https://keachmurakami.github.io/2018/09/01/r%E3%81%8B%E3%82%89python%E7%B5%8C%E7%94%B1%E3%81%A7keras.preprocessing.image%E3%81%AB%E3%82%88%E3%82%8B%E7%94%BB%E5%83%8F%E5%89%8D%E5%87%A6%E7%90%86/</link>
+      <pubDate>Sat, 01 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/09/01/r%E3%81%8B%E3%82%89python%E7%B5%8C%E7%94%B1%E3%81%A7keras.preprocessing.image%E3%81%AB%E3%82%88%E3%82%8B%E7%94%BB%E5%83%8F%E5%89%8D%E5%87%A6%E7%90%86/</guid>
+      <description>型に厳密でないRに慣れたせいではまったメモ 画像を回転・移動させて画像増殖する機械学習の定石をとるにあたり、keras.preprocessi</description>
+    </item>
+    
+  </channel>
+</rss>
