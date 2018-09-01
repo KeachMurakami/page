@@ -30,12 +30,12 @@ names(kpi)
 names(kpi$image)
 ```
 
-パッケージが階層っぽく管理されている。
-ほしいのは`kpi$image$random_rotation`。
+関数が階層っぽく管理されている。
+欲しいのは`kpi$image$random_XXX`シリーズで、とりあえず`kpi$image$random_rotation`を試す。
 
 ## 下準備
 
-```{r}
+```{r, results = "markup"}
 # ライセンスフリーの画像をローカル一時フォルダに保存
 temp_file <- tempfile()
 img_url <- "https://cdn.pixabay.com/photo/2012/04/13/00/19/copyright-free-31208_640.png"
@@ -101,7 +101,8 @@ plot(img_rot, axes = FALSE)
 
 ランダムに回転角度を決めるので、実行するたびに結果が変わる。
 画像端に回転処理で見切れた部分が延長されて表示されるので、ランダム回転 → 余白をcropping、が必要そう。
-croppingで取り除く領域のサイズは、45°回転した場合に最大で元画像の$1-1/\sqrt2 \simeq 0.293$なので、3割増で画像を切り出ししておくといい。
+croppingで取り除く領域のサイズは、45°回転した場合に最大値をとり、元画像の$1-1/\sqrt2 \simeq 0.293$。
+対象領域の3割増で余白を持たせて画像を切り出ししておくといい。
 
 ```{r, results = "hold"}
 # rotate

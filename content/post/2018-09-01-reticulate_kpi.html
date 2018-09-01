@@ -48,7 +48,7 @@ names(kpi)</code></pre>
 ## [33] &quot;save_img&quot;                       &quot;scipy&quot;                         
 ## [35] &quot;threading&quot;                      &quot;transform_matrix_offset_center&quot;
 ## [37] &quot;warnings&quot;</code></pre>
-<p>パッケージが階層っぽく管理されている。 ほしいのは<code>kpi$image$random_rotation</code>。</p>
+<p>関数が階層っぽく管理されている。 欲しいのは<code>kpi$image$random_XXX</code>シリーズで、とりあえず<code>kpi$image$random_rotation</code>を試す。</p>
 <div class="section level2">
 <h2>下準備</h2>
 <pre class="r"><code># ライセンスフリーの画像をローカル一時フォルダに保存
@@ -57,15 +57,19 @@ img_url &lt;- &quot;https://cdn.pixabay.com/photo/2012/04/13/00/19/copyright-fre
 download.file(img_url, destfile = temp_file, quiet = TRUE)
 
 # 画像を読み込む
-(img_raw &lt;- kpi$load_img(temp_file))
-
-# 画像をRでも扱えるarrayに変換
+(img_raw &lt;- kpi$load_img(temp_file))</code></pre>
+<pre><code>## &lt;PIL.Image.Image image mode=RGB size=585x640 at 0x126B0CAD0&gt;</code></pre>
+<pre class="r"><code># 画像をRでも扱えるarrayに変換
 img_raw %&lt;&gt;% kpi$img_to_array()
 
-img_raw %&gt;% dim
-img_raw[1:3, 1:3, 1]
-
-img &lt;- 
+img_raw %&gt;% dim</code></pre>
+<pre><code>## [1] 640 585   3</code></pre>
+<pre class="r"><code>img_raw[1:3, 1:3, 1]</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]  255  255  255
+## [2,]  255  255  255
+## [3,]  255  255  255</code></pre>
+<pre class="r"><code>img &lt;- 
   img_raw %&gt;%
   aperm(perm = c(2, 1, 3)) %&gt;% # 画像が転地状態になるので、１−２次元目を入れ替え
   `*`(1/255)
@@ -74,12 +78,6 @@ img %&gt;%
   as.cimg %&gt;%
   plot(axes = FALSE)</code></pre>
 <p><img src="/post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre><code>## &lt;PIL.Image.Image image mode=RGB size=585x640 at 0x123496AD0&gt;
-## [1] 640 585   3
-##      [,1] [,2] [,3]
-## [1,]  255  255  255
-## [2,]  255  255  255
-## [3,]  255  255  255</code></pre>
 </div>
 <div class="section level2">
 <h2>回転</h2>
@@ -107,7 +105,7 @@ plot(img_rot, axes = FALSE)</code></pre>
 
 plot(img_rot, axes = FALSE)</code></pre>
 <p><img src="/post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>ランダムに回転角度を決めるので、実行するたびに結果が変わる。 画像端に回転処理で見切れた部分が延長されて表示されるので、ランダム回転 → 余白をcropping、が必要そう。 croppingで取り除く領域のサイズは、45°回転した場合に最大で元画像の<span class="math inline">\(1-1/\sqrt2 \simeq 0.293\)</span>なので、3割増で画像を切り出ししておくといい。</p>
+<p>ランダムに回転角度を決めるので、実行するたびに結果が変わる。 画像端に回転処理で見切れた部分が延長されて表示されるので、ランダム回転 → 余白をcropping、が必要そう。 croppingで取り除く領域のサイズは、45°回転した場合に最大値をとり、元画像の<span class="math inline">\(1-1/\sqrt2 \simeq 0.293\)</span>。 対象領域の3割増で余白を持たせて画像を切り出ししておくといい。</p>
 <pre class="r"><code># rotate
 img_rot &lt;-
   img %&gt;%
