@@ -18,7 +18,7 @@ set.seed(71)
 画像を回転・移動させて画像増殖する機械学習の定石をとるにあたり、`keras.preprocessing.image`というPythonモジュールが便利そう ([参照](http://www.mathgram.xyz/entry/keras/preprocess/img))。
 Rから呼べればなお幸せなので`reticulate`で呼び出す。
 
-```{r}
+```{r, results = "markup"}
 library(reticulate, quietly = TRUE)
 library(imager)
 
@@ -109,10 +109,10 @@ img_rot <-
   img %>%
   kpi$random_rotation(rg = 360, row_axis = 0L, col_axis = 1L, channel_axis = 2L)
 
-# cropping
+# crop
 dims <- dim(img)
-cnt <- round(dims[1:2]/2) # center x-y px
-frm <- round(dims[1:2] / sqrt(8)) # x-y px from center
+cnt <- round(dims[1:2]/2) # center
+frm <- round(dims[1:2] / sqrt(8)) # side/2
 img_crop <- 
   img_rot[(cnt[1]-frm[1]):(cnt[1]+frm[1]), (cnt[2]-frm[2]):(cnt[2]+frm[2]),]
 
@@ -132,8 +132,7 @@ img_crop %>%
 関数化して葉片をランダムに回転させる。
 
 ```{r}
-
-# 関数科
+# function
 random_rotate <-
   function(img){
     library(reticulate, quietly = TRUE)
@@ -149,14 +148,14 @@ random_rotate <-
       img %>%
       kpi$random_rotation(rg = 360, row_axis = 0L, col_axis = 1L, channel_axis = 2L)
     
-    cnt <- round(dims[1:2]/2) # center x-y px
-    frm <- round(dims[1:2] / sqrt(8)) # x-y px from center
+    cnt <- round(dims[1:2]/2) # center
+    frm <- round(dims[1:2] / sqrt(8)) # side/2
 
     rot[(cnt[1]-frm[1]):(cnt[1]+frm[1]), (cnt[2]-frm[2]):(cnt[2]+frm[2]),] %>%
       return()
   }
 
-# データ読み込み
+# load
 leaf_disc <-
   "~/Dropbox/2018/ANU/disc_images/P04_id01_2.jpg" %>%
   load.image() %>%

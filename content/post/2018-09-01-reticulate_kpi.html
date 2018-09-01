@@ -16,8 +16,7 @@ reticulate::use_virtualenv(&quot;r-tensorflow&quot;)
 kpi &lt;- reticulate::import(&quot;keras.preprocessing.image&quot;)
 
 
-names(kpi)
-names(kpi$image)</code></pre>
+names(kpi)</code></pre>
 <pre><code>##  [1] &quot;absolute_import&quot;        &quot;apply_affine_transform&quot;
 ##  [3] &quot;apply_brightness_shift&quot; &quot;apply_channel_shift&quot;   
 ##  [5] &quot;array_to_img&quot;           &quot;DirectoryIterator&quot;     
@@ -28,8 +27,9 @@ names(kpi$image)</code></pre>
 ## [15] &quot;random_brightness&quot;      &quot;random_channel_shift&quot;  
 ## [17] &quot;random_rotation&quot;        &quot;random_shear&quot;          
 ## [19] &quot;random_shift&quot;           &quot;random_zoom&quot;           
-## [21] &quot;save_img&quot;              
-##  [1] &quot;absolute_import&quot;                &quot;apply_affine_transform&quot;        
+## [21] &quot;save_img&quot;</code></pre>
+<pre class="r"><code>names(kpi$image)</code></pre>
+<pre><code>##  [1] &quot;absolute_import&quot;                &quot;apply_affine_transform&quot;        
 ##  [3] &quot;apply_brightness_shift&quot;         &quot;apply_channel_shift&quot;           
 ##  [5] &quot;array_to_img&quot;                   &quot;backend&quot;                       
 ##  [7] &quot;DirectoryIterator&quot;              &quot;division&quot;                      
@@ -74,7 +74,7 @@ img %&gt;%
   as.cimg %&gt;%
   plot(axes = FALSE)</code></pre>
 <p><img src="/post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre><code>## &lt;PIL.Image.Image image mode=RGB size=585x640 at 0x123294AD0&gt;
+<pre><code>## &lt;PIL.Image.Image image mode=RGB size=585x640 at 0x123496AD0&gt;
 ## [1] 640 585   3
 ##      [,1] [,2] [,3]
 ## [1,]  255  255  255
@@ -113,10 +113,10 @@ img_rot &lt;-
   img %&gt;%
   kpi$random_rotation(rg = 360, row_axis = 0L, col_axis = 1L, channel_axis = 2L)
 
-# cropping
+# crop
 dims &lt;- dim(img)
-cnt &lt;- round(dims[1:2]/2) # center x-y px
-frm &lt;- round(dims[1:2] / sqrt(8)) # x-y px from center
+cnt &lt;- round(dims[1:2]/2) # center
+frm &lt;- round(dims[1:2] / sqrt(8)) # side/2
 img_crop &lt;- 
   img_rot[(cnt[1]-frm[1]):(cnt[1]+frm[1]), (cnt[2]-frm[2]):(cnt[2]+frm[2]),]
 
@@ -133,7 +133,7 @@ img_crop %&gt;%
   plot(axes = FALSE)</code></pre>
 <p><img src="/post/2018-09-01-reticulate_kpi_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>関数化して葉片をランダムに回転させる。</p>
-<pre class="r"><code># 関数科
+<pre class="r"><code># function
 random_rotate &lt;-
   function(img){
     library(reticulate, quietly = TRUE)
@@ -149,14 +149,14 @@ random_rotate &lt;-
       img %&gt;%
       kpi$random_rotation(rg = 360, row_axis = 0L, col_axis = 1L, channel_axis = 2L)
     
-    cnt &lt;- round(dims[1:2]/2) # center x-y px
-    frm &lt;- round(dims[1:2] / sqrt(8)) # x-y px from center
+    cnt &lt;- round(dims[1:2]/2) # center
+    frm &lt;- round(dims[1:2] / sqrt(8)) # side/2
 
     rot[(cnt[1]-frm[1]):(cnt[1]+frm[1]), (cnt[2]-frm[2]):(cnt[2]+frm[2]),] %&gt;%
       return()
   }
 
-# データ読み込み
+# load
 leaf_disc &lt;-
   &quot;~/Dropbox/2018/ANU/disc_images/P04_id01_2.jpg&quot; %&gt;%
   load.image() %&gt;%
