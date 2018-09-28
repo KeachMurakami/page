@@ -197,7 +197,7 @@ papers <-
   dplyr::transmute(title = str_glue('<a href="http://doi.org/{doi}">{title}</a>'),
                    author, year, type, journal, corresponding, bibtexkey, self_archive) %>%
   
-  dplyr::mutate(title = if_else(!is.na(self_archive), paste0(title, '&emsp;<a href="', self_archive, '"><i class="ai ai-google-scholar-square ai-3x"></i></a>'), as.character(title))) %>%
+  dplyr::mutate(title = if_else(!is.na(self_archive), paste0(title, '&emsp;<a href="', self_archive, '"><i class="ai ai-open-access ai-1x"></i></a>'), as.character(title))) %>%
   indicate_author(corresponding, mark = "<sup>+</sup>") %>%
   {
     is_main <-
