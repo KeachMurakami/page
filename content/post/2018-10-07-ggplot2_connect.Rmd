@@ -109,7 +109,7 @@ extract_connect <-
       dplyr::ungroup() %>%
       dplyr::left_join(dplyr::filter(tbl, (!!group) == ref_group),
                        by = quo_name(time_var), suffix = c("", "___ref___temp___")) %>%
-      dplyr::mutate(!!quo_name(y_var) := if_else(is.na(!!y_var), value___ref___temp___, !!y_var)) %>%
+      dplyr::mutate(!!quo_name(y_var) := if_else(is.na(!!y_var), !!sym(paste0(quo_name(y_var), "___ref___temp___")), !!y_var)) %>%
       dplyr::select(-ends_with("___ref___temp___")) %>%
       return()
     }
@@ -143,30 +143,30 @@ connector <-
     y_var <- enquo(y_var)
     group <- enquo(group_var)
     
-  function(tbl){
-    connect <-
-      tbl %>%
-      tidyr::complete(!!time_var, !!group) %>%
-      dplyr::filter((!!group) != ref_group) %>%
-      dplyr::group_by(!!group) %>%
-      dplyr::do({
-        num_na <-
-          pull(., !!y_var) %>%
-          is.na %>%
-          sum %>%
-          {.:(.+1)}
-        dplyr::arrange(., !!time_var) %>%
-          dplyr::slice(num_na)
-      })
-
-    connect %>%
-      dplyr::ungroup() %>%
-      dplyr::left_join(dplyr::filter(tbl, (!!group) == ref_group),
-                       by = quo_name(time_var), suffix = c("", "___ref___temp___")) %>%
-      dplyr::mutate(!!quo_name(y_var) := if_else(is.na(!!y_var), value___ref___temp___, !!y_var)) %>%
-      dplyr::select(-ends_with("___ref___temp___")) %>%
-      return()
-    } %>%
+    function(tbl){
+      connect <-
+        tbl %>%
+        tidyr::complete(!!time_var, !!group) %>%
+        dplyr::filter((!!group) != ref_group) %>%
+        dplyr::group_by(!!group) %>%
+        dplyr::do({
+          num_na <-
+            pull(., !!y_var) %>%
+            is.na %>%
+            sum %>%
+            {.:(.+1)}
+          dplyr::arrange(., !!time_var) %>%
+            dplyr::slice(num_na)
+        })
+  
+      connect %>%
+        dplyr::ungroup() %>%
+        dplyr::left_join(dplyr::filter(tbl, (!!group) == ref_group),
+                         by = quo_name(time_var), suffix = c("", "___ref___temp___")) %>%
+        dplyr::mutate(!!quo_name(y_var) := if_else(is.na(!!y_var), !!sym(paste0(quo_name(y_var), "___ref___temp___")), !!y_var)) %>%
+        dplyr::select(-ends_with("___ref___temp___")) %>%
+        return()
+      } %>%
       return()
   }
 
@@ -179,11 +179,9 @@ dat %>%
  
 ## To Do
 
-- 分岐時点が１時点前とは限らない
-    - 分岐時点を指定する情報が必要か？
-- 欠測周り
-    - 練れていないので怪しい
-    - 元系列の分岐時点が欠測の場合は内挿する？
+- 欠測周りが怪しい
+- 等間隔なデータでない場合、分岐時点が１時点前とは限らない
+- 分岐時点を指定する情報が必要か？
 
 test-drivenなコード書きをしないといけないと思いながらもさぼっている。
 
@@ -197,4 +195,7 @@ devtools::session_info()
 ## 雑記
 
 - 科研費申請書がつらい
-  - 途中で所属が変わるだろうし、その先も決まっていないのに「研究環境について書け」って無茶ぶりもいいとこ
+    - 学振PD3年目から採用の場合、途中で所属が変わる (無職になる場合も含む)
+    - その先も決まっていないのに「研究環境・施設について書け」って鬼だ
+        - 申請者に非テニュアを想定しているはずの若手研究からはこの要件は抜くべきでは？
+        - いかにも選択と集中、って感じだ
