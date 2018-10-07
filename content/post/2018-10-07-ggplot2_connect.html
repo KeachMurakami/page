@@ -1,0 +1,276 @@
+---
+title: "途中で分岐する時系列プロット (ggplot2)"
+date: 2018-10-07
+categories: ["tidyverse"]
+---
+
+
+
+<p>対照区に対していくつかの時点から処理を開始する試験区を設け、試験区ごとに一定間隔で取得した経時データを比較する。</p>
+<pre class="r"><code>dat &lt;-
+  tibble(day = c(1:4, 2:4, 3:4),
+         value = c(10, 10, 10, 10, # ctrl
+                   7, 5, 4,        # group1
+                   8, 7),          # group2
+         group = c(rep(&quot;ctrl&quot;, 4),
+                   rep(&quot;group1&quot;, 3),
+                   rep(&quot;group2&quot;, 2))
+         )
+
+p1 &lt;-
+  dat %&gt;%
+  ggplot(aes(day, value, color = group, group = group)) +
+  geom_point() +
+  geom_line()
+
+print(p1)</code></pre>
+<p><img src="/post/2018-10-07-ggplot2_connect_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>処理開始時点を視覚的に伝えるため、<code>group1</code>はday1とday2、<code>group2</code>はday2とday3、を点線でつなぎたい。</p>
+<div class="section level3">
+<h3>愚直にやる</h3>
+<p>まず愚直にやる。</p>
+<p>各処理区の処理前後時点のデータを作る。 処理開始前のデータは存在しないので、NA。</p>
+<pre class="r"><code>connected_points &lt;-
+  dat %&gt;%
+  tidyr::complete(day, group) %&gt;%
+  dplyr::filter(group != &quot;ctrl&quot;) %&gt;%
+  dplyr::group_by(group) %&gt;%
+  dplyr::do({
+    num_na &lt;- sum(is.na(.$value))
+    dplyr::arrange(., day) %&gt;%
+      dplyr::slice(num_na:(num_na+1))
+  })
+
+print(connected_points)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+## # Groups:   group [2]
+##     day group  value
+##   &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt;
+## 1     1 group1    NA
+## 2     2 group1     7
+## 3     2 group2    NA
+## 4     3 group2     8</code></pre>
+<p>処理開始前のデータを参照先の対照区のデータで置換する。</p>
+<pre class="r"><code>connected_points %&lt;&gt;%
+  dplyr::ungroup() %&gt;%
+  dplyr::left_join(., filter(dat, group == &quot;ctrl&quot;), by = &quot;day&quot;) %&gt;%
+  dplyr::transmute(day, group = group.x,
+                   value = dplyr::if_else(is.na(value.x), value.y, value.x))
+
+print(connected_points)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##     day group  value
+##   &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt;
+## 1     1 group1    10
+## 2     2 group1     7
+## 3     2 group2    10
+## 4     3 group2     8</code></pre>
+<pre class="r"><code>p1 + geom_line(data = connected_points, linetype = 2)</code></pre>
+<p><img src="/post/2018-10-07-ggplot2_connect_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div class="section level3">
+<h3>関数化</h3>
+<p>関数化する。</p>
+<blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">手作業で30分掛かるものを3秒で終わらせるために3時間掛けるのがエンジニア、という持論を大切にしていきたい</p>&mdash; わかめそば@技術書典い05 (@wakamesoba98) <a href="https://twitter.com/wakamesoba98/status/1020496602132180992?ref_src=twsrc%5Etfw">2018年7月21日</a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p><code>rlang</code>を使って<code>dplyr</code>っぽく引数をquoteしないで済むようにする。 毎回quosureについてぐぐっている気がする。</p>
+<pre class="r"><code>library(rlang)
+
+extract_connect &lt;-
+  function(tbl, time_var, y_var, group_var, ref_group){
+    time_var &lt;- enquo(time_var)
+    y_var &lt;- enquo(y_var)
+    group &lt;- enquo(group_var)
+
+    connect &lt;-
+      tbl %&gt;%
+      tidyr::complete(!!time_var, !!group) %&gt;%
+      dplyr::filter((!!group) != ref_group) %&gt;%
+      dplyr::group_by(!!group) %&gt;%
+      dplyr::do({
+        num_na &lt;-
+          pull(., !!y_var) %&gt;%
+          is.na %&gt;%
+          sum %&gt;%
+          {.:(.+1)}
+        dplyr::arrange(., !!time_var) %&gt;%
+          dplyr::slice(num_na)
+      })
+
+    connect %&gt;%
+      dplyr::ungroup() %&gt;%
+      dplyr::left_join(dplyr::filter(tbl, (!!group) == ref_group),
+                       by = quo_name(time_var), suffix = c(&quot;&quot;, &quot;___ref___temp___&quot;)) %&gt;%
+      dplyr::mutate(!!quo_name(y_var) := if_else(is.na(!!y_var), value___ref___temp___, !!y_var)) %&gt;%
+      dplyr::select(-ends_with(&quot;___ref___temp___&quot;)) %&gt;%
+      return()
+    }
+
+dat %&gt;%
+  extract_connect(time_var = day, y_var = value, group_var = group, ref_group = &quot;ctrl&quot;) %&gt;%
+  print()</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##     day group  value
+##   &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt;
+## 1     1 group1    10
+## 2     2 group1     7
+## 3     2 group2    10
+## 4     3 group2     8</code></pre>
+<p>OK。</p>
+</div>
+<div class="section level3">
+<h3>高階関数化</h3>
+<p><code>geom_XXX</code>の<code>data</code>は関数をとることができるらしい (r-wakalangでのyutannihilationさんの発言から)。</p>
+<pre class="r"><code>mtcars %&gt;%
+  ggplot(aes(hp, disp)) +
+  geom_point(size = 2.5) +
+  geom_point(data = tail, col = &quot;magenta&quot;) + # = geom_point(data = tail(mtcars), ...)
+  geom_point(data = function(x){filter(x, between(disp, 150, 300))}, col = &quot;orange&quot;) # 引数が必要な場合は無名関数で書く</code></pre>
+<p><img src="/post/2018-10-07-ggplot2_connect_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>これを応用して簡単に分岐プロットを書く。 元データに応じてよしなに処理できるような関数を作るための高階関数を作る。</p>
+<pre class="r"><code>connector &lt;-
+  function(time_var, y_var, group_var, ref_group){
+    time_var &lt;- enquo(time_var)
+    y_var &lt;- enquo(y_var)
+    group &lt;- enquo(group_var)
+    
+  function(tbl){
+    connect &lt;-
+      tbl %&gt;%
+      tidyr::complete(!!time_var, !!group) %&gt;%
+      dplyr::filter((!!group) != ref_group) %&gt;%
+      dplyr::group_by(!!group) %&gt;%
+      dplyr::do({
+        num_na &lt;-
+          pull(., !!y_var) %&gt;%
+          is.na %&gt;%
+          sum %&gt;%
+          {.:(.+1)}
+        dplyr::arrange(., !!time_var) %&gt;%
+          dplyr::slice(num_na)
+      })
+
+    connect %&gt;%
+      dplyr::ungroup() %&gt;%
+      dplyr::left_join(dplyr::filter(tbl, (!!group) == ref_group),
+                       by = quo_name(time_var), suffix = c(&quot;&quot;, &quot;___ref___temp___&quot;)) %&gt;%
+      dplyr::mutate(!!quo_name(y_var) := if_else(is.na(!!y_var), value___ref___temp___, !!y_var)) %&gt;%
+      dplyr::select(-ends_with(&quot;___ref___temp___&quot;)) %&gt;%
+      return()
+    } %&gt;%
+      return()
+  }
+
+dat %&gt;%
+  ggplot(aes(day, value, col = group, group = group)) +
+  geom_line(data = connector(day, value, group, &quot;ctrl&quot;), linetype = 2) +
+  geom_point() +
+  geom_line()</code></pre>
+<p><img src="/post/2018-10-07-ggplot2_connect_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="to-do" class="section level2">
+<h2>To Do</h2>
+<ul>
+<li>分岐時点が１時点前とは限らない
+<ul>
+<li>分岐時点を指定する情報が必要か？</li>
+</ul></li>
+<li>欠測周り
+<ul>
+<li>練れていないので怪しい</li>
+<li>元系列の分岐時点が欠測の場合は内挿する？</li>
+</ul></li>
+</ul>
+<p>test-drivenなコード書きをしないといけないと思いながらもさぼっている。</p>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Sydney            
+##  date     2018-10-07                  
+## 
+##  package    * version date       source        
+##  assertthat   0.2.0   2017-04-11 CRAN (R 3.5.0)
+##  backports    1.1.2   2017-12-13 CRAN (R 3.5.0)
+##  base       * 3.5.0   2018-04-24 local         
+##  bindr        0.1.1   2018-03-13 CRAN (R 3.5.0)
+##  bindrcpp   * 0.2.2   2018-03-29 CRAN (R 3.5.0)
+##  blogdown     0.8     2018-07-15 CRAN (R 3.5.0)
+##  bookdown     0.7     2018-02-18 CRAN (R 3.5.0)
+##  broom      * 0.5.0   2018-07-17 CRAN (R 3.5.0)
+##  cellranger   1.1.0   2016-07-27 CRAN (R 3.5.0)
+##  cli          1.0.1   2018-09-25 CRAN (R 3.5.0)
+##  colorspace   1.3-2   2016-12-14 CRAN (R 3.5.0)
+##  compiler     3.5.0   2018-04-24 local         
+##  crayon       1.3.4   2017-09-16 CRAN (R 3.5.0)
+##  datasets   * 3.5.0   2018-04-24 local         
+##  devtools   * 1.13.6  2018-06-27 CRAN (R 3.5.0)
+##  digest       0.6.17  2018-09-12 CRAN (R 3.5.0)
+##  dplyr      * 0.7.6   2018-06-29 cran (@0.7.6) 
+##  evaluate     0.11    2018-07-17 CRAN (R 3.5.0)
+##  fansi        0.4.0   2018-10-05 CRAN (R 3.5.0)
+##  forcats    * 0.3.0   2018-02-19 CRAN (R 3.5.0)
+##  ggplot2    * 3.0.0   2018-07-03 CRAN (R 3.5.0)
+##  glue         1.3.0   2018-07-17 cran (@1.3.0) 
+##  graphics   * 3.5.0   2018-04-24 local         
+##  grDevices  * 3.5.0   2018-04-24 local         
+##  grid         3.5.0   2018-04-24 local         
+##  gtable       0.2.0   2016-02-26 CRAN (R 3.5.0)
+##  haven        1.1.2   2018-06-27 CRAN (R 3.5.0)
+##  hms          0.4.2   2018-03-10 CRAN (R 3.5.0)
+##  htmltools    0.3.6   2017-04-28 CRAN (R 3.5.0)
+##  httr         1.3.1   2017-08-20 CRAN (R 3.5.0)
+##  jsonlite     1.5     2017-06-01 CRAN (R 3.5.0)
+##  knitr      * 1.20    2018-02-20 CRAN (R 3.5.0)
+##  labeling     0.3     2014-08-23 CRAN (R 3.5.0)
+##  lattice      0.20-35 2017-03-25 CRAN (R 3.5.0)
+##  lazyeval     0.2.1   2017-10-29 CRAN (R 3.5.0)
+##  lubridate  * 1.7.4   2018-04-11 CRAN (R 3.5.0)
+##  magrittr   * 1.5     2014-11-22 CRAN (R 3.5.0)
+##  MASS       * 7.3-50  2018-04-30 CRAN (R 3.5.0)
+##  memoise      1.1.0   2017-04-21 CRAN (R 3.5.0)
+##  methods    * 3.5.0   2018-04-24 local         
+##  modelr       0.1.2   2018-05-11 cran (@0.1.2) 
+##  munsell      0.5.0   2018-06-12 CRAN (R 3.5.0)
+##  nlme         3.1-137 2018-04-07 CRAN (R 3.5.0)
+##  pillar       1.3.0   2018-07-14 CRAN (R 3.5.0)
+##  pkgconfig    2.0.2   2018-08-16 CRAN (R 3.5.0)
+##  plyr       * 1.8.4   2016-06-08 CRAN (R 3.5.0)
+##  purrr      * 0.2.5   2018-05-29 CRAN (R 3.5.0)
+##  R6           2.2.2   2017-06-17 CRAN (R 3.5.0)
+##  Rcpp         0.12.19 2018-10-01 CRAN (R 3.5.0)
+##  readr      * 1.1.1   2017-05-16 CRAN (R 3.5.0)
+##  readxl       1.1.0   2018-04-20 CRAN (R 3.5.0)
+##  rlang      * 0.2.2   2018-08-16 CRAN (R 3.5.0)
+##  rmarkdown    1.10    2018-06-11 cran (@1.10)  
+##  rprojroot    1.3-2   2018-01-03 CRAN (R 3.5.0)
+##  rstudioapi   0.8     2018-10-02 CRAN (R 3.5.0)
+##  rvest        0.3.2   2016-06-17 CRAN (R 3.5.0)
+##  scales       1.0.0   2018-08-09 CRAN (R 3.5.0)
+##  stats      * 3.5.0   2018-04-24 local         
+##  stringi      1.2.4   2018-07-20 CRAN (R 3.5.0)
+##  stringr    * 1.3.1   2018-05-10 cran (@1.3.1) 
+##  tibble     * 1.4.2   2018-01-22 CRAN (R 3.5.0)
+##  tidyr      * 0.8.1   2018-05-18 cran (@0.8.1) 
+##  tidyselect   0.2.4   2018-02-26 CRAN (R 3.5.0)
+##  tidyverse  * 1.2.1   2017-11-14 CRAN (R 3.5.0)
+##  tools        3.5.0   2018-04-24 local         
+##  utf8         1.1.4   2018-05-24 cran (@1.1.4) 
+##  utils      * 3.5.0   2018-04-24 local         
+##  withr        2.1.2   2018-03-15 CRAN (R 3.5.0)
+##  xfun         0.3     2018-07-06 CRAN (R 3.5.0)
+##  xml2         1.2.0   2018-01-24 CRAN (R 3.5.0)
+##  yaml         2.2.0   2018-07-25 cran (@2.2.0)</code></pre>
+</div>
+<div class="section level2">
+<h2>雑記</h2>
+<ul>
+<li>科研費申請書がつらい</li>
+<li>途中で所属が変わるだろうし、その先も決まっていないのに「研究環境について書け」って無茶ぶりもいいとこ</li>
+</ul>
+</div>

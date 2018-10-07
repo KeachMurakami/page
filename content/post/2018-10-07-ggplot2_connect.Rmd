@@ -1,0 +1,200 @@
+---
+title: "途中で分岐する時系列プロット (ggplot2)"
+date: 2018-10-07
+categories: ["tidyverse"]
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(magrittr)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+対照区に対していくつかの時点から処理を開始する試験区を設け、試験区ごとに一定間隔で取得した経時データを比較する。
+
+```{r}
+dat <-
+  tibble(day = c(1:4, 2:4, 3:4),
+         value = c(10, 10, 10, 10, # ctrl
+                   7, 5, 4,        # group1
+                   8, 7),          # group2
+         group = c(rep("ctrl", 4),
+                   rep("group1", 3),
+                   rep("group2", 2))
+         )
+
+p1 <-
+  dat %>%
+  ggplot(aes(day, value, color = group, group = group)) +
+  geom_point() +
+  geom_line()
+
+print(p1)
+```
+
+処理開始時点を視覚的に伝えるため、`group1`はday1とday2、`group2`はday2とday3、を点線でつなぎたい。
+
+### 愚直にやる
+
+まず愚直にやる。
+
+各処理区の処理前後時点のデータを作る。
+処理開始前のデータは存在しないので、NA。
+
+```{r}
+connected_points <-
+  dat %>%
+  tidyr::complete(day, group) %>%
+  dplyr::filter(group != "ctrl") %>%
+  dplyr::group_by(group) %>%
+  dplyr::do({
+    num_na <- sum(is.na(.$value))
+    dplyr::arrange(., day) %>%
+      dplyr::slice(num_na:(num_na+1))
+  })
+
+print(connected_points)
+```
+
+処理開始前のデータを参照先の対照区のデータで置換する。
+
+```{r}
+connected_points %<>%
+  dplyr::ungroup() %>%
+  dplyr::left_join(., filter(dat, group == "ctrl"), by = "day") %>%
+  dplyr::transmute(day, group = group.x,
+                   value = dplyr::if_else(is.na(value.x), value.y, value.x))
+
+print(connected_points)
+```
+
+```{r}
+p1 + geom_line(data = connected_points, linetype = 2)
+```
+
+### 関数化
+
+関数化する。
+
+`r htmltools::HTML('<blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">手作業で30分掛かるものを3秒で終わらせるために3時間掛けるのがエンジニア、という持論を大切にしていきたい</p>&mdash; わかめそば@技術書典い05 (@wakamesoba98) <a href="https://twitter.com/wakamesoba98/status/1020496602132180992?ref_src=twsrc%5Etfw">2018年7月21日</a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>')`
+
+`rlang`を使って`dplyr`っぽく引数をquoteしないで済むようにする。
+毎回quosureについてぐぐっている気がする。
+
+```{r}
+library(rlang)
+
+extract_connect <-
+  function(tbl, time_var, y_var, group_var, ref_group){
+    time_var <- enquo(time_var)
+    y_var <- enquo(y_var)
+    group <- enquo(group_var)
+
+    connect <-
+      tbl %>%
+      tidyr::complete(!!time_var, !!group) %>%
+      dplyr::filter((!!group) != ref_group) %>%
+      dplyr::group_by(!!group) %>%
+      dplyr::do({
+        num_na <-
+          pull(., !!y_var) %>%
+          is.na %>%
+          sum %>%
+          {.:(.+1)}
+        dplyr::arrange(., !!time_var) %>%
+          dplyr::slice(num_na)
+      })
+
+    connect %>%
+      dplyr::ungroup() %>%
+      dplyr::left_join(dplyr::filter(tbl, (!!group) == ref_group),
+                       by = quo_name(time_var), suffix = c("", "___ref___temp___")) %>%
+      dplyr::mutate(!!quo_name(y_var) := if_else(is.na(!!y_var), value___ref___temp___, !!y_var)) %>%
+      dplyr::select(-ends_with("___ref___temp___")) %>%
+      return()
+    }
+
+dat %>%
+  extract_connect(time_var = day, y_var = value, group_var = group, ref_group = "ctrl") %>%
+  print()
+```
+
+OK。
+
+### 高階関数化
+
+`geom_XXX`の`data`は関数をとることができるらしい (r-wakalangでのyutannihilationさんの発言から)。
+
+```{r}
+mtcars %>%
+  ggplot(aes(hp, disp)) +
+  geom_point(size = 2.5) +
+  geom_point(data = tail, col = "magenta") + # = geom_point(data = tail(mtcars), ...)
+  geom_point(data = function(x){filter(x, between(disp, 150, 300))}, col = "orange") # 引数が必要な場合は無名関数で書く
+```
+
+これを応用して簡単に分岐プロットを書く。
+元データに応じてよしなに処理できるような関数を作るための高階関数を作る。
+
+```{r}
+connector <-
+  function(time_var, y_var, group_var, ref_group){
+    time_var <- enquo(time_var)
+    y_var <- enquo(y_var)
+    group <- enquo(group_var)
+    
+  function(tbl){
+    connect <-
+      tbl %>%
+      tidyr::complete(!!time_var, !!group) %>%
+      dplyr::filter((!!group) != ref_group) %>%
+      dplyr::group_by(!!group) %>%
+      dplyr::do({
+        num_na <-
+          pull(., !!y_var) %>%
+          is.na %>%
+          sum %>%
+          {.:(.+1)}
+        dplyr::arrange(., !!time_var) %>%
+          dplyr::slice(num_na)
+      })
+
+    connect %>%
+      dplyr::ungroup() %>%
+      dplyr::left_join(dplyr::filter(tbl, (!!group) == ref_group),
+                       by = quo_name(time_var), suffix = c("", "___ref___temp___")) %>%
+      dplyr::mutate(!!quo_name(y_var) := if_else(is.na(!!y_var), value___ref___temp___, !!y_var)) %>%
+      dplyr::select(-ends_with("___ref___temp___")) %>%
+      return()
+    } %>%
+      return()
+  }
+
+dat %>%
+  ggplot(aes(day, value, col = group, group = group)) +
+  geom_line(data = connector(day, value, group, "ctrl"), linetype = 2) +
+  geom_point() +
+  geom_line()
+```
+ 
+## To Do
+
+- 分岐時点が１時点前とは限らない
+    - 分岐時点を指定する情報が必要か？
+- 欠測周り
+    - 練れていないので怪しい
+    - 元系列の分岐時点が欠測の場合は内挿する？
+
+test-drivenなコード書きをしないといけないと思いながらもさぼっている。
+
+
+## Session Info
+
+```{r}
+devtools::session_info()
+```
+
+## 雑記
+
+- 科研費申請書がつらい
+  - 途中で所属が変わるだろうし、その先も決まっていないのに「研究環境について書け」って無茶ぶりもいいとこ

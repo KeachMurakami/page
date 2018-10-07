@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://keachmurakami.github.io/2018/10/07/%E9%80%94%E4%B8%AD%E3%81%A7%E5%88%86%E5%B2%90%E3%81%99%E3%82%8B%E6%99%82%E7%B3%BB%E5%88%97%E3%83%97%E3%83%AD%E3%83%83%E3%83%88-ggplot2/</loc>
+    <lastmod>2018-10-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/2018/09/01/r%E3%81%8B%E3%82%89python%E7%B5%8C%E7%94%B1%E3%81%A7keras.preprocessing.image%E3%81%AB%E3%82%88%E3%82%8B%E7%94%BB%E5%83%8F%E5%89%8D%E5%87%A6%E7%90%86/</loc>
     <lastmod>2018-09-01T00:00:00+00:00</lastmod>
   </url>
@@ -404,7 +409,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/</loc>
-    <lastmod>2018-09-01T00:00:00+00:00</lastmod>
+    <lastmod>2018-10-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -491,7 +496,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/post/</loc>
-    <lastmod>2018-09-01T00:00:00+00:00</lastmod>
+    <lastmod>2018-10-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -556,7 +561,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/categories/tidyverse/</loc>
-    <lastmod>2018-07-21T00:00:00+00:00</lastmod>
+    <lastmod>2018-10-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

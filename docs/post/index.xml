@@ -6,10 +6,19 @@
     <description>Recent content in Posts on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sat, 01 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 07 Oct 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://keachmurakami.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>途中で分岐する時系列プロット (ggplot2)</title>
+      <link>https://keachmurakami.github.io/2018/10/07/%E9%80%94%E4%B8%AD%E3%81%A7%E5%88%86%E5%B2%90%E3%81%99%E3%82%8B%E6%99%82%E7%B3%BB%E5%88%97%E3%83%97%E3%83%AD%E3%83%83%E3%83%88-ggplot2/</link>
+      <pubDate>Sun, 07 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2018/10/07/%E9%80%94%E4%B8%AD%E3%81%A7%E5%88%86%E5%B2%90%E3%81%99%E3%82%8B%E6%99%82%E7%B3%BB%E5%88%97%E3%83%97%E3%83%AD%E3%83%83%E3%83%88-ggplot2/</guid>
+      <description>対照区に対していくつかの時点から処理を開始する試験区を設け、試験区ごとに一定間隔で取得した経時データを比較する。 dat &amp;lt;- tibble(day = c(1:4, 2:4, 3:4), value = c(10, 10, 10, 10, #</description>
+    </item>
     
     <item>
       <title>RからPython経由でkeras.preprocessing.imageによる画像前処理</title>
