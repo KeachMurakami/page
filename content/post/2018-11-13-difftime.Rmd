@@ -1,0 +1,107 @@
+---
+title: "時間差の単位 (difftime)"
+date: 2018-11-13
+categories: ["base"]
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(magrittr)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+時間の差を計算するときのはまりメモ
+
+Rは２時点間の差によしなに単位をつけてくれる。
+
+```{r}
+time0 <- ymd_hms("2018-11-11 00:00:00")
+time1 <- ymd_hms("2018-11-11 11:11:11")
+time2 <- ymd_hms("2018-12-31 23:59:59")
+
+time1 - time0
+time2 - time0
+```
+
+処理開始時刻と測定時刻をログしたhourスケールの実験`exp_hour`とdayスケールの実験`exp_day`がある。
+
+```{r}
+exp_hour <- tibble(init = time0, time = time1, dif = time - init)
+exp_day <- tibble(init = time0, time = time2, dif = time - init)
+```
+
+これを`write_csv` -> `read_csv`とするとdouble型に落ちて、実験間で単位に齟齬が生じる。
+
+```{r}
+temp_file1 <- tempfile()
+temp_file2 <- tempfile()
+
+write_csv(exp_hour, path = temp_file1)
+write_csv(exp_day, path = temp_file2)
+
+exp_hour2 <- read_csv(temp_file1)
+exp_day2 <- read_csv(temp_file2)
+
+exp_hour2$dif
+exp_day2$dif
+```
+
+実用的には、
+
+- `as.numeric(units = "hours")`で単位を指定する
+- `lubridate`の`duration`系関数 (`dhours`など) で割って単位変換する
+
+```{r}
+round(50.9999) * 24
+exp_day %>% transmute(dif = as.numeric(dif, units = "hours")) %$% dif
+exp_day %>% transmute(dif = dif / dhours(1)) %$% dif
+```
+
+ついでに、単位の異なる時間差をまとめて扱う場合、差をとる順序によって結果が変わってくる。
+
+```{r}
+(exp_hour %<>% select(-dif))
+(exp_day %<>% select(-dif))
+```
+
+```{r}
+# さきに差を計算
+sub_before <-
+  bind_rows(
+    exp_hour %>% transmute(dif = time - init),
+    exp_day %>% transmute(dif = time - init)
+  )
+sub_before
+```
+
+```{r}
+# あとで差を計算
+sub_after <-
+  bind_rows(exp_hour, exp_day) %>%
+  transmute(dif = time - init)
+sub_after
+```
+
+`mutate`では生成される列内で最小の単位に統一されるのに対し、`c`や`bind_rows`でつなげると任意の単位の組み合わせからsecあるいはday単位のいずれかに換算されるのが原因。
+
+```{r}
+dif_hour = ymd_hms("2018-11-11 06:00:00") - ymd_hms("2018-11-11 00:00:00")
+dif_week = ymd_hms("2018-11-18 01:00:00") - ymd_hms("2018-11-11 00:00:00")
+dif_month = ymd_hms("2018-12-11 01:00:00") - ymd_hms("2018-11-11 00:00:00")
+dif_year = ymd_hms("2019-11-11 01:00:0") - ymd_hms("2018-11-11 00:00:00")
+
+attributes(c(dif_hour, dif_week))$units
+attributes(c(dif_hour, dif_month))$units
+attributes(c(dif_hour, dif_year))$units
+
+attributes(c(dif_week, dif_month))$units
+attributes(c(dif_week, dif_year))$units
+
+attributes(c(dif_month, dif_year))$units
+```
+
+## Session information
+
+```{r}
+devtools::session_info()
+```
