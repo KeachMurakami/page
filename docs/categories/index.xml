@@ -2,209 +2,219 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on A plant researcher</title>
-    <link>https://keachmurakami.github.io/categories/</link>
+    <link>/categories/</link>
     <description>Recent content in Categories on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
+    <lastBuildDate>Tue, 13 Nov 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://keachmurakami.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Base</title>
+      <link>/categories/base/</link>
+      <pubDate>Tue, 13 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/base/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Documentation</title>
-      <link>https://keachmurakami.github.io/categories/documentation/</link>
+      <link>/categories/documentation/</link>
       <pubDate>Tue, 04 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/documentation/</guid>
+      <guid>/categories/documentation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Ggplot2</title>
-      <link>https://keachmurakami.github.io/categories/ggplot2/</link>
+      <link>/categories/ggplot2/</link>
       <pubDate>Sat, 21 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/ggplot2/</guid>
+      <guid>/categories/ggplot2/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Gis</title>
-      <link>https://keachmurakami.github.io/categories/gis/</link>
+      <link>/categories/gis/</link>
       <pubDate>Sat, 26 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/gis/</guid>
+      <guid>/categories/gis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Grant</title>
-      <link>https://keachmurakami.github.io/categories/grant/</link>
+      <link>/categories/grant/</link>
       <pubDate>Tue, 06 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/grant/</guid>
+      <guid>/categories/grant/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Image Processing</title>
-      <link>https://keachmurakami.github.io/categories/image-processing/</link>
+      <link>/categories/image-processing/</link>
       <pubDate>Sat, 01 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/image-processing/</guid>
+      <guid>/categories/image-processing/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Infographic</title>
-      <link>https://keachmurakami.github.io/categories/infographic/</link>
+      <link>/categories/infographic/</link>
       <pubDate>Wed, 27 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/infographic/</guid>
+      <guid>/categories/infographic/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Inkscape</title>
-      <link>https://keachmurakami.github.io/categories/inkscape/</link>
+      <link>/categories/inkscape/</link>
       <pubDate>Sat, 13 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/inkscape/</guid>
+      <guid>/categories/inkscape/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Leaflet</title>
-      <link>https://keachmurakami.github.io/categories/leaflet/</link>
+      <link>/categories/leaflet/</link>
       <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/leaflet/</guid>
+      <guid>/categories/leaflet/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Note</title>
-      <link>https://keachmurakami.github.io/categories/note/</link>
+      <link>/categories/note/</link>
       <pubDate>Mon, 01 Jan 2001 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/note/</guid>
+      <guid>/categories/note/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Others</title>
-      <link>https://keachmurakami.github.io/categories/others/</link>
+      <link>/categories/others/</link>
       <pubDate>Thu, 03 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/others/</guid>
+      <guid>/categories/others/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Plotly</title>
-      <link>https://keachmurakami.github.io/categories/plotly/</link>
+      <link>/categories/plotly/</link>
       <pubDate>Wed, 27 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/plotly/</guid>
+      <guid>/categories/plotly/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Python</title>
-      <link>https://keachmurakami.github.io/categories/python/</link>
+      <link>/categories/python/</link>
       <pubDate>Sat, 01 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/python/</guid>
+      <guid>/categories/python/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Rbase</title>
-      <link>https://keachmurakami.github.io/categories/rbase/</link>
+      <link>/categories/rbase/</link>
       <pubDate>Fri, 29 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/rbase/</guid>
+      <guid>/categories/rbase/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Research Book</title>
-      <link>https://keachmurakami.github.io/categories/research-book/</link>
+      <link>/categories/research-book/</link>
       <pubDate>Fri, 25 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/research-book/</guid>
+      <guid>/categories/research-book/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Research Journal</title>
-      <link>https://keachmurakami.github.io/categories/research-journal/</link>
+      <link>/categories/research-journal/</link>
       <pubDate>Tue, 24 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/research-journal/</guid>
+      <guid>/categories/research-journal/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Research Symposium</title>
-      <link>https://keachmurakami.github.io/categories/research-symposium/</link>
+      <link>/categories/research-symposium/</link>
       <pubDate>Fri, 22 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/research-symposium/</guid>
+      <guid>/categories/research-symposium/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Reticulate</title>
-      <link>https://keachmurakami.github.io/categories/reticulate/</link>
+      <link>/categories/reticulate/</link>
       <pubDate>Sat, 01 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/reticulate/</guid>
+      <guid>/categories/reticulate/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Shiny</title>
-      <link>https://keachmurakami.github.io/categories/shiny/</link>
+      <link>/categories/shiny/</link>
       <pubDate>Wed, 27 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/shiny/</guid>
+      <guid>/categories/shiny/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Stan</title>
-      <link>https://keachmurakami.github.io/categories/stan/</link>
+      <link>/categories/stan/</link>
       <pubDate>Sun, 24 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/stan/</guid>
+      <guid>/categories/stan/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tex</title>
-      <link>https://keachmurakami.github.io/categories/tex/</link>
+      <link>/categories/tex/</link>
       <pubDate>Tue, 14 Jun 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/tex/</guid>
+      <guid>/categories/tex/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tidyverse</title>
-      <link>https://keachmurakami.github.io/categories/tidyverse/</link>
+      <link>/categories/tidyverse/</link>
       <pubDate>Sun, 07 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/tidyverse/</guid>
+      <guid>/categories/tidyverse/</guid>
       <description></description>
     </item>
     
     <item>
       <title>時系列解析</title>
-      <link>https://keachmurakami.github.io/categories/%E6%99%82%E7%B3%BB%E5%88%97%E8%A7%A3%E6%9E%90/</link>
+      <link>/categories/%E6%99%82%E7%B3%BB%E5%88%97%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 24 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/categories/%E6%99%82%E7%B3%BB%E5%88%97%E8%A7%A3%E6%9E%90/</guid>
+      <guid>/categories/%E6%99%82%E7%B3%BB%E5%88%97%E8%A7%A3%E6%9E%90/</guid>
       <description></description>
     </item>
     

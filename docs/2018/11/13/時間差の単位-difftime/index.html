@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.40" />
+
+
+<title>時間差の単位 (difftime) - A plant researcher</title>
+<meta property="og:title" content="時間差の単位 (difftime) - A plant researcher">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="../../../../css/fonts.css" media="all">
+<link rel="stylesheet" href="../../../../css/main.css" media="all">
+
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="../../../../" class="nav-logo">
+    <img src="../../../../images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="../../../../cv_eng/">About (Eng)</a></li>
+    
+    <li><a href="../../../../cv_jpn/">About (Jpn)</a></li>
+    
+    <li><a href="../../../../publication_list/">Publication</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">時間差の単位 (difftime)</h1>
+
+    
+    <span class="article-date">2018/11/13</span>
+    
+
+    <div class="article-content">
+      <p>時間の差を計算するときのはまりメモ</p>
+<p>Rは２時点間の差によしなに単位をつけてくれる。</p>
+<pre class="r"><code>time0 &lt;- ymd_hms(&quot;2018-11-11 00:00:00&quot;)
+time1 &lt;- ymd_hms(&quot;2018-11-11 11:11:11&quot;)
+time2 &lt;- ymd_hms(&quot;2018-12-31 23:59:59&quot;)
+
+time1 - time0</code></pre>
+<pre><code>## Time difference of 11.18639 hours</code></pre>
+<pre class="r"><code>time2 - time0</code></pre>
+<pre><code>## Time difference of 50.99999 days</code></pre>
+<p>処理開始時刻と測定時刻をログしたhourスケールの実験<code>exp_hour</code>とdayスケールの実験<code>exp_day</code>がある。</p>
+<pre class="r"><code>exp_hour &lt;- tibble(init = time0, time = time1, dif = time - init)
+exp_day &lt;- tibble(init = time0, time = time2, dif = time - init)</code></pre>
+<p>これを<code>write_csv</code> -&gt; <code>read_csv</code>とするとdouble型に落ちて、実験間で単位に齟齬が生じる。</p>
+<pre class="r"><code>temp_file1 &lt;- tempfile()
+temp_file2 &lt;- tempfile()
+
+write_csv(exp_hour, path = temp_file1)
+write_csv(exp_day, path = temp_file2)
+
+exp_hour2 &lt;- read_csv(temp_file1)
+exp_day2 &lt;- read_csv(temp_file2)
+
+exp_hour2$dif</code></pre>
+<pre><code>## [1] 11.18639</code></pre>
+<pre class="r"><code>exp_day2$dif</code></pre>
+<pre><code>## [1] 50.99999</code></pre>
+<p>実用的には、</p>
+<ul>
+<li><code>as.numeric(units = &quot;hours&quot;)</code>で単位を指定する</li>
+<li><code>lubridate</code>の<code>duration</code>系関数 (<code>dhours</code>など) で割って単位変換する</li>
+</ul>
+<pre class="r"><code>round(50.9999) * 24</code></pre>
+<pre><code>## [1] 1224</code></pre>
+<pre class="r"><code>exp_day %&gt;% transmute(dif = as.numeric(dif, units = &quot;hours&quot;)) %$% dif</code></pre>
+<pre><code>## [1] 1224</code></pre>
+<pre class="r"><code>exp_day %&gt;% transmute(dif = dif / dhours(1)) %$% dif</code></pre>
+<pre><code>## [1] 1224</code></pre>
+<p>ついでに、単位の異なる時間差をまとめて扱う場合、差をとる順序によって結果が変わってくる。</p>
+<pre class="r"><code>(exp_hour %&lt;&gt;% select(-dif))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   init                time               
+##   &lt;dttm&gt;              &lt;dttm&gt;             
+## 1 2018-11-11 00:00:00 2018-11-11 11:11:11</code></pre>
+<pre class="r"><code>(exp_day %&lt;&gt;% select(-dif))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   init                time               
+##   &lt;dttm&gt;              &lt;dttm&gt;             
+## 1 2018-11-11 00:00:00 2018-12-31 23:59:59</code></pre>
+<pre class="r"><code># さきに差を計算
+sub_before &lt;-
+  bind_rows(
+    exp_hour %&gt;% transmute(dif = time - init),
+    exp_day %&gt;% transmute(dif = time - init)
+  )
+sub_before</code></pre>
+<pre><code>## # A tibble: 2 x 1
+##   dif           
+##   &lt;time&gt;        
+## 1 &quot;  40271 secs&quot;
+## 2 4406399 secs</code></pre>
+<pre class="r"><code># あとで差を計算
+sub_after &lt;-
+  bind_rows(exp_hour, exp_day) %&gt;%
+  transmute(dif = time - init)
+sub_after</code></pre>
+<pre><code>## # A tibble: 2 x 1
+##   dif               
+##   &lt;time&gt;            
+## 1 &quot;  11.18639 hours&quot;
+## 2 1223.99972 hours</code></pre>
+<p><code>mutate</code>では生成される列内で最小の単位に統一されるのに対し、<code>c</code>や<code>bind_rows</code>でつなげると任意の単位の組み合わせからsecあるいはday単位のいずれかに換算されるのが原因。</p>
+<pre class="r"><code>dif_hour = ymd_hms(&quot;2018-11-11 06:00:00&quot;) - ymd_hms(&quot;2018-11-11 00:00:00&quot;)
+dif_week = ymd_hms(&quot;2018-11-18 01:00:00&quot;) - ymd_hms(&quot;2018-11-11 00:00:00&quot;)
+dif_month = ymd_hms(&quot;2018-12-11 01:00:00&quot;) - ymd_hms(&quot;2018-11-11 00:00:00&quot;)
+dif_year = ymd_hms(&quot;2019-11-11 01:00:0&quot;) - ymd_hms(&quot;2018-11-11 00:00:00&quot;)
+
+attributes(c(dif_hour, dif_week))$units</code></pre>
+<pre><code>## [1] &quot;secs&quot;</code></pre>
+<pre class="r"><code>attributes(c(dif_hour, dif_month))$units</code></pre>
+<pre><code>## [1] &quot;secs&quot;</code></pre>
+<pre class="r"><code>attributes(c(dif_hour, dif_year))$units</code></pre>
+<pre><code>## [1] &quot;secs&quot;</code></pre>
+<pre class="r"><code>attributes(c(dif_week, dif_month))$units</code></pre>
+<pre><code>## [1] &quot;days&quot;</code></pre>
+<pre class="r"><code>attributes(c(dif_week, dif_year))$units</code></pre>
+<pre><code>## [1] &quot;days&quot;</code></pre>
+<pre class="r"><code>attributes(c(dif_month, dif_year))$units</code></pre>
+<pre><code>## [1] &quot;days&quot;</code></pre>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.5.0 (2018-04-23)
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       Australia/Sydney            
+##  date     2018-11-13                  
+## 
+##  package     * version  date       source                               
+##  assertthat    0.2.0    2017-04-11 CRAN (R 3.5.0)                       
+##  backports     1.1.2    2017-12-13 CRAN (R 3.5.0)                       
+##  base        * 3.5.0    2018-04-24 local                                
+##  bindr         0.1.1    2018-03-13 CRAN (R 3.5.0)                       
+##  bindrcpp    * 0.2.2    2018-03-29 CRAN (R 3.5.0)                       
+##  blogdown      0.8      2018-07-15 CRAN (R 3.5.0)                       
+##  bookdown      0.7      2018-02-18 CRAN (R 3.5.0)                       
+##  broom       * 0.5.0    2018-07-17 CRAN (R 3.5.0)                       
+##  cellranger    1.1.0    2016-07-27 CRAN (R 3.5.0)                       
+##  cli           1.0.1    2018-09-25 CRAN (R 3.5.0)                       
+##  colorspace    1.3-2    2016-12-14 CRAN (R 3.5.0)                       
+##  compiler      3.5.0    2018-04-24 local                                
+##  crayon        1.3.4    2017-09-16 CRAN (R 3.5.0)                       
+##  curl          3.2      2018-03-28 CRAN (R 3.5.0)                       
+##  datasets    * 3.5.0    2018-04-24 local                                
+##  devtools    * 1.13.6   2018-06-27 CRAN (R 3.5.0)                       
+##  digest        0.6.18   2018-10-10 cran (@0.6.18)                       
+##  dplyr       * 0.7.6    2018-06-29 cran (@0.7.6)                        
+##  evaluate      0.11     2018-07-17 CRAN (R 3.5.0)                       
+##  fansi         0.4.0    2018-10-05 CRAN (R 3.5.0)                       
+##  forcats     * 0.3.0    2018-02-19 CRAN (R 3.5.0)                       
+##  ggplot2     * 3.1.0    2018-10-25 CRAN (R 3.5.0)                       
+##  glue          1.3.0    2018-07-17 cran (@1.3.0)                        
+##  googleway   * 2.7.1002 2018-11-11 Github (SymbolixAU/googleway@a9bbd33)
+##  graphics    * 3.5.0    2018-04-24 local                                
+##  grDevices   * 3.5.0    2018-04-24 local                                
+##  grid          3.5.0    2018-04-24 local                                
+##  gtable        0.2.0    2016-02-26 CRAN (R 3.5.0)                       
+##  haven         1.1.2    2018-06-27 CRAN (R 3.5.0)                       
+##  hms           0.4.2    2018-03-10 CRAN (R 3.5.0)                       
+##  htmltools     0.3.6    2017-04-28 CRAN (R 3.5.0)                       
+##  htmlwidgets   1.3      2018-09-30 CRAN (R 3.5.0)                       
+##  httpuv        1.4.5    2018-07-19 CRAN (R 3.5.0)                       
+##  httr          1.3.1    2017-08-20 CRAN (R 3.5.0)                       
+##  jsonlite      1.5      2017-06-01 CRAN (R 3.5.0)                       
+##  knitr       * 1.20     2018-02-20 CRAN (R 3.5.0)                       
+##  later         0.7.5    2018-09-18 CRAN (R 3.5.0)                       
+##  lattice       0.20-35  2017-03-25 CRAN (R 3.5.0)                       
+##  lazyeval      0.2.1    2017-10-29 CRAN (R 3.5.0)                       
+##  lubridate   * 1.7.4    2018-04-11 CRAN (R 3.5.0)                       
+##  magrittr    * 1.5      2014-11-22 CRAN (R 3.5.0)                       
+##  MASS        * 7.3-50   2018-04-30 CRAN (R 3.5.0)                       
+##  memoise       1.1.0    2017-04-21 CRAN (R 3.5.0)                       
+##  methods     * 3.5.0    2018-04-24 local                                
+##  mime          0.6      2018-10-05 cran (@0.6)                          
+##  modelr        0.1.2    2018-05-11 cran (@0.1.2)                        
+##  munsell       0.5.0    2018-06-12 CRAN (R 3.5.0)                       
+##  nlme          3.1-137  2018-04-07 CRAN (R 3.5.0)                       
+##  pillar        1.3.0    2018-07-14 CRAN (R 3.5.0)                       
+##  pkgconfig     2.0.2    2018-08-16 CRAN (R 3.5.0)                       
+##  plyr        * 1.8.4    2016-06-08 CRAN (R 3.5.0)                       
+##  promises      1.0.1    2018-04-13 CRAN (R 3.5.0)                       
+##  purrr       * 0.2.5    2018-05-29 CRAN (R 3.5.0)                       
+##  R6            2.3.0    2018-10-04 cran (@2.3.0)                        
+##  Rcpp          1.0.0    2018-11-07 cran (@1.0.0)                        
+##  readr       * 1.1.1    2017-05-16 CRAN (R 3.5.0)                       
+##  readxl        1.1.0    2018-04-20 CRAN (R 3.5.0)                       
+##  rlang         0.3.0.1  2018-10-25 cran (@0.3.0.1)                      
+##  rmarkdown     1.10     2018-06-11 cran (@1.10)                         
+##  rprojroot     1.3-2    2018-01-03 CRAN (R 3.5.0)                       
+##  rstudioapi    0.8      2018-10-02 CRAN (R 3.5.0)                       
+##  rvest         0.3.2    2016-06-17 CRAN (R 3.5.0)                       
+##  scales        1.0.0    2018-08-09 CRAN (R 3.5.0)                       
+##  shiny         1.2.0    2018-11-02 cran (@1.2.0)                        
+##  stats       * 3.5.0    2018-04-24 local                                
+##  stringi       1.2.4    2018-07-20 CRAN (R 3.5.0)                       
+##  stringr     * 1.3.1    2018-05-10 cran (@1.3.1)                        
+##  tibble      * 1.4.2    2018-01-22 CRAN (R 3.5.0)                       
+##  tidyr       * 0.8.1    2018-05-18 cran (@0.8.1)                        
+##  tidyselect    0.2.4    2018-02-26 CRAN (R 3.5.0)                       
+##  tidyverse   * 1.2.1    2017-11-14 CRAN (R 3.5.0)                       
+##  tools         3.5.0    2018-04-24 local                                
+##  utf8          1.1.4    2018-05-24 cran (@1.1.4)                        
+##  utils       * 3.5.0    2018-04-24 local                                
+##  withr         2.1.2    2018-03-15 CRAN (R 3.5.0)                       
+##  xfun          0.3      2018-07-06 CRAN (R 3.5.0)                       
+##  xml2          1.2.0    2018-01-24 CRAN (R 3.5.0)                       
+##  xtable        1.8-3    2018-08-29 CRAN (R 3.5.0)                       
+##  yaml          2.2.0    2018-07-25 cran (@2.2.0)</code></pre>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="../../../../index.xml" type="application/rss+xml" target="_blank"><i class="fas fa-rss"></i></a>
+          </li>
+          <li>
+            <a href="https://github.com/KeachMurakami/page" class="footer-link"><i class="fab fa-github"></i></a>
+          </li>
+          <li>
+            Powered by <a href="https://gohugo.io/" class="footer-link">Hugo</a>, <a href="https://github.com/rstudio/blogdown" class="footer-link">blogdown</a>, and <a href="https://pages.github.com/" class="footer-link">GitHub Pages</a>.
+          </li>
+        </ul>
+        <ul class="footer-links">
+          <li>
+            Except where otherwise noted, content on this site is licensed under a<a href="https://creativecommons.org/licenses/by/4.0/" class="footer-link">Creative Commons Attribution 4.0 International license</a>.
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="../../../../js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119357988-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
+

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Inkscape on A plant researcher</title>
-    <link>https://keachmurakami.github.io/categories/inkscape/</link>
+    <link>/categories/inkscape/</link>
     <description>Recent content in Inkscape on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sat, 13 Feb 2016 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://keachmurakami.github.io/categories/inkscape/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/inkscape/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>徐々に細くなる線を書く (Inkscape)</title>
-      <link>https://keachmurakami.github.io/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</link>
+      <link>/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</link>
       <pubDate>Sat, 13 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</guid>
+      <guid>/2016/02/13/%E5%BE%90%E3%80%85%E3%81%AB%E7%B4%B0%E3%81%8F%E3%81%AA%E3%82%8B%E7%B7%9A%E3%82%92%E6%9B%B8%E3%81%8F-inkscape/</guid>
       <description>Inkscapeで先細りの線を書く (メモ ペンツール/成形/三角形 底辺→頂角 howto F2で底辺の長さを変更できる 根を書くときにお世話になった draw</description>
     </item>
     

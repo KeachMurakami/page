@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tex on A plant researcher</title>
-    <link>https://keachmurakami.github.io/categories/tex/</link>
+    <link>/categories/tex/</link>
     <description>Recent content in Tex on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Tue, 14 Jun 2016 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://keachmurakami.github.io/categories/tex/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/tex/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>引用文献の管理 (bibtex; 書式の設定と引用の形式)</title>
-      <link>https://keachmurakami.github.io/2016/06/14/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex-%E6%9B%B8%E5%BC%8F%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E5%BC%95%E7%94%A8%E3%81%AE%E5%BD%A2%E5%BC%8F/</link>
+      <link>/2016/06/14/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex-%E6%9B%B8%E5%BC%8F%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E5%BC%95%E7%94%A8%E3%81%AE%E5%BD%A2%E5%BC%8F/</link>
       <pubDate>Tue, 14 Jun 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/06/14/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex-%E6%9B%B8%E5%BC%8F%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E5%BC%95%E7%94%A8%E3%81%AE%E5%BD%A2%E5%BC%8F/</guid>
+      <guid>/2016/06/14/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex-%E6%9B%B8%E5%BC%8F%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E5%BC%95%E7%94%A8%E3%81%AE%E5%BD%A2%E5%BC%8F/</guid>
       <description>論文に引用文献リストをさくっと挿入したい (メモ２: 書式の設定と本文中での引用の形式) 引用文献の書式の変更 引用文献のタイトルが、斜体、下付き・</description>
     </item>
     
     <item>
       <title>引用文献の管理 (bibtex)</title>
-      <link>https://keachmurakami.github.io/2016/05/30/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex/</link>
+      <link>/2016/05/30/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex/</link>
       <pubDate>Mon, 30 May 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://keachmurakami.github.io/2016/05/30/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex/</guid>
+      <guid>/2016/05/30/%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%E3%81%AE%E7%AE%A1%E7%90%86-bibtex/</guid>
       <description>論文に引用文献リストをさくっと挿入したい (メモ) Rmd+knitrで論文を書いている 論文をダウンロードするときに、その論文の情報をbibte</description>
     </item>
     

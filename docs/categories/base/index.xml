@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Base on A plant researcher</title>
+    <link>/categories/base/</link>
+    <description>Recent content in Base on A plant researcher</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Tue, 13 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/base/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>時間差の単位 (difftime)</title>
+      <link>/2018/11/13/%E6%99%82%E9%96%93%E5%B7%AE%E3%81%AE%E5%8D%98%E4%BD%8D-difftime/</link>
+      <pubDate>Tue, 13 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/11/13/%E6%99%82%E9%96%93%E5%B7%AE%E3%81%AE%E5%8D%98%E4%BD%8D-difftime/</guid>
+      <description>時間の差を計算するときのはまりメモ Rは２時点間の差によしなに単位をつけてくれる。 time0 &amp;lt;- ymd_hms(&amp;quot;2018-11-11 00:00:00&amp;quot;) time1 &amp;lt;- ymd_hms(&amp;quot;2018-11-11 11:11:11&amp;quot;) time2 &amp;lt;- ymd_hms(&amp;quot;2018-12-31 23:59:59&amp;quot;) time1 - time0 ## Time difference of 11.18639 hours time2 - time0 ## Time difference of 50.99999 days</description>
+    </item>
+    
+  </channel>
+</rss>
