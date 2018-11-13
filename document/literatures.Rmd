@@ -6205,4 +6205,191 @@ within photosystem II
     - Glasshouse Crops Research Institute
     - おもにPQ周りの状態の解析なので、HL-LLとはいえ省略でいいでしょう
     
+  - 雑記
+    - ４件目のAirbnb物件に移った日曜日以来、体の各所がかゆい
+      - 蕁麻疹か？
+      - チャリ40分に起因する汗疹か？
+      
+- 22
+
+  - 雑記
+    - 測定つづき
+    - ５件目のAirbnb物件へ移動
+      - かゆみが消えたので、物件依存
+      - その他は素晴らしかった
+    - 数年ぶりに連絡をとった人にやる気をもらった
+    
+- 23
+
+  - 雑記
+    - 実験室のカードキーを自宅に忘れる...
+    - MBAの充電も実験室内なので、今日は早く帰ってThinkPadで作業しよう
+    
+  671. [Meng et al. 2018; EEB](https://www.sciencedirect.com/science/article/pii/S0098847218309821?via%3Dihub); 20181023済
+    - Leaf age and light quality influence the basal resistance against Botrytis T cinerea in strawberry leaves
+    - Ghent Univ., van Labeke group
+    - 久しぶりに農業工学系論文
+    - 各種防御系の発現を週ごと時系列で見て、抵抗性と散布図
+    - １次データとしては面白いけど、各断面での各論ではなくて因果関係に踏み込めるともっといい
+    - White LEDに青ピークがないけど、誤植では？
+
+  672. [Goudriaan 1977; Thesis at Wageningen](https://library.wur.nl/WebQuery/wurpubs/70980); 20181022概
+    - Crop micrometeorology : a simulation study
+    - モデルに便利だ
+    
+- 24
+
+  - 雑記
+    - いまの物件は先進国ではないな
+      - 水のむか？頷く。水道から汲みーのどうぞ (東京の水道水よりはまずくない)
+      - トースターもないし、プラスチック製でない皿がない...
+    - 先日の一件以来、日本からの重力が強い
+      - 帰るべきところがないからホームシックではないんだよなぁ
+      - 宮下奈都さんの本をごりごり読んでいる
+      - 非アカデミア系の逆オファーサイトを見たり
+      - 逃げてるなぁ
   
+- 25
+
+  672. [Keller et al. 2018; Photosynth Res](https://link.springer.com/article/10.1007/s11120-018-0594-9); 低
+    - Maximum fluorescence and electron transport kinetics determined by light-induced fluorescence transients (LIFT) for photosynthesis phenotyping
+    - IBG-2がおもで、スイス・ハンガリーの研究者が少し
+    - PAMのmultiple turnoverでの測定結果とLIFTでの結果を比較する
+    
+  673. [Ballard et al. 2018; Funct Plant Biol](http://www.publish.csiro.au/fp/FP18104); 20181025摘
+    - Blue and red light effects on stomatal oscillations
+    - Keith Mott
+    - １つの気孔にのみ光照射して、摂動解析
+    - 青色経由で安定的に高い気孔開度を維持しているっぽい
+
+- 26
+
+  - 雑記
+    - [コレ](https://www.u-presscenter.jp/2018/10/post-40310.html)
+      - いわく微弱なパルスで転流が促進される
+      - たとえ増収があっても原因はソレじゃない気がする
+      - むしろネットの遮光でネガティブなくらいで、はっきりいって再現しないだろこれ
+      - Google scholarで人を調べても数十件しか出てこないどころかラボページも見つからない、プレスに論文リンクもなしと
+      
+  674. [Ruangrak & Khummueng 2018; J Hort Sci Biotechnol](https://www.tandfonline.com/doi/abs/10.1080/14620316.2018.1504630?journalCode=thsb20); <Font color="green">無</Font>
+    - Effects of artificial light sources on accumulation of phytochemical contents in hydroponic lettuce
+    - タイのPrince Songkla Univ.
+    - 初雑誌、RSSは取らなくていいでしょう
+    - イントロを斜めよみした限り、概論が無駄に重くて引用も不適切
+      - D論の1章か？
+      - ‘Lettuce is consumed worldwide because it is highly nutritious (Dougher & Bugbee, 2001; Kim, 2004)’
+      - ‘The red, blue and green spectral ranges are more important for driving photosynthesis than other spectral regions (Ohashi-Kaneko et al., 2007; Terashima, Fujita, Inoue, Chow, & Oguchi, 2009; Zhou & Singh, 2002)’
+    
+- 29
+
+  - 雑記
+      - fire alertで避難するも誤作動だったらしい  
+        - emergency!って言われると上がるな
+        - 測定はどうにか滞りなく
+        
+## 11
+
+- 01
+
+  675. [西浜 & 河内 2018; 領域融合レビュー](http://leading.lifesciencedb.jp/7-e008); <Font color="green">低</Font>
+    - 新しいモデル生物：苔類ゼニゴケ
+    - たぶんご縁はないだろうけども一応
+    
+- 04
+
+  - 雑記
+    - NSWとの州境までサイクリング
+      - 公園と山の上で鼻歌まじりに某研公募書き
+      - 人間的だなぁ
+
+
+- 05
+
+  - 雑記
+    - 査読着弾
+    
+- 06
+
+  - 査読で関連文献読み
+  - 変動光の話、別筋から
+  
+  676. [Takahashi & Badger 2011; Trend Plant Sci](https://www.sciencedirect.com/science/article/pii/S1360138510002116); <Font color="green">済</Font>
+    - Photoprotection in plants: a new light on photosystem II damage
+    - なぜか見つからないので再ダウンロード
+    
+  677. [Kadaja & Tooming 2004; Agric For Meteorol](https://www.sciencedirect.com/science/article/pii/S016819230400190X); 20181106概
+    - Potato production model based on principle of maximum plant productivity
+    - エストニアの農研
+    - かなり独自進化しているモデルで、主流ではないな
+    
+  678. [Watling et al. 1997; Funct Ecol](https://www.jstor.org/stable/2390323?seq=1#metadata_info_tab_contents); 概
+    - The Utilization of Lightflecks for Growth in Four Australian Rain-Forest Species
+    - お隣のMBも著者
+  
+  679. [Sims & Pearcy 1993; Funct Ecol](https://www.jstor.org/stable/2390189?seq=1#metadata_info_tab_contents); 概
+    - Sunfleck Frequency and Duration Affects Growth Rate of the Understorey Plant, Alocasia macrorrhiza
+    - いつものふたり
+    - J先輩 (2012) の引用が事実の逆なので、きっと別論文と間違えているな...?
+    
+  680. [Leaky et al. 2003; Oecologia](https://link.springer.com/article/10.1007%2Fs00442-003-1178-7); 概
+    - Patterns of dynamic irradiance affect the photosynthetic capacity and growth of dipterocarp tree seedlings
+    - Univ. Sheffield
+    
+  681. [Leaky et al. 2002; PCE](https://onlinelibrary.wiley.com/doi/epdf/10.1046/j.1365-3040.2002.00944.x); 概
+    - Relative enhancement of photosynthesis and growth at elevated CO2 is greater under sunflecks than uniform irradiance in a tropical rain forest tree seedling
+    - Univ. Sheffield
+
+- 07
+
+  - 雑記
+    - 査読返送
+      - FirstがPhD candidateだから早いほうが助かるだろう、という優しさ
+    - すげーどうでもいい話で大御所にメール
+      - 緊張する
+      - 今度あったとき挨拶しよう
+    - Open-top chamberを借りにお隣のラボへ
+      - FB氏と会う
+      - オーラありすぎ
+      
+- 08
+
+  - 雑記
+    - まさかの今日も査読着弾
+      - すでに２回投稿したエディタさんだから、いい対応をしたい
+      - が、内容がわりとひどい
+      - リジェクトで返す方針は固まったが、コメントしっかり書こう
+      - 即日done
+      - 書籍30％OFFの権利に加え、締切４日前以前に返したのでカラー図版１枚フリー
+    - LI6400XTをひさびさに
+      - やっぱり酸素電極より好きだなぁ
+      - Soda lime の蓋が開けられなくてCBさんに助けてもらった
+      
+  682. [Greenland et al. 2016; Eur J Epidemiol](https://link.springer.com/article/10.1007/s10654-016-0149-3); <Font color="green">優</Font>
+    - Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations
+    - p値、95%信頼区間、検出力（Power)に関する２５の誤解
+  
+  683. [Shimakawa & Miyake 2018; Front Plant Sci](https://www.frontiersin.org/articles/10.3389/fpls.2018.01617/full); 低
+    - Oxidation of P700 Ensures Robust Photosynthesis
+    - あいかわらず神戸組
+    - 因果関係っぽい発現は避けたほうがいい
+    
+  684. [Johnson 2018; Biochem J](http://www.biochemj.org/content/475/7/1225.full-text.pdf); 低
+    - Metabolic regulation of photosynthetic membrane structure tunes electron transfer function
+    - ほぼ確だが、証明は難しいこの話
+    - イメージング系で最後は済ませることになるのかな？
+
+- 11
+
+  - 雑記
+    - OFF
+      - 自転車をこいで湖畔のベンチで公募書きとLI6400の解析
+      - 面白い仮説を思いついたので、Fredに話してみよう
+
+- 13
+
+  - 雑記
+    - Fredがハワイから帰還
+      - 不在中のデータなんかをdiscussion
+      - クソみたいな英語からの結果→仮説→実験提案という理想的な流れを発揮する日本人
+      - 想定通りの流れでMBと共同研究っぽくなる
+      - 年末年始の空きを狙ってがっつり実験やるおじさんになる
