@@ -305,9 +305,16 @@ num_paper <-
 
 - 06
 
-  32. [Li et al. 2017; Plant Physiol](http://www.plantcell.org/content/early/2017/01/30/tpc.16.00768.short?rss=1); 低
+  32. [Li et al. 2017; Plant Cell](http://www.plantcell.org/content/early/2017/01/30/tpc.16.00768.short?rss=1); 20181123再
     - Protein Degradation Rate in Arabidopsis thaliana Leaf Growth and Development
     - タンパク分解をsystems biologyっぽく
+    - N15 labelingと質量分析でタンパクごとにKdを時変でやっている
+    - 考察と結果がかなり頭いい印象をうける
+    - 成長速度とKdの比例・反比例で葉齢-タンパク齢プロファイルが決まる
+    - degradation kineticsを無視したlinear回帰でのタンパク合成じゃ限界がある、というスタンス
+      - Kdの時変は必要なほどに大きいか、やや微妙？
+      - なんとなく系統誤差っぽい挙動に見えなくもないので (Fig. 5C)
+    - ‘light-dependent transcriptional processes may be associated with enhanced protein degradation of the proteins being synthesized, while dark- dependent processes are relatively less connected.’
 
   33. [Atherton et al. 2016; Remote Sens Environ](http://www.sciencedirect.com/science/article/pii/S0034425715302571); 低
     - Using Spectral Chlorophyll Fluorescence and the Photochemical Reflectance Index to Predict Physiological Dynamics
@@ -6393,3 +6400,114 @@ within photosystem II
       - クソみたいな英語からの結果→仮説→実験提案という理想的な流れを発揮する日本人
       - 想定通りの流れでMBと共同研究っぽくなる
       - 年末年始の空きを狙ってがっつり実験やるおじさんになる
+    - Airbnbでshared spaceまったく掃除なしで提供しておいて、“He was ok exept cleaning”とかふざけてる
+    - 6件目のUniLodgeへ引っ越し
+      - みんな学部・修士で若い...
+      
+- 14
+
+  - 雑記
+    - セミナー聴講など
+
+- 15
+
+  685. [Zhang et al. 2018; Physiol Plant](https://onlinelibrary.wiley.com/doi/abs/10.1111/ppl.12876?af=R); 低
+    - Red/blue light ratio strongly affects steady‐state photosynthesis, but hardly affects photosynthetic induction, in tomato (Solanum lycopersicum)
+    - CAS Qichang とWU Tao Li
+    - 出落ちnegativeデータ処理論文
+  
+  686. [広田ら 2017; 生物と気象](https://www.jstage.jst.go.jp/article/cib/17/0/17_J-17-034/_article/-char/ja); 20181115済
+    - 気候変動による北海道におけるワイン産地の確立
+    - 広田さん、歴史も好きっぽい文章だ
+    - SVDを概ね理解したが、実践が必要だ
+    
+  
+  - 雑記
+    - 今日は測定がない日 (day 24) なので、気楽
+    - 公募終わらせよう
+      - 一晩寝かせて明日Go
+      - 一晩ねるが正しい
+    
+  687. [Takahashi & Shinozaki 2019; COPB](https://www.sciencedirect.com/science/article/pii/S136952661830075X); <Font color="green">低</Font>
+    - Long-distance signaling in plant stress response
+    - ああ、2019が来た
+    
+- 16
+
+  - 雑記
+    - 昨夜よく寝られなかったので眠い
+      - ちかごろはたまに寝付けないことがあるな
+      - 寝入りはいいタイプだったはずなのに
+      
+- 17
+
+  - 雑記
+    - 農研公募を送信
+      - メールはありがたいねぇ
+      - 面接はつくば１月上旬以降、ざっと15万円くらいかかりそう
+      - Fさんとか声かけてみよう
+
+- 18
+
+  688. [Ghosh et al. 2018; Nat Protocol](https://www.nature.com/articles/s41596-018-0072-z); 低
+    - Speed breeding in growth chambers and glasshouses for crop breeding and model plant research
+    - Univ Queenland
+    - うーん？
+    - これならプロトコルじゃなくて普通のarticleでいいと思うんだよなあ
+    - 温室スケールで完全再現は現実的じゃない
+    - 発芽5-7dとかいっても、温室制御レベルの分のvariationが出ても仕方ないんだから実質意味がない
+    
+- 19
+
+  689. [Schöttler et al. 2007; JBC](http://www.jbc.org/content/282/2/976.long); 20181119済
+    - Knock-out of the Plastid-encoded PetL Subunit Results in Reduced Stability and Accelerated Leaf Age-dependent Loss of the Cytochrome b6f Complex
+    - chemだけどちゃんと読むか...
+    - すげー読みやすい論文だった
+    - Fig. 4Aがもったいない
+      - Cytの安定性を物理・高低温・chaotropic処理で調べている
+      - いずれも∆petLで不安定化傾向があるが、Nが少ないのか、考察ではあまり聞かない、という方向へもっていっている
+    - mRNA自体は葉齢依存なしで出てるから、翻訳後制御が重要っぽい
+    
+- 20
+
+  690. [Brandon et al. 2016; Book chapter](); <Font color="green">低</Font>
+    - Next Evolution of Agriculture: A Review of Innovations in Plant Factories
+    - 千葉大のころの矢守さん
+    - OAにしていいのか...?
+    
+- 21
+
+  - 雑記
+    - 可逆性論文書き
+      - 回復過程のモデリングをどうするかだなーっと
+      - その他の考察など書けるところの流れは概ね決まった
+      - `Chotewutmontri & Barkan 2016`を再読など
+      
+- 22
+
+  691. [Pattison et al. 2018; Nature](https://www.nature.com/articles/s41586-018-0706-x); <Font color="green">無</Font>
+    - LEDs for photons, physiology and food
+    - Bluce Bugbeeなど
+      - Firstの人にLED特集でオファー -> 概説するから適任者に声かけるか -> で、こうなったんだろうな
+    - 読むものでもない
+    
+- 23
+
+  692. [Boyes et al. 2001; Plant Cell](http://www.plantcell.org/content/13/7/1499.long); 無
+    - Growth Stage–Based Phenotypic Analysis of Arabidopsis: A Model for High Throughput Functional Genomics in Plants
+    - Paradigm Genetics Inc.
+      - 企業単独でPlant Cellとはやるなぁ
+    - `Li et al. 2017`からgrowth stage 1.10の定義を
+      - 孫引きじゃねーか
+      
+  693. [Lancashire et al. 1991; Ann Appl Biol](https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1744-7348.1991.tb04895.x); 低
+    - A uniform decimal code for growth stages of crops and weeds
+    - 個体レベルのステージ記述の話で葉齢スケールの話はない
+    - ので読まない
+    
+  - 雑記
+    - `Li et al. 2017`を読み込む
+      - 3*3*3 (LEAF*TIME*Biological rep) を27independentといってるけど、n = 1じゃねーのか
+      - もともと医学系の人なのかな？
+      - 
+    - Black Fridayなので夏服を買いに行こう
