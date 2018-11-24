@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Shiny on A plant researcher</title>
-    <link>/categories/shiny/</link>
+    <link>https://keachmurakami.github.io/categories/shiny/</link>
     <description>Recent content in Shiny on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Wed, 27 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/categories/shiny/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://keachmurakami.github.io/categories/shiny/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>連続画像のある断面の時間変化を対話的にみる (R &amp; Shiny)</title>
-      <link>/2018/06/27/%E9%80%A3%E7%B6%9A%E7%94%BB%E5%83%8F%E3%81%AE%E3%81%82%E3%82%8B%E6%96%AD%E9%9D%A2%E3%81%AE%E6%99%82%E9%96%93%E5%A4%89%E5%8C%96%E3%82%92%E5%AF%BE%E8%A9%B1%E7%9A%84%E3%81%AB%E3%81%BF%E3%82%8B-r--shiny/</link>
+      <link>https://keachmurakami.github.io/2018/06/27/%E9%80%A3%E7%B6%9A%E7%94%BB%E5%83%8F%E3%81%AE%E3%81%82%E3%82%8B%E6%96%AD%E9%9D%A2%E3%81%AE%E6%99%82%E9%96%93%E5%A4%89%E5%8C%96%E3%82%92%E5%AF%BE%E8%A9%B1%E7%9A%84%E3%81%AB%E3%81%BF%E3%82%8B-r--shiny/</link>
       <pubDate>Wed, 27 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/27/%E9%80%A3%E7%B6%9A%E7%94%BB%E5%83%8F%E3%81%AE%E3%81%82%E3%82%8B%E6%96%AD%E9%9D%A2%E3%81%AE%E6%99%82%E9%96%93%E5%A4%89%E5%8C%96%E3%82%92%E5%AF%BE%E8%A9%B1%E7%9A%84%E3%81%AB%E3%81%BF%E3%82%8B-r--shiny/</guid>
+      <guid>https://keachmurakami.github.io/2018/06/27/%E9%80%A3%E7%B6%9A%E7%94%BB%E5%83%8F%E3%81%AE%E3%81%82%E3%82%8B%E6%96%AD%E9%9D%A2%E3%81%AE%E6%99%82%E9%96%93%E5%A4%89%E5%8C%96%E3%82%92%E5%AF%BE%E8%A9%B1%E7%9A%84%E3%81%AB%E3%81%BF%E3%82%8B-r--shiny/</guid>
       <description>データ可視化系。 連続的にイメージングした2次元経時データ (=動画) から、任意のx/y断面の時系列を表示する。 pixel値 ~ 切断面に沿った座標</description>
     </item>
     
     <item>
       <title>htmlwidget x (Hugo &#43; Blogdown &#43; GitHub Page)</title>
-      <link>/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</link>
+      <link>https://keachmurakami.github.io/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</link>
       <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</guid>
+      <guid>https://keachmurakami.github.io/2018/05/19/htmlwidget-x-hugo---blogdown---github-page/</guid>
       <description>{leaflet}や{plotly}で作成したインタラクティブなjavascript系コンテンツをHugo + Blogdown + GitHub Pageに埋め込むときのメ</description>
     </item>
     
     <item>
       <title>Excel作図で困ること</title>
-      <link>/2016/02/29/excel%E4%BD%9C%E5%9B%B3%E3%81%A7%E5%9B%B0%E3%82%8B%E3%81%93%E3%81%A8/</link>
+      <link>https://keachmurakami.github.io/2016/02/29/excel%E4%BD%9C%E5%9B%B3%E3%81%A7%E5%9B%B0%E3%82%8B%E3%81%93%E3%81%A8/</link>
       <pubDate>Mon, 29 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/02/29/excel%E4%BD%9C%E5%9B%B3%E3%81%A7%E5%9B%B0%E3%82%8B%E3%81%93%E3%81%A8/</guid>
+      <guid>https://keachmurakami.github.io/2016/02/29/excel%E4%BD%9C%E5%9B%B3%E3%81%A7%E5%9B%B0%E3%82%8B%E3%81%93%E3%81%A8/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; 最近はMSoffice離れが進み、作図はR、たまにInk</description>
     </item>
     

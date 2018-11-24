@@ -4,7 +4,7 @@ title: " "
 <link rel="stylesheet" href="https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css">
 
 <div style="text-align: right; font-size: .7em">
-<FONT color="grey">Last update: `r lubridate::today()`  <br>Add items: GreenSys2019 and submission</FONT>
+<FONT color="grey">Last update: `r lubridate::today()`  <br>Add book chapter</FONT>
 </div>
 
 ```{r functions, echo = F, message = F, warning = F}
@@ -214,7 +214,9 @@ papers <-
 books <-
   bib_data %>%
   dplyr::filter(category %in% c("book", "inbook", "incollection")) %>%
-  dplyr::transmute(title = str_glue('<a href="http://doi.org/{doi}">{title}</a>'),
+  dplyr::transmute(title = if_else(is.na(doi),
+                                   str_glue('<a href="{direct_url}">{title}</a>'),
+                                   str_glue('<a href="http://doi.org/{doi}">{title}</a>')),
                    author, corresponding, bibtexkey, booktitle = paste0(booktitle, " (", year, ")")) %>%
   indicate_author(corresponding, mark = "<sup>+</sup>")
 

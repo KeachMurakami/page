@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Others on A plant researcher</title>
-    <link>/categories/others/</link>
+    <link>https://keachmurakami.github.io/categories/others/</link>
     <description>Recent content in Others on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Thu, 03 May 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/categories/others/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://keachmurakami.github.io/categories/others/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Jekyll -&gt; Hugo</title>
-      <link>/2018/05/03/jekyll---hugo/</link>
+      <link>https://keachmurakami.github.io/2018/05/03/jekyll---hugo/</link>
       <pubDate>Thu, 03 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/05/03/jekyll---hugo/</guid>
+      <guid>https://keachmurakami.github.io/2018/05/03/jekyll---hugo/</guid>
       <description>Jekyll + servr体制からHugo + blogdown体制へ移行 blogdown時代なので時流に合わせて 引っかかりどころメモ blogdown::build_site() -&amp;gt; docs以下に公開</description>
     </item>
     

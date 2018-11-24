@@ -2,93 +2,93 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tidyverse on A plant researcher</title>
-    <link>/categories/tidyverse/</link>
+    <link>https://keachmurakami.github.io/categories/tidyverse/</link>
     <description>Recent content in Tidyverse on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sun, 07 Oct 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/categories/tidyverse/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://keachmurakami.github.io/categories/tidyverse/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>途中で分岐する時系列プロット (ggplot2)</title>
-      <link>/2018/10/07/%E9%80%94%E4%B8%AD%E3%81%A7%E5%88%86%E5%B2%90%E3%81%99%E3%82%8B%E6%99%82%E7%B3%BB%E5%88%97%E3%83%97%E3%83%AD%E3%83%83%E3%83%88-ggplot2/</link>
+      <link>https://keachmurakami.github.io/2018/10/07/%E9%80%94%E4%B8%AD%E3%81%A7%E5%88%86%E5%B2%90%E3%81%99%E3%82%8B%E6%99%82%E7%B3%BB%E5%88%97%E3%83%97%E3%83%AD%E3%83%83%E3%83%88-ggplot2/</link>
       <pubDate>Sun, 07 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/10/07/%E9%80%94%E4%B8%AD%E3%81%A7%E5%88%86%E5%B2%90%E3%81%99%E3%82%8B%E6%99%82%E7%B3%BB%E5%88%97%E3%83%97%E3%83%AD%E3%83%83%E3%83%88-ggplot2/</guid>
+      <guid>https://keachmurakami.github.io/2018/10/07/%E9%80%94%E4%B8%AD%E3%81%A7%E5%88%86%E5%B2%90%E3%81%99%E3%82%8B%E6%99%82%E7%B3%BB%E5%88%97%E3%83%97%E3%83%AD%E3%83%83%E3%83%88-ggplot2/</guid>
       <description>対照区に対していくつかの時点から処理を開始する試験区を設け、試験区ごとに一定間隔で取得した経時データを比較する。 dat &amp;lt;- tibble(day = c(1:4, 2:4, 3:4), value = c(10, 10, 10, 10, #</description>
     </item>
     
     <item>
       <title>ggplot2の図をパネル状に並べる (cowplot, patchwork, egg, ggpubr)</title>
-      <link>/2018/07/21/ggplot2%E3%81%AE%E5%9B%B3%E3%82%92%E3%83%91%E3%83%8D%E3%83%AB%E7%8A%B6%E3%81%AB%E4%B8%A6%E3%81%B9%E3%82%8B-cowplot-patchwork-egg-ggpubr/</link>
+      <link>https://keachmurakami.github.io/2018/07/21/ggplot2%E3%81%AE%E5%9B%B3%E3%82%92%E3%83%91%E3%83%8D%E3%83%AB%E7%8A%B6%E3%81%AB%E4%B8%A6%E3%81%B9%E3%82%8B-cowplot-patchwork-egg-ggpubr/</link>
       <pubDate>Sat, 21 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/07/21/ggplot2%E3%81%AE%E5%9B%B3%E3%82%92%E3%83%91%E3%83%8D%E3%83%AB%E7%8A%B6%E3%81%AB%E4%B8%A6%E3%81%B9%E3%82%8B-cowplot-patchwork-egg-ggpubr/</guid>
+      <guid>https://keachmurakami.github.io/2018/07/21/ggplot2%E3%81%AE%E5%9B%B3%E3%82%92%E3%83%91%E3%83%8D%E3%83%AB%E7%8A%B6%E3%81%AB%E4%B8%A6%E3%81%B9%E3%82%8B-cowplot-patchwork-egg-ggpubr/</guid>
       <description>ggplot2パネル表示のメモ とくに論文書きでは関係する図をパネル状に並べて表示する機会が多い。 ggplot2のfacetファミリーでどうに</description>
     </item>
     
     <item>
       <title>関数を繰り返し適用するpurrr::reduce</title>
-      <link>/2018/07/20/%E9%96%A2%E6%95%B0%E3%82%92%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8Bpurrrreduce/</link>
+      <link>https://keachmurakami.github.io/2018/07/20/%E9%96%A2%E6%95%B0%E3%82%92%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8Bpurrrreduce/</link>
       <pubDate>Fri, 20 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/07/20/%E9%96%A2%E6%95%B0%E3%82%92%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8Bpurrrreduce/</guid>
+      <guid>https://keachmurakami.github.io/2018/07/20/%E9%96%A2%E6%95%B0%E3%82%92%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8Bpurrrreduce/</guid>
       <description>purrr::reduceがしっくりこないメモ。 check_query &amp;lt;- function (data, query){ data %&amp;gt;% mutate(UQ(query) := ifelse(str_detect(Species, query), TRUE, FALSE)) } qs &amp;lt;- c(&amp;quot;s&amp;quot;, &amp;quot;ver&amp;quot;, &amp;quot;col&amp;quot;) # 引数を変えながらループする処理 result_base &amp;lt;- iris[48:52,] %&amp;gt;% check_query(qs[1]) %&amp;gt;% check_query(qs[2]) %&amp;gt;% check_query(qs[3]) %&amp;gt;% knitr::kable()</description>
     </item>
     
     <item>
       <title>内向きティックの付け方 (ggplot2)</title>
-      <link>/2018/07/18/%E5%86%85%E5%90%91%E3%81%8D%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9-ggplot2/</link>
+      <link>https://keachmurakami.github.io/2018/07/18/%E5%86%85%E5%90%91%E3%81%8D%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9-ggplot2/</link>
       <pubDate>Wed, 18 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/07/18/%E5%86%85%E5%90%91%E3%81%8D%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9-ggplot2/</guid>
+      <guid>https://keachmurakami.github.io/2018/07/18/%E5%86%85%E5%90%91%E3%81%8D%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9-ggplot2/</guid>
       <description>ggplot2でtickを内向きにする方法のメモ。 tickの長さを負にして、marginを2倍とる。 length_tick &amp;lt;- .2 theme_set( theme_bw() + theme(axis.ticks.length = unit(-length_tick, &amp;quot;cm&amp;quot;), axis.text.x = element_text(margin = unit(c(length_tick * 2, 0, 0, 0),</description>
     </item>
     
     <item>
       <title>関数への全引数をmutateで追加する (R)</title>
-      <link>/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</link>
+      <link>https://keachmurakami.github.io/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</link>
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</guid>
+      <guid>https://keachmurakami.github.io/2017/12/14/%E9%96%A2%E6%95%B0%E3%81%B8%E3%81%AE%E5%85%A8%E5%BC%95%E6%95%B0%E3%82%92mutate%E3%81%A7%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B-r/</guid>
       <description>はまったのでメモ。 複数パラメータを引数にとる自作関数で感度分析するとき、出力のデータフレームには入力したパラメータがあってほしい。 引数が多く</description>
     </item>
     
     <item>
       <title>中間生成なしでカラム名を変更する５つの方法 (R)</title>
-      <link>/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95-r/</link>
+      <link>https://keachmurakami.github.io/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95-r/</link>
       <pubDate>Fri, 01 Apr 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95-r/</guid>
+      <guid>https://keachmurakami.github.io/2016/04/01/%E4%B8%AD%E9%96%93%E7%94%9F%E6%88%90%E3%81%AA%E3%81%97%E3%81%A7%E3%82%AB%E3%83%A9%E3%83%A0%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B%EF%BC%95%E3%81%A4%E3%81%AE%E6%96%B9%E6%B3%95-r/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; 中間生成なしでカラム名を変更する 中間生成的なことをせずに</description>
     </item>
     
     <item>
       <title>データフレームからのベクトル出力 (R)</title>
-      <link>/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B-r/</link>
+      <link>https://keachmurakami.github.io/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B-r/</link>
       <pubDate>Sun, 20 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B-r/</guid>
+      <guid>https://keachmurakami.github.io/2016/03/20/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%81%8B%E3%82%89%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%87%BA%E5%8A%9B-r/</guid>
       <description>dplyr::selectでvector出力はできない (メモ # デフォルトの列選択 iris[, &amp;quot;Species&amp;quot;] %&amp;gt;% head ## [1] setosa setosa setosa setosa setosa setosa ## Levels: setosa versicolor virginica # データフレーム構造を維持</description>
     </item>
     
     <item>
       <title>aes(group)</title>
-      <link>/2016/03/09/aesgroup/</link>
+      <link>https://keachmurakami.github.io/2016/03/09/aesgroup/</link>
       <pubDate>Wed, 09 Mar 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/03/09/aesgroup/</guid>
+      <guid>https://keachmurakami.github.io/2016/03/09/aesgroup/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; ggplot2のaes(group)内で処理をする (メモ</description>
     </item>
     
     <item>
       <title>図のラベルを楽に付けたい (R)</title>
-      <link>/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84-r/</link>
+      <link>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84-r/</link>
       <pubDate>Mon, 01 Feb 2016 00:00:00 +0000</pubDate>
       
-      <guid>/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84-r/</guid>
+      <guid>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84-r/</guid>
       <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; expression関数内に変数を動的に組み込みたかった</description>
     </item>
     
