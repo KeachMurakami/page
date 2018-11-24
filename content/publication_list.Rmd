@@ -194,7 +194,9 @@ bib_data <-
 papers <-
   bib_data %>%
   dplyr::filter(category == 'article') %>%
-  dplyr::transmute(title = str_glue('<a href="http://doi.org/{doi}">{title}</a>'),
+  dplyr::transmute(title = if_else(is.na(doi),
+                                   title,
+                                   as.character(str_glue('<a href="http://doi.org/{doi}">{title}</a>'))),
                    author, year, type, journal, corresponding, bibtexkey, self_archive) %>%
   
   dplyr::mutate(title = if_else(!is.na(self_archive), paste0(title, '&emsp;<a href="', self_archive, '"><i class="ai ai-open-access ai-1x"></i></a>'), as.character(title))) %>%
