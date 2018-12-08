@@ -1,0 +1,13 @@
+---
+title: "書籍発売 (分担執筆)"
+date: 2018-12-08
+categories: ["research-book"]
+---
+
+共著で章を担当した和書が発売されたようです。
+私はおもに光合成機能の順化応答に関する部分を執筆しました。
+
+> 人工光環境と植物の光合成  
+> 荊木 康臣, 村上 貴一  
+> *アグリフォトニクスIII*, 監修: 後藤 英司  
+> [URL](http://www.cmcbooks.co.jp/products/detail.php?product_id=5494)
