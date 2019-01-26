@@ -305,16 +305,9 @@ num_paper <-
 
 - 06
 
-  32. [Li et al. 2017; Plant Cell](http://www.plantcell.org/content/early/2017/01/30/tpc.16.00768.short?rss=1); 20181123再
+  32. [Li et al. 2017; Plant Physiol](http://www.plantcell.org/content/early/2017/01/30/tpc.16.00768.short?rss=1); 低
     - Protein Degradation Rate in Arabidopsis thaliana Leaf Growth and Development
     - タンパク分解をsystems biologyっぽく
-    - N15 labelingと質量分析でタンパクごとにKdを時変でやっている
-    - 考察と結果がかなり頭いい印象をうける
-    - 成長速度とKdの比例・反比例で葉齢-タンパク齢プロファイルが決まる
-    - degradation kineticsを無視したlinear回帰でのタンパク合成じゃ限界がある、というスタンス
-      - Kdの時変は必要なほどに大きいか、やや微妙？
-      - なんとなく系統誤差っぽい挙動に見えなくもないので (Fig. 5C)
-    - ‘light-dependent transcriptional processes may be associated with enhanced protein degradation of the proteins being synthesized, while dark- dependent processes are relatively less connected.’
 
   33. [Atherton et al. 2016; Remote Sens Environ](http://www.sciencedirect.com/science/article/pii/S0034425715302571); 低
     - Using Spectral Chlorophyll Fluorescence and the Photochemical Reflectance Index to Predict Physiological Dynamics
@@ -6507,7 +6500,342 @@ within photosystem II
     
   - 雑記
     - `Li et al. 2017`を読み込む
-      - 3*3*3 (LEAF*TIME*Biological rep) を27independentといってるけど、n = 1じゃねーのか
-      - もともと医学系の人なのかな？
-      - 
-    - Black Fridayなので夏服を買いに行こう
+    - 3*3*3 (LEAF*TIME*Biological rep) を27independentといってるけど、n = 1じゃねーか
+    
+- 25
+
+  - 論文書きと文献足し
+
+  694. [Sims & Pearcy 1992; Am J Bot](https://onlinelibrary.wiley.com/doi/abs/10.1002/j.1537-2197.1992.tb14573.x); 20181125済
+    - Response of leaf anatomy and photosynthetic capacity in Alocasia macrorrhiza (Araceae) to a transfer from low to high light
+    - 先行のレビュー
+      - `Julik et al. 1987`, Fragaria virginiana: 90%展開時にLL-HLでPmax up, thickness stay
+      - `Syvertsen 1984, Syvertsen & Smith 1984`, citrus: mature leafにLL-HLでPmax stay, thickness up slightly
+      - `Bauer & Thoni 1988`, ivy: mature leafにLL-HLでPmax up + thickness up (increased cell layer)
+    - この論文ではAlocasiaのmature leafにLL-HLでPmax up slightly, thickness stay
+    - CO2 uptake / volumeはコンスタントだから、厚さ方向の制御でのみPmaxをコントロールしているらしい
+    - leaf plastochron index (LPI) で葉のステージを整理している
+  
+  695. [Bauer & Thöni 1988; Physiol Plant](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1399-3054.1988.tb09189.x); 20181125済
+    - Photosynthetic light acclimation in fully developed leaves of the juvenile and adult life phases of Hedera helix
+    - 20歳程度のivyの親株から、juvenile/adultな部位をとってきて、弱光・強光遷移実験
+    - adultよりはjuvenileのほうが反応性がよい (modulative / modificativeが大きい)
+
+  696. [Sims & Pearcy 1991; Physiol Plant](https://link.springer.com/article/10.1007/BF00317615); 20181125済
+    - Photosynthesis and respiration in Alocasia macrorrhiza following transfers to high and low light
+    - 6-8 d after full expansionのAlocasiaだと、LL-HLもHL-LLもPmaxにはほとんど効かない
+    - 呼吸速度には効く
+
+- 26
+
+  - 論文書き
+  
+  697. [Carpenter et al. 2017; J Stat Soft](https://www.jstatsoft.org/article/view/v076i01); 20181126済
+    - Stan: A Probabilistic Programming Language
+    - 引用などする準備
+    - Stanを使っている近い分野の研究者を見たことがないので、どう書くか参考にする論文がない
+      - うーむ
+      - 久保さんも入っていて信頼できる`Araya et al. 2017`はWinBugsだ
+    
+  698. [He & Chow 2003; Physiol Plant](https://onlinelibrary.wiley.com/doi/full/10.1034/j.1399-3054.2003.00107.x); 低
+    - The rate coefficient of repair of photosystem II after photoinactivation
+    - `Hu et al. 2013`の前
+    - 式は一緒
+    
+- 27
+
+  - 雑記
+    - 初の遺伝子編集のこどもの話
+      - やっぱり中国で起こるわな
+      - 「人体実験とか狂ってる」という指摘
+        - もちろん倫理ラインの設定・遵守は重要といううえで
+        - どんなに事前に動物実験してもいつか踏むステップなわけで、「私はマウスでしかやってないから」というスタンスでの批判は汚い
+        - そういう利用法への期待で予算を引っ張ってるわけで、人間に適用する青写真がない、ってんなら元からやるなよ
+      - 意図せずしてなのか意図してなのか双子の一方にのみ、というシチュエーションは業が深い
+        - 体細胞を採取培養して感染を見るとかするのかな
+        - この子はいろいろな自由を失うんだろう
+        - かわいそうに
+
+- 28
+
+  699. [Innes et al. 2018; Photochem Photobiol Sci](https://pubs.rsc.org/en/Content/ArticleLanding/2019/PP/C8PP00401C#!divAbstract); 20181128概
+    - Elevated air humidity increases UV mediated leaf and DNA damage in pea (Pisum sativum) due to reduced flavonoid content and antioxidant power	
+    - Norway Torre group
+    - 期待: 高RHで気孔がばがば問題をUVでどうにかできるのでは？
+    - 結果: 高RHでUVを当てると、curlingやらnechrosisやらDNAダメージを受けるわ、moderate RHよりもflavonoidやantioxidant powerが低いわ、で使える感じではない
+    - 無理に持っていってなくて誠実だと思う
+    - 波長選択が悪い (UV-B/Cが強すぎる) のでは...?
+      - moderate + UVでは出てないから、応答性が違う、という結論で正解
+
+  700. [Schöttler et al. 2015; JXB](https://academic.oup.com/jxb/article/66/9/2373/676473); 高
+    - Photosynthetic complex stoichiometry dynamics in higher plants: biogenesis, function, and turnover of ATP synthase and the cytochrome b6f complex 
+    - Cytochromeのとこだけ読もう...
+    
+  701. [Wei et al. 2014; Plant Cell](http://www.plantcell.org/content/26/1/353); 20190108済
+    - Nitric Oxide–Triggered Remodeling of Chloroplast Bioenergetics and Thylakoid Proteins upon Nitrogen Starvation in Chlamydomonas reinhardtii
+    - CNRS Choquet Wollmanなど
+    - 弱光+N飢餓でcytochromeの高速分解
+    - `Li et al. 2018; Trend Plant Scie`から
+    - しんどそう
+    - 読んだ
+      - しんどかった
+      - FtsHのみではなさそう、って感じ
+    - 流れエレガントやな
+      - N飢餓では光合成系全般 (PSII,PSI,cytochrome,Rubisco) が時間スケールで削られる
+      - PSII・PSIは若干でも光制御されているが、Cyt・Rubはほとんど関係なし
+      - 無acetate・嫌気・mito resp mutantでは高速分解が抑えられる
+      - 外生でNOを増減させると、それに応じて分解特性が変わるのでこれが原因っぽいね
+      - 内生でのNOもtagしてimagingするよ
+      - 現象の明確化から原因特定、新仮設設計と課題点の提示まで
+
+  702. [Nelson et al. 2014; Plant Physiol](http://www.plantphysiol.org/content/166/1/91/tab-figures-data); 20181130済
+    - Proteins with High Turnover Rate in Barley Leaves Estimated by Proteome Analysis Combined with in Planta Isotope Labeling
+    - UWA, A. Harvey Millar
+    - `Li et al. 2017`の元ネタ的な
+    - Kdを数値で出してくれてる
+    - plant materialはS1にある通り、mature:young ~ 8:2の混合試料
+    - stable-isotopeの選び方なども議論している
+      - fast = C13, slow = N15のちゃんぽんがいいのでは、という提案
+    
+- 29
+
+  - 雑記
+    - こっちに来て初めて悪意を感じた
+      - 語学力の問題でなら自責も感じるが、意思疎通する意志ゼロで弾かれるか
+      - あの人にはかかわらんとこ
+
+- 30
+
+  703. [Nawrocki et al. 2018; Plant Physiol](http://www.plantphysiol.org/content/early/2018/11/29/pp.18.01213); 低
+    - Chlororespiration controls growth under intermittent light
+    - Wollman, Bailleul, Joliotという激しいメンツ
+    - 読むか読まざるか...
+    
+  - 雑記
+    - 昼サッカーした
+      - 東大昼サッカーのがレベルは高かった
+      - コート広くしてkick & rushはおっさんたちがやることではなかろーて
+      
+## 12
+
+- 01
+
+  704. [Oguchi et al. 2003; PCE](https://onlinelibrary.wiley.com/doi/full/10.1046/j.1365-3040.2003.00981.x); 20181201済
+    - Does the photosynthetic light‐acclimation need change in leaf anatomy?
+  
+  705. [Oguchi et al. 2005; PCE](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1365-3040.2005.01344.x); 20181201済
+    - Leaf anatomy as a constraint for photosynthetic acclimation: differential responses in leaf anatomy to increasing growth irradiance among three deciduous trees
+
+  - 雑記
+    - Japan.Rをリモート聴講
+      - 皆さん声がイメージと違って面白い
+      - ぞうさんのRmdテンプレート作成がめちゃくちゃ参考になった
+        - デフォルトのhtmlが重い (1MB) からいじった記憶
+    
+- 02
+
+  706. [Storti et al. 2018; PCE](https://onlinelibrary.wiley.com/doi/abs/10.1111/pce.13493?af=R); 未取得
+    - ROLE OF CYCLIC AND PSEUDO‐CYCLIC ELECTRON TRANSPORT IN RESPONSE TO DYNAMIC LIGHT CHANGES IN PHYSCOMITRELLA PATENS
+    - Univ. Padova, Morosinotto
+    - patensはディッシュで2D解析っぽくできるのね、便利
+
+- 04
+  
+  - 雑記
+    - JE氏とのディスカッションが木曜日に伸びた
+      - ここに来た理由の大きな割合を締める人だなぁ
+      - しっかり準備、と思いつつ手が進まん
+   
+- 06
+
+  - 雑記
+    - ディスカッション ~ 2.0 h
+      - クソみたいな英語で申し訳なくなる
+        - 日本語でやるときの1.5倍かかるな
+        - 必要な議論はすべてしたし、出すか迷ってたStanの話もした
+      - システム誤差を組み込むと、over fittingになる、という話
+        - むしろシステム誤差を入れないと、信用区間が縮まって怪しい推定になる、と解釈しているが、どうなんだろう
+        - 統計wakalang
+        - きっついなぁ
+      - くっそ速い、というわけではない
+        - 経験に裏打ちされた、って感じだ
+        - 速さでいったら環境研のが上だったように思う
+        - 伝達が言語力依存的な面もあるから実態はわからん
+    
+- 07
+
+  - 雑記
+    - EoYパーティでただ飯
+    - いつもぱさついたコメみたいなんがあるが、あれはなんなんだ
+  
+  707. [Hubbart et al. 2018; Commun Biol](https://www.nature.com/articles/s42003-018-0026-6); 20181207概
+    - Enhanced thylakoid photoprotection can increase yield and canopy radiation use efficiency in rice
+    - Murchie lab 単騎
+      - 最近ではもう単一ラボ仕事が珍しくなっているなぁ
+    - **これもうダウンロードしてんじゃねーか案件 (427)**
+    - イネPsbSのOXはnatural/artificial変動光下でWTよりDW、grain yieldが高い
+      - 弱光時にNPQが大きいくせにWTよりETRが高い
+        - qIとqEちゃんぽんだからNPQがよくないよー
+        - YNPQで実効エネルギー収支を議論すべきだ
+      - 強光下ではNPQが大きくてETRが小さい
+        - そりゃそーだ
+        - upper leavesでの光阻害が減ったのが理由では、という解釈
+      - NPQはOXで高いがETRは変わらん (YIIが変わらん、ということはYNPQもなんだろーなー)
+      - total light interceptも変わらんが、biomass / integral PARがOXで高い
+        - LAIや群落構造で光均一化とかしてるんだろうか、というデータ
+    - bee swormを使っておる
+      - でもN=42とかだから疑似反復なんでしょう...？
+      
+  708. [Demmig-Adams et al. 2014; Phil Trans R Soc B](http://rstb.royalsocietypublishing.org/content/369/1640/20130244.long); 20181215概
+    - Multiple feedbacks between chloroplast and whole plant in the context of plant adaptation and acclimation to the environment
+    - よさそう (遅い)
+    - と思ったけどそうでもなかった
+      - 転流に関係する要素 (cell wall、phloemとか) が気になりごとなのか
+    
+- 12
+  
+  - 雑記
+    - 測定しながらNAR-HARC論文
+
+  709. [濱嵜ら 2013; 農業および園芸](https://agriknowledge.affrc.go.jp/RN/2010870712); 20181212済
+    - 温暖化後の北海道で，コシヒカリは栽培できるか?
+    - 濱嵜さん、論文博士とったのだろうか
+      - ぼくと同期D論だったかもしれなかった
+      - あんだけ成果出してても、論博だと「うん」とはならんのがアレだ
+      - ボスが厳しいからなぁ...
+    - 内容は北海道の日長条件下で高温化したときの出穂時期の推定と品種間差
+    
+  710. [Nemoto et al. 2016a; ](https://www.jstage.jst.go.jp/article/agrmet/72/3-4/72_D-15-00017/_article); 20181212概
+    - Estimation of Rice Yield Components with Meteorological Elements Divided According to Developmental Stages
+    - きらら397と比較して、ななつぼしはpanicle-weight寄り、ふっくりんこはpanicle-number寄り
+    - ステージで分離して、Yield component ~ 日射 x 日平均気温の回帰
+
+  711. [Nemoto et al. 2016b; ](https://www.jstage.jst.go.jp/article/agrmet/72/3-4/72_D-15-00027/_article); 20181212概
+    - Prediction of climatic suitability for wine grape production under the climatic change in Hokkaido
+    - 夏気温 (13.1--20.9)・夏降水 (<1200)・冬気温 (> -15)のしきい値で判定し、道内にマッピング
+
+  - 雑記
+    - 寮の大掃除した
+    - 性格でるね
+    
+- 13
+
+  - 雑記
+    - Hot potパーティ
+      - heteroな人種構成で話すと話題が国際に向かいやすい
+      - A「フランス人がいなければフランスはキレイなところ」
+      - Hはぼくより年上だったのか...
+
+- 14
+
+  - 雑記
+    - stanをごりごり回して、ようやくとっついた感じ
+    - 文法がよーわからんからそれでグダる
+    - transformed parametersブロックで使う
+    - generated quantitiesでは`rng`で生成しないと何やってるかわからんことになるのか
+    - PK解析の記事、ちゃうな
+
+  712. [Fadrique et al. 2018; Nature](https://www.nature.com/articles/s41586-018-0715-9?WT.ec_id=NATURE-20181213&utm_source=nature_etoc&utm_medium=email&utm_campaign=20181213&sap-outbound-id=0AA49C88F5B6EB3D0A20BBA20A1A5B6DCDD9EF83); 20181214概
+    - Widespread but heterogeneous responses of Andean forests to climate change
+    - 読もうか？
+    - 気候変動で所与の地域にとって外来リスクになりそうな種を挙げる、とかできたらたのしい
+      - 現環境と適応レベルのデータセットみたいなんがあればなんでもできるんだな
+      
+- 17
+
+  713. [Ernstsen et al. 1997; Photosynth Res](https://link.springer.com/article/10.1023/A:1005847500471); 20181217概
+    - Responses of Rubisco activation and deactivation rates to variations in growth-light conditions
+    
+
+# 2019
+
+## 01
+
+- 03
+
+  714. [Behrenfeld et al. 1998; Photosynth Res](https://link.springer.com/article/10.1023/A:1006138630573); 20190103済
+    - Compensatory changes in Photosystem II electron turnover rates protect photosynthesis from photoinhibition
+    - ‘Excess PSII capacity’
+    
+- 04
+
+  715. [South et al. 2019; Science](http://science.sciencemag.org/content/363/6422/eaat9077/tab-pdf); 低
+    - Synthetic glycolate metabolism pathways stimulate crop growth and productivity in the field
+    - Don Ort lab
+    - 光呼吸をショートカットする
+    
+- 08
+
+  716. [Malnoé et al. 2014; Plant Cell](http://www.plantcell.org/content/26/1/373.short); 概
+    - Thylakoid FtsH Protease Contributes to Photosystem II and Cytochrome b6f Remodeling in Chlamydomonas reinhardtii under Stress Conditions
+    - FA Wallmanとde Viltry
+    - `Wei et al. 2014`と連チャン
+    - しんどいその２
+
+- 09
+  
+  717. [Evans & Clarke 2019; JXB](https://academic.oup.com/jxb/article/70/1/7/5142912); <Font color="green">中</Font>
+    - The nitrogen cost of photosynthesis
+    
+- 10
+  
+  718. [Nagano et al. 2019; Nat Plant](https://www.nature.com/articles/s41477-018-0338-z); 低
+    - Annual transcriptome dynamics in natural environments reveals plant seasonal adaptation
+    - 龍谷大永野さん
+      - すごい
+    - abstだとあまり増えどころが...
+      - チャンバーでtemp x day lengthの非同調をすると温度への応答が崩れる、ってとこが新しいっぽい
+      
+  - 雑記
+    - Stan待ちが長い
+    - 立替え払いの書類をもぞもぞ準備
+      - カード明細だすのなんか恥ずかしい
+      - めんどくさい
+      - コーポレートカードつくれよー
+
+
+- 17
+
+  - 雑記
+    - 日本に帰ってきた
+      - 楽だなー
+      - 雑談がキャッチできてしまうのはそれはそれで
+      - 自分の喋り方かわったような気がする
+      - ごはんやすい
+    - 面接@つくば
+      - 30 min
+      - 比較的ゆるい感じだった
+      - どんな分野の人と組みたい？
+      - 研究のモチベーション
+      - これまでの研究での自分の立ち位置
+        - 協調性できるか
+        - 後輩指導
+      - 健康のためにしていること
+      - １０年後、どんな研究者たるか
+      - どの領域で専門性をだす？
+      - 公募ファジーだったけど、例えばどんなことをやると想定している？
+    - 査読着弾
+      - 悪く言えば雑誌の分相応
+      - 対応で論文よむ
+
+  719. [Sun et al. 2012; PCE](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1365-3040.2011.02466.x); 低
+    - The influence of light quality on C4 photosynthesis under steady‐state conditions in Zea mays and Miscanthus × giganteus: changes in rates of photosynthesis but not the efficiency of the CO2 concentrating mechanism
+    - Wasinton State Univ.、知らない人だ
+
+- 18
+
+  - 雑記
+    - 環境研訪問
+      - 実家のような安心感
+      - 先生たちにご挨拶
+      - 陳さんと川島と昼飯
+    
+
+- 24
+
+  720. [Pfitsch & Pearcy 1989; Oecologia](https://link.springer.com/article/10.1007/BF00380067); 20190124概
+    - Daily carbon gain by Adenocaulon bicolor (Asteraceae), a redwood forest understory herb, in relation to its light environment
+    - 日内・日間PFD変動に言及するため
+  
+  - 雑記
+    - 最近、このリストに書いていない論文がどんどん増えており、もはや崩壊している
