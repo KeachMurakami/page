@@ -1,0 +1,189 @@
+---
+title: "ggplot2で論文作図: ラベルまわり"
+date: 2019-01-26
+categories: ["tidyverse", "ggplot2"]
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(magrittr)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, results = "hold")
+```
+
+# 即投稿クオリティの図をggplot2で作るメモ (ラベル周り)
+
+facetで特殊文字を使う場合は`label_parsed`、`expression`形式で書く。
+
+```{r}
+df <-
+  iris %>%
+  select(1, 2, 5) %>%
+  gather(variable, value, -Species)
+
+df %>%
+  mutate(variable = case_when(
+    variable == "Sepal.Width" ~ "'Some parameter'~'[\u00B5'*mol~m^-2~s^-1*']'",
+    variable == "Sepal.Length" ~ "'Another parameter'~'[\u00B5'*'m'*']'")) %>%
+  ggplot(aes(value, col = Species)) +
+  geom_density() +
+  facet_grid(variable ~ ., labeller = label_parsed) +
+  labs(y = NULL)
+```
+
+途中で変換するとその後の取り回しが悪くなるので、プロットする段階で変える。
+
+`ggplot2::as_labeller`で予めラベルを登録しておく。
+
+```{r}
+fig_base <-
+  df %>%
+  ggplot(aes(value, col = Species)) +
+  geom_density()
+
+label_1row <-
+  c(Sepal.Width = "'Some parameter'~'[\u00B5'*mol~m^-2~s^-1*']'",
+    Sepal.Length = "'Another parameter'~'[\u00B5'*'m'*']'",
+    hogehoge = "NOT SHOWN")
+
+label_2row <-
+  c(Sepal.Width = "atop('Some parameter', '[\u00B5'*mol~m^-2~s^-1*']')",
+    Sepal.Length = "atop('Another parameter', '[\u00B5'*'m'*']')",
+    hogehoge = "NOT SHOWN")
+
+parsed_single <- as_labeller(label_1row, label_parsed)
+parsed_double <- as_labeller(label_2row, label_parsed)
+
+(fig_1 <- fig_base + facet_grid(variable ~ ., labeller = parsed_single))
+(fig_2 <- fig_base + facet_grid(variable ~ ., labeller = parsed_double))
+```
+
+該当するラベルがない場合は、ラベルが空白になる。
+
+```{r}
+df %>%
+  mutate(variable = if_else(variable == "Sepal.Length", "test", variable)) %>%
+  ggplot(aes(value, col = Species)) +
+  geom_density() +
+  facet_grid(variable ~ ., labeller = parsed_single)
+```
+
+`\n`で折り返すと変なことになる。
+
+```{r}
+label_ng <-
+  as_labeller(c(Sepal.Length = "'Another parameter\n'*'['*mu*'m'*']'",
+                Sepal.Width = "'Some parameter\n'*'[\u00B5'*mol~m^-2~s^-1*']'"),
+              label_parsed)
+
+fig_base + facet_grid(variable ~ ., labeller = label_ng)
+```
+
+`theme_set`で一括適用する細かいスタイルを設定する。
+
+```{r}
+tick_len <- .2
+
+theme_set(
+  # theme_bw() +
+  theme_bw(base_family = "Arial") +
+  theme(text = element_text(),
+        panel.grid = element_blank(),
+        
+        # ティックを内向きに
+        axis.ticks.length=unit(-tick_len, "cm"),
+        axis.ticks = element_line(size = rel(.5)),
+        axis.text.x = element_text(margin=unit(c(2*tick_len, 0, 0, 0), "cm")),
+        axis.text.y = element_text(margin=unit(c(0, 2*tick_len, 0, 0), "cm")),
+        
+        # stripのサイズ、位置、背景を調整
+        strip.text = element_text(size = rel(1)),
+        strip.placement = "outside",
+        strip.background = element_blank())
+  )
+```
+
+`facet_grid(switch = "y")`でfacetラベルを左に持っていく。
+
+```{r}
+fig_3 <-
+  fig_base +
+  facet_grid(variable ~ ., labeller = parsed_double, switch = "y") +
+  labs(y = NULL)
+
+fig_3
+```
+
+pdf出力して、fontを埋め込む。
+
+```{r}
+temp_file_original <- paste0(tempfile(), ".pdf")
+temp_file_embed <- paste0(tempfile(), ".pdf")
+
+quartz(type = "pdf", file = temp_file_original)
+fig_3
+dev.off()
+
+embedFonts(file = temp_file_original, outfile = temp_file_embed,
+           options = "-c \"<</NeverEmbed []>> setdistillerparams\" -f ")
+```
+
+埋め込み状態を確認する。
+bash経由でやる。
+`pdffonts`でembed列が`yes`になっていれば大丈夫らしい。
+
+```{r}
+system(str_glue("pdffonts {temp_file_embed}"))
+```
+
+```
+name                                 type              emb sub uni prob object ID
+------------------------------------ ----------------- --- --- --- ---- ---------
+QVYYFG+ArialMT                       TrueType          yes yes yes          72  0
+NYAKOE+ArialMT                       TrueType          yes yes yes          38  0
+DJZUJO+ArialMT                       TrueType          yes yes yes          26  0
+MEMITD+ArialMT                       TrueType          yes yes yes          95  0
+RWTTYK+ArialMT                       TrueType          yes yes yes          91  0
+CKVQWC+ArialMT                       TrueType          yes yes yes          32  0
+MJPVJK+ArialMT                       TrueType          yes yes yes          20  0
+PPAHAH+ArialMT                       TrueType          yes yes yes          78  0
+TIZGFW+ArialMT                       TrueType          yes yes yes          62  0
+ZQRGZO+ArialMT                       TrueType          yes yes yes          58  0
+KPYJFU+ArialMT                       TrueType          yes yes yes          52  0
+QSKFCU+Symbol                        TrueType          yes yes yes          46  0
+JFRXDS+ArialMT                       TrueType          yes yes yes          40  0
+GJHAAU+ArialMT                       TrueType          yes yes yes          34  0
+NGQXUK+ArialMT                       TrueType          yes yes yes          28  0
+NBBCTZ+ArialMT                       TrueType          yes yes yes          68  0
+FRCCMY+ArialMT                       TrueType          yes yes yes          22  0
+ZUPVSQ+ArialMT                       TrueType          yes yes yes          93  0
+AMATMK+ArialMT                       TrueType          yes yes yes          64  0
+WHUINY+ArialMT                       TrueType          yes yes yes          74  0
+HUOCGU+Symbol                        TrueType          yes yes yes          54  0
+EMXJMO+ArialMT                       TrueType          yes yes yes          48  0
+TNUQGN+Symbol                        TrueType          yes yes yes          42  0
+IFRBQQ+ArialMT                       TrueType          yes yes yes          36  0
+KJUGHP+ArialMT                       TrueType          yes yes yes          24  0
+OOHDYH+ArialMT                       TrueType          yes yes yes          83  0
+BEUQQG+ArialMT                       TrueType          yes yes yes          70  0
+PSXPLM+ArialMT                       TrueType          yes yes yes          30  0
+RMTSJQ+ArialMT                       TrueType          yes yes yes          80  0
+NGLPKZ+ArialMT                       TrueType          yes yes yes          66  0
+SQSHEN+ArialMT                       TrueType          yes yes yes          60  0
+SNUPUT+ArialMT                       TrueType          yes yes yes          76  0
+NMWUGM+ArialMT                       TrueType          yes yes yes          56  0
+MKMMNZ+Symbol                        TrueType          yes yes yes          50  0
+FZWFDH+ArialMT                       TrueType          yes yes yes          44  0
+```
+
+## Session information
+
+```{r}
+devtools::session_info()
+```
+
+## 雑記
+
+- あと乾物重を測ったらデータが揃うので、そろそろ投稿
+- 今回からStanを使い始めた
+  - 解析->可視化->解釈の流れがシミュレーションで途切れるから捗らない
+  - マルチタスク適正をあげていきたい
