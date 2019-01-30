@@ -139,7 +139,7 @@ parsed_double &lt;- as_labeller(label_2row, label_parsed)
 <p><img src="../../../../post/2019-01-26-facet_label_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p><code>\n</code>で折り返すと変なことになる。</p>
 <pre class="r"><code>label_ng &lt;-
-  as_labeller(c(Sepal.Length = &quot;&#39;Another parameter\n&#39;*&#39;[&#39;*mu*&#39;m&#39;*&#39;]&#39;&quot;,
+  as_labeller(c(Sepal.Length = &quot;&#39;Another parameter\n&#39;*&#39;[\u00B5&#39;*&#39;m&#39;*&#39;]&#39;&quot;,
                 Sepal.Width = &quot;&#39;Some parameter\n&#39;*&#39;[\u00B5&#39;*mol~m^-2~s^-1*&#39;]&#39;&quot;),
               label_parsed)
 
@@ -234,7 +234,7 @@ FZWFDH+ArialMT                       TrueType          yes yes yes          44  
 ##  language (EN)                        
 ##  collate  en_US.UTF-8                 
 ##  tz       Australia/Sydney            
-##  date     2019-01-26                  
+##  date     2019-01-31                  
 ## 
 ##  package     * version  date       source                               
 ##  assertthat    0.2.0    2017-04-11 CRAN (R 3.5.0)                       
@@ -321,9 +321,11 @@ FZWFDH+ArialMT                       TrueType          yes yes yes          44  
 <h2>雑記</h2>
 <ul>
 <li>あと乾物重を測ったらデータが揃うので、そろそろ投稿</li>
-<li>今回からStanを使い始めた</li>
+<li>今回からStanを使い始めた
+<ul>
 <li>解析-&gt;可視化-&gt;解釈の流れがシミュレーションで途切れるから捗らない</li>
 <li>マルチタスク適正をあげていきたい</li>
+</ul></li>
 </ul>
 </div>
 </div>

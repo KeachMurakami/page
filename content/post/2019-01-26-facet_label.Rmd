@@ -71,7 +71,7 @@ df %>%
 
 ```{r}
 label_ng <-
-  as_labeller(c(Sepal.Length = "'Another parameter\n'*'['*mu*'m'*']'",
+  as_labeller(c(Sepal.Length = "'Another parameter\n'*'[\u00B5'*'m'*']'",
                 Sepal.Width = "'Some parameter\n'*'[\u00B5'*mol~m^-2~s^-1*']'"),
               label_parsed)
 
@@ -185,5 +185,5 @@ devtools::session_info()
 
 - あと乾物重を測ったらデータが揃うので、そろそろ投稿
 - 今回からStanを使い始めた
-  - 解析->可視化->解釈の流れがシミュレーションで途切れるから捗らない
-  - マルチタスク適正をあげていきたい
+    - 解析->可視化->解釈の流れがシミュレーションで途切れるから捗らない
+    - マルチタスク適正をあげていきたい
