@@ -7,7 +7,7 @@ categories: ["research-symposium"]
 3/27--3/29開催の日本農業気象学会2019年全国大会 (@静岡県立大学) に参加・発表を申し込みました。
 
 > “成熟した葉の光合成能力は強光順化応答を示さないのか”  
-> Keach Murakami and Wah Soon Chow
+> Keach Murakami and Wah Soon Chow  
 
 ANU滞在中にとったデータです。
 数日曇天が続いたあとに晴天が続く場合の光合成を最大化することについて考えています。
