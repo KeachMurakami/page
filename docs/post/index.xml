@@ -651,6 +651,15 @@
     </item>
     
     <item>
+      <title>複数層の3次元プロットを1枚の図で (R)</title>
+      <link>https://keachmurakami.github.io/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7-r/</link>
+      <pubDate>Wed, 10 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2016/02/10/%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE3%E6%AC%A1%E5%85%83%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%82%921%E6%9E%9A%E3%81%AE%E5%9B%B3%E3%81%A7-r/</guid>
+      <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;akima&amp;#39; ## Warning in library(package, lib.loc = lib.loc,</description>
+    </item>
+    
+    <item>
       <title>図のラベルを楽に付けたい (R)</title>
       <link>https://keachmurakami.github.io/2016/02/01/%E5%9B%B3%E3%81%AE%E3%83%A9%E3%83%99%E3%83%AB%E3%82%92%E6%A5%BD%E3%81%AB%E4%BB%98%E3%81%91%E3%81%9F%E3%81%84-r/</link>
       <pubDate>Mon, 01 Feb 2016 00:00:00 +0000</pubDate>
@@ -684,15 +693,6 @@
       
       <guid>https://keachmurakami.github.io/2001/01/01/%E8%BB%A2%E5%B1%85%E6%99%82%E3%81%AE%E3%82%84%E3%82%8B%E3%81%93%E3%81%A8%E3%83%AA%E3%82%B9%E3%83%88/</guid>
       <description>転出側での手続き 郵便局の転居届 銀行口座 不動産への連絡 1ヶ月前に連絡 役所 転出届け 印鑑登録 国民健康保険 ライフラインを止める 転入側での手続き 急ぎ 役</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://keachmurakami.github.io/1/01/01/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://keachmurakami.github.io/1/01/01/</guid>
-      <description>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;agricolae&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;slackr&amp;#39; ## Warning in library(package, lib.loc = lib.loc, character.only = TRUE, ## logical.return = TRUE, : there is no package called &amp;#39;akima&amp;#39; ## Warning in library(package, lib.loc = lib.loc,</description>
     </item>
     
   </channel>
