@@ -22,7 +22,7 @@ opts_chunk$set(echo = FALSE, warning = F, message = F)
 
 ### Affiliation
 
-2018.05--2019.01  
+2018.05--2019.02  
 Chow laboratory, Research School of Biology, The Australian National University, Australia
 
 2017.04--2020.03  

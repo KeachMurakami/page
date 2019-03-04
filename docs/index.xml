@@ -6,10 +6,19 @@
     <description>Recent content on A plant researcher</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Thu, 31 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 04 Mar 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://keachmurakami.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>論文投稿 (Regular_007, 1誌目)</title>
+      <link>https://keachmurakami.github.io/2019/03/04/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_007-1%E8%AA%8C%E7%9B%AE/</link>
+      <pubDate>Mon, 04 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/2019/03/04/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_007-1%E8%AA%8C%E7%9B%AE/</guid>
+      <description>成熟した葉も光環境の変化に対して柔軟に光合成能力を順化させている、という論文を投稿しました “Reversibility of photosynthetic capacity of mature pea leaves in response to re-</description>
+    </item>
     
     <item>
       <title>農業気象学会2019へ参加・発表の申込み</title>
@@ -759,13 +768,22 @@
     </item>
     
     <item>
+      <title></title>
+      <link>https://keachmurakami.github.io/publication_list/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://keachmurakami.github.io/publication_list/</guid>
+      <description>Last update: 2019-03-04 Submitted new article Journal Articles + -&amp;gt; Corresponding Author {(First | Corresponding) &amp;amp; Original} papers 007 Reversibility of photosynthetic capacity of mature pea leaves in response to re-exposure to high light after temporary shadingKeach Murakami+, R. Murray Badger, Wah Soon Chow+ NA (Inf) 006 Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem IIKeach Murakami+, Yasuomi Ibaraki</description>
+    </item>
+    
+    <item>
       <title> </title>
       <link>https://keachmurakami.github.io/cv_eng/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/cv_eng/</guid>
-      <description>Last update: 2019-01-31 
- Author Contact  Keach MURAKAMI (Ph.D.)  mail: keach.murakamigmail.com CV:     Affiliation 2018.05–2019.01
+      <description>Last update: 2019-03-04 
+ Author Contact  Keach MURAKAMI (Ph.D.)  mail: keach.murakamigmail.com CV:     Affiliation 2018.05–2019.02
 Chow laboratory, Research School of Biology, The Australian National University, Australia
 2017.04–2020.03
 Graduate School of Sciences and Technology for Innovation, Yamaguchi University, Japan
@@ -778,7 +796,7 @@ Graduate School of Sciences and Technology for Innovation, Yamaguchi University,
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/cv_jpn/</guid>
-      <description>Last update: 2018-08-28 人物 著者 村上（むらかみ） 貴一（きいち） 博士 (農学); Keach MURAKAMI (Ph.D.) mail: keach.murakamigmail.com CV: 所属 2018.05–2019.01 The Australian National UniversityのChow</description>
+      <description>Last update: 2019-03-04 人物 著者 村上（むらかみ） 貴一（きいち） 博士 (農学); Keach MURAKAMI (Ph.D.) mail: keach.murakamigmail.com CV: 所属 2018.05–2019.02 The Australian National UniversityのChow</description>
     </item>
     
     <item>
@@ -791,15 +809,6 @@ Graduate School of Sciences and Technology for Innovation, Yamaguchi University,
  in detail
  in detail
  </description>
-    </item>
-    
-    <item>
-      <title> </title>
-      <link>https://keachmurakami.github.io/publication_list/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://keachmurakami.github.io/publication_list/</guid>
-      <description>Last update: 2019-02-07 Add link to self-archive Journal Articles + -&amp;gt; Corresponding Author {(First | Corresponding) &amp;amp; Original} papers 006 Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem IIKeach Murakami+, Yasuomi Ibaraki Physiologia Plantarum (2019) 005 A mathematical model of photosynthetic electron transport in response to light spectrum based on excitation energy distributed to photosystemsKeach Murakami+, Ryo Matsuda+, Kazuhiro</description>
     </item>
     
   </channel>

@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://keachmurakami.github.io/2019/03/04/%E8%AB%96%E6%96%87%E6%8A%95%E7%A8%BF-regular_007-1%E8%AA%8C%E7%9B%AE/</loc>
+    <lastmod>2019-03-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/2019/01/31/%E8%BE%B2%E6%A5%AD%E6%B0%97%E8%B1%A1%E5%AD%A6%E4%BC%9A2019%E3%81%B8%E5%8F%82%E5%8A%A0%E7%99%BA%E8%A1%A8%E3%81%AE%E7%94%B3%E8%BE%BC%E3%81%BF/</loc>
     <lastmod>2019-01-31T00:00:00+00:00</lastmod>
   </url>
@@ -412,6 +417,10 @@
   </url>
   
   <url>
+    <loc>https://keachmurakami.github.io/publication_list/</loc>
+  </url>
+  
+  <url>
     <loc>https://keachmurakami.github.io/cv_eng/</loc>
   </url>
   
@@ -424,12 +433,8 @@
   </url>
   
   <url>
-    <loc>https://keachmurakami.github.io/publication_list/</loc>
-  </url>
-  
-  <url>
     <loc>https://keachmurakami.github.io/</loc>
-    <lastmod>2019-01-31T00:00:00+00:00</lastmod>
+    <lastmod>2019-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -523,7 +528,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/post/</loc>
-    <lastmod>2019-01-31T00:00:00+00:00</lastmod>
+    <lastmod>2019-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -547,7 +552,7 @@
   
   <url>
     <loc>https://keachmurakami.github.io/categories/research-journal/</loc>
-    <lastmod>2018-04-24T00:00:00+00:00</lastmod>
+    <lastmod>2019-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
