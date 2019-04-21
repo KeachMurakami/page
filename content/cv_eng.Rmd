@@ -22,11 +22,8 @@ opts_chunk$set(echo = FALSE, warning = F, message = F)
 
 ### Affiliation
 
-2018.05--2019.02  
-Chow laboratory, Research School of Biology, The Australian National University, Australia
-
-2017.04--2020.03  
-Graduate School of Sciences and Technology for Innovation, Yamaguchi University, Japan
+2019.04--
+National Agriculture and Food Research Organization (NARO), Hokkaido Agricultural Research Center (HARC)
 
 ### Education
 
@@ -58,13 +55,16 @@ data.frame(
 
 ```{r Professional_Experience, echo = F}
 data.frame(
-  Year = c("2014.04--2017.03", "2017.04--2020.03"),
-  Category = c("JSPS Research Fellow (DC1)", "JSPS Postdoctoral Research Fellow (PD)"),
+  Year = c("2014.04--2017.03", "2017.04--2019.03", "2018.05--2019.02"),
+  Category = c("JSPS Research Fellow (DC1)", "JSPS Postdoctoral Research Fellow (PD)",
+               "Visiting Fellow"),
   Affiliation =
     c("Graduate School of Agricultural and Life Sciences, The University of Tokyo, Japan",
-      "Graduate School of Sciences and Technology for Innovation, Yamaguchi University, Japan"),
-  Advisor = c("Prof: Kazuhiro Fujiwara",
-              "Prof: Yasuomi Ibaraki")
+      "Graduate School of Sciences and Technology for Innovation, Yamaguchi University, Japan",
+      "Research School of Biology, The Autsralian National University, Australia"),
+  Advisor = c("Prof. Kazuhiro Fujiwara",
+              "Prof. Yasuomi Ibaraki",
+              "Prof. Wah Soon Chow")
 ) %>%
   kable
 ```
@@ -73,7 +73,7 @@ data.frame(
 
 ```{r grant, echo = F}
 data.frame(
-  Year = c("2014.04--2017.03", "2017.04--2020.03"),
+  Year = c("2014.04--2017.03", "2017.04--2019.03"),
   Title = c("Estimation of photosynthetic electron transport rate from light spectrum based on photochemical reactions at photosystems",
             "Development of a state-space model of leaf photosynthetic characteristics for prediction and regulation of whole-plant photosynthesis"),
   Category = c("Grant-in-Aid for JSPS Fellows (DC1)",
@@ -111,4 +111,4 @@ data.frame(
     - Japanese > [`r icon::fa("r-project")`](https://www.r-project.org/) >> English
 - Activities
     - `r icon::fa("futbol")`
-    - `r icon::fa("bicycle")` (Fuji -> TREK)
+    - `r icon::fa("bicycle")`
