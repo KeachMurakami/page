@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css">
 
 <div style="text-align: right; font-size: .7em">
-<FONT color="grey">Last update: `r lubridate::today()`  <br>Accepted</FONT>
+<FONT color="grey">Last update: `r lubridate::today()`  <br>Presentation +1</FONT>
 </div>
 
 ```{r functions, echo = F, message = F, warning = F}
@@ -236,7 +236,8 @@ talks <-
                 from = case_when(
                   time < "2017-03-31" ~ "Univ._Tokyo",
                   time < "2018-05-31" ~ "Yamaguchi_Univ.",
-                  time < "2019-01-31" ~ "ANU"
+                  time < "2019-01-31" ~ "ANU",
+                  TRUE ~ "NARO",
                 ),
                 short_symposium = paste0(type, " in ", short_symposium, "\\@", venue),
                 symposium = paste0(type, " in ", symposium, "\\@", venue),
@@ -342,17 +343,20 @@ if(1 == 0){
     write_csv("~/Dropbox/page/data/misc/symposium_addresses.csv")
 
 geos_from <-
-  list(Univ._Tokyo = c(139.762, 35.71268),
-       Yamaguchi_Univ. = c(131.4691, 34.14923),
-       ANU = c(149.1185, -35.2777))
+  list(ANU = c(149.1185, -35.2777),
+       `HARC/NARO` = c(141.411572, 43.008409),
+       Univ._Tokyo = c(139.762, 35.71268),
+       Yamaguchi_Univ. = c(131.4691, 34.14923)
+       )
 
 work_locations <-
   geos_from %>%
   map_df(~ tibble(lon = .[1], lat = .[2]), .id = "from") %>%
   mutate(from = str_replace(from, "_", " "),
-         span = c("April/2008&ndash;March/2017",
-                  "April/2017&ndash;March/2020",
-                  "May/2018&ndash;Feb/2019"),
+         span = c("May/2018&ndash;Feb/2019",
+                  "April/2019&ndash;",
+                  "April/2008&ndash;March/2017",
+                  "April/2017&ndash;March/2019"),
          from = str_c(from, "<br>", span))
 
 
@@ -372,11 +376,12 @@ flight_lines <-
   })
 
 color_set <-
-  c("orange", "cyan", "magenta")
+  c("orange", "cyan", "magenta", "yellow")
 color_set_map <-
   list(A = "<FONT color='{color_set[1]}'>ANU</FONT>",
-       B = "<FONT color='{color_set[2]}'>Univ. Tokyo</FONT>",
-       C = "<FONT color='{color_set[3]}'>Yamaguchi Univ.</FONT>")
+       B = "<FONT color='{color_set[2]}'>HARC/NARO</FONT>",
+       C = "<FONT color='{color_set[3]}'>Univ. Tokyo</FONT>",
+       D = "<FONT color='{color_set[4]}'>Yamaguchi Univ.</FONT>")
 
 add_flight <-
   function(map, flight, ...){
@@ -394,33 +399,31 @@ symposium_map <-
   add_flight(flight_lines[[1]], color = color_set[1], group = color_set_map[[1]]) %>%
   add_flight(flight_lines[[2]], color = color_set[2], group = color_set_map[[2]]) %>%
   add_flight(flight_lines[[3]], color = color_set[3], group = color_set_map[[3]]) %>%
-  addCircleMarkers(data = work_locations,
-                   lng = ~lon, lat = ~lat,
-                   stroke = F, radius = 8.5, fillOpacity = .05, color = "white") %>%
-  addCircleMarkers(data = work_locations,
-                   lng = ~lon, lat = ~lat,
-                   stroke = F, radius = 8, fillOpacity = .10, color = "white") %>%
-  addCircleMarkers(data = work_locations,
-                   lng = ~lon, lat = ~lat,
-                   stroke = F, radius = 7.5, fillOpacity = .25, color = "white") %>%
-  addCircleMarkers(data = work_locations,
-                   lng = ~lon, lat = ~lat, popup = ~ from,
-                   stroke = F, radius = 7, fillOpacity = 1, color = "black") %>%
-
+  add_flight(flight_lines[[4]], color = color_set[4], group = color_set_map[[4]]) %>%
   addCircleMarkers(data = filter(geos, from == "ANU"),
                    lng = ~lon, lat = ~lat, popup = ~ short_symposium,
-                   stroke = F, radius = 5, fillOpacity = .5,
+                   stroke = F, radius = 3, fillOpacity = .75,
                    color = color_set[1], group = color_set_map[[1]]) %>%
+  addCircleMarkers(data = filter(geos, from == "HARC"),
+                   lng = ~lon, lat = ~lat, popup = ~ short_symposium,
+                   stroke = F, radius = 3, fillOpacity = .75,
+                   color = color_set[2], group = color_set_map[[2]]) %>%
   addCircleMarkers(data = filter(geos, from == "Univ._Tokyo"),
                    lng = ~lon, lat = ~lat, popup = ~ short_symposium,
-                   stroke = F, radius = 5, fillOpacity = .5,
-                   color = color_set[2], group = color_set_map[[2]]) %>%
+                   stroke = F, radius = 3, fillOpacity = .75,
+                   color = color_set[3], group = color_set_map[[3]]) %>%
   addCircleMarkers(data = filter(geos, from == "Yamaguchi_Univ."),
                    lng = ~lon, lat = ~lat, popup = ~ short_symposium,
-                   stroke = F, radius = 5, fillOpacity = .5,
-                   color = color_set[3], group = color_set_map[[3]]) %>%
+                   stroke = F, radius = 3, fillOpacity = .75,
+                   color = color_set[4], group = color_set_map[[4]]) %>%
+  addCircleMarkers(data = work_locations,
+                   lng = ~lon, lat = ~lat,
+                   stroke = F, radius = 4, fillOpacity = 15, color = color_set) %>%
+  addCircleMarkers(data = work_locations,
+                   lng = ~lon, lat = ~lat, popup = ~ from,
+                   stroke = F, radius = 3, fillOpacity = 1, color = "white") %>%
   addLayersControl(
-    overlayGroups = c(color_set_map[[1]], color_set_map[[2]], color_set_map[[3]]),
+    overlayGroups = c(color_set_map[[1]], color_set_map[[2]], color_set_map[[3]], color_set_map[[4]]),
     options = layersControlOptions(collapsed = T)
   )
 
