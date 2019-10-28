@@ -11,12 +11,10 @@ title: " "
     - 人数がある程度予想できるといいのですが...
     - 店・日程決め打ちなら座席に増減が効くところ
     - ここらへんは昨年幹事 (あやかさん & ふじたさん) にも聞いてみたい
-- ビンゴ大会
+- ビンゴ大会 -> くじ引き大会？
     - 賞品選び
         - 時間かかりそうなので急ぐ
         - 周りの皆さんに積極的に振りたい
-    - ビンゴセット的なやつがあると楽ちん
-        - 誰か持ってそうなので聞いてみる (→ 急がないでも大丈夫)
 
 ## おみせ候補
 
@@ -68,6 +66,18 @@ unknown <-
                   "和。2h 3000円, 焼き鳥・串焼き系の食べ放題、22人個室。レビューを見るに対応は早いらしい。")) %>%
   mutate(name = paste0(name, " <a href=", url, " target='_top'>web</a><br>", memo))
 
+mame <-
+  tibble(name = c("梅酒 焼酎だいにんぐ かくれんぼ",
+                  "焼肉バル BAR carne alla griglia（カルネアラグリーリア）"),
+         station = c("すすきの", "すすきの"),
+         lat = c(43.058125, 43.056616),
+         lon = c(141.357314, 141.354360),
+         class = c("b", "b"),
+         url = c("https://www.hotpepper.jp/strJ000728152/",
+                 "https://www.hotpepper.jp/strJ001018019/"),
+         memo = c("和。2h 3500円~, 梅酒&焼酎が豊富。テーブル席で45人。",
+                  "西。2h 3500円~, 内装がおしゃれ〜。パーティ仕様で最大40人。")) %>%
+  mutate(name = paste0(name, " <a href=", url, " target='_top'>web</a><br>", memo))
 
 color_set <-
   c("orange", "red", "darkred")
@@ -77,6 +87,7 @@ color_set_map <-
        "<FONT color='darkred'>4000円</FONT>")
 
 
+icons()
 
 add_group_marker <-
   function(.map, tbl, is_known){
@@ -103,6 +114,7 @@ bounenkai <-
   # addProviderTiles(providers$Thunderforest.Transport) %>%
   add_group_marker(known, is_known = "pink") %>%
   add_group_marker(unknown, is_known = "black") %>%
+  add_group_marker(mame, is_known = "black") %>%
   # add_group_marker(data_source, cluster = 2) %>%
   # addCircleMarkers(data = filter(data_source, class == "a"),
   #                  lng = ~lon, lat = ~lat, popup = ~ name,
@@ -130,8 +142,8 @@ saveWidget(bounenkai, "bounenkai_map.html", selfcontained = T)
 setwd("..")
 ```
 
-```{r, results="asis"}
-bind_rows(known, unknown) %>%
-  transmute(店名 = name, 最寄り = station) %>%
-  DT::datatable(escape = FALSE)
+```{r, results="asis", echo = FALSE}
+bind_rows(mame, known, unknown) %>%
+  transmute(店名など = name, 最寄り = station) %>%
+  datatable(escape = FALSE, rownames = FALSE)
 ```
