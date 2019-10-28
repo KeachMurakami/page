@@ -1,0 +1,126 @@
+---
+title: " "
+---
+
+# Azzurri忘年会\@さっぽろ (2019)
+
+## 懸案
+
+### 予算まわり
+
+- 20000–30000円
+- 1次会は3000円/3500円/4000円
+- ビンゴ？
+    - するかしないか
+    - ビンゴセット的なやつ (誰かもってそう)
+    - 賞品選び
+        - 振りたい
+- 昨年幹事 (あやかさんとふじたさん) に聞きたい
+
+
+<iframe seamless src="../leaflet/bounenkai_map/index.html" width="800px" height="1000px"></iframe>
+
+```{r, include = FALSE, echo = FALSE}
+library(tidyverse)
+library(leaflet)
+library(htmlwidgets)
+
+known <-
+  tibble(name = c("蕎麦切り 黒むぎ",
+                  "Bistro CinqCes ビストロサンクシー",
+                  "金丸農園 野菜居酒屋ルンゴカーニバル"),
+         lat = c(43.070994, 43.057606, 43.069536),
+         lon = c(141.348435, 141.348112,  141.348381),
+         class = c("c", "b", "b"),
+         url = c("https://tabelog.com/hokkaido/A0101/A010101/1041095/",
+                 "https://tabelog.com/hokkaido/A0101/A010103/1007160/",
+                 "https://tabelog.com/hokkaido/A0101/A010101/1039619/"),
+         memo = c("和。2h 4000円~, 非常によかったが落ち着いているので気が引ける。",
+                  "仏。2h 3500~4000円, ワインが充実、部分的に貸し切って20人くらいで利用した。",
+                  "欧？2h 3500~4000円, 誕生日ケーキサービスなどパリピ感があった。")) %>%
+  mutate(name = paste0(name, " <a href=", url, ">web</a><br>", memo))
+unknown <-
+  tibble(name = c("カジュアル スパニッシュイタリアン エスパニョール",
+                  "肉バル ミートボーイN.Y",
+                  "Oyster&Steak DINER es",
+                  "イタリア居酒屋Bocco",
+                  "とりっくす",
+                  "お鍋と炭焼き居酒屋  URARA"),
+         lat = c(43.066069, 43.067035, 43.066997, 43.053978, 43.056776, 43.056192),
+         lon = c(141.352930, 141.353231, 141.353188, 141.355010, 141.354247, 141.352114),
+         class = c("a", "a", "b", "a", "b", "a"),
+         url = c("https://www.hotpepper.jp/strJ000747942/",
+                 "https://www.hotpepper.jp/strJ001009952/",
+                 "https://www.hotpepper.jp/strJ000989880/",
+                 "https://www.hotpepper.jp/strJ000707076/",
+                 "https://www.hotpepper.jp/strJ000999523/",
+                 "https://www.hotpepper.jp/strJ000717037/"),
+         memo = c("西・伊。2h 3100円~, 20人、30人個室。店名が迷走している。アルコールいまいちかも。",
+                  "米？2h 3000円~, チーズフォンデュ。30人テーブル。",
+                  "欧？2h 3600~4000円, フロアで複数テーブルに分散。やや品目少ないがアルコール揃いがいい。",
+                  "伊。2h 3000円~, こじんまりっぽい、テーブル18人、個室36人。",
+                  "博多。2h 3500円, 半個室24人テーブル。非常に当たり障りがない。",
+                  "和。2h 3000円, 焼き鳥・串焼き系の食べ放題、22人個室。レビューを見るに対応は早いらしい。")) %>%
+  mutate(name = paste0(name, " <a href=", url, ">web</a><br>", memo))
+
+
+color_set <-
+  c("orange", "red", "darkred")
+color_set_map <-
+  list("<FONT color='orange'>3000円</FONT>",
+       "<FONT color='red'>3500円</FONT>",
+       "<FONT color='darkred'>4000円</FONT>")
+
+
+
+add_group_marker <-
+  function(.map, tbl, is_known){
+    .map %>%
+    addCircleMarkers(data = filter(tbl, class == "a"), fillColor = is_known, fillOpacity = .75,
+                     clusterId = 1, clusterOptions = markerClusterOptions(),
+                     lng = ~lon, lat = ~lat, popup = ~ name, radius = 5,
+                     color = color_set[1], group = color_set_map[[1]]) %>%
+    addCircleMarkers(data = filter(tbl, class == "b"), fillColor = is_known, fillOpacity = .75,
+                     clusterId = 1, clusterOptions = markerClusterOptions(),
+                     lng = ~lon, lat = ~lat, popup = ~ name, radius = 5,
+                     color = color_set[2], group = color_set_map[[2]]) %>%
+    addCircleMarkers(data = filter(tbl, class == "c"), fillColor = is_known, fillOpacity = .75,
+                     clusterId = 1, clusterOptions = markerClusterOptions(),
+                     lng = ~lon, lat = ~lat, popup = ~ name, radius = 5,
+                     color = color_set[3], group = color_set_map[[3]]) %>%
+    return()
+  }
+
+
+bounenkai <-
+  leaflet() %>%
+  addProviderTiles(providers$CartoDB) %>%
+  # addProviderTiles(providers$Thunderforest.Transport) %>%
+  add_group_marker(known, is_known = "pink") %>%
+  add_group_marker(unknown, is_known = "black") %>%
+  # add_group_marker(data_source, cluster = 2) %>%
+  # addCircleMarkers(data = filter(data_source, class == "a"),
+  #                  lng = ~lon, lat = ~lat, popup = ~ name,
+  #                  color = color_set[1], group = color_set_map[[1]]) %>%
+  # addCircleMarkers(data = filter(data_source, class == "b"),
+  #                  lng = ~lon, lat = ~lat, popup = ~ name,
+  #                  color = color_set[2], group = color_set_map[[2]]) %>%
+  # addCircleMarkers(data = filter(data_source, class == "c"),
+  #                  lng = ~lon, lat = ~lat, popup = ~ name,
+  #                  color = color_set[3], group = color_set_map[[3]]) %>%
+  addLayersControl(
+    overlayGroups = c(color_set_map[[1]], color_set_map[[2]], color_set_map[[3]]),
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  addLegend("topright", 
+            colors =c("pink","black"),
+            labels= c("ある", "ない"),
+            title= "行ったことが...", opacity = 1)
+
+bounenkai
+
+dir.create("leaflet", showWarnings = FALSE)
+setwd("leaflet")
+saveWidget(bounenkai, "bounenkai_map.html", selfcontained = T)
+setwd("..")
+```
