@@ -18,6 +18,8 @@ title: " "
     - ビンゴセット的なやつがあると楽ちん
         - 誰か持ってそうなので聞いてみる (→ 急がないでも大丈夫)
 
+## おみせ候補
+
 <iframe seamless src="../leaflet/bounenkai_map/index.html" width="800px" height="1000px"></iframe>
 
 ```{r, include = FALSE, echo = FALSE}
@@ -38,7 +40,7 @@ known <-
          memo = c("和。2h 4000円~, 非常によかったが落ち着いているので気が引ける。",
                   "仏。2h 3500~4000円, ワインが充実、部分的に貸し切って20人くらいで利用した。",
                   "欧？2h 3500~4000円, 誕生日ケーキサービスなどパリピ感があった。")) %>%
-  mutate(name = paste0(name, " <a href=", url, ">web</a><br>", memo))
+  mutate(name = paste0(name, " <a href=", url, " target='_top'>web</a><br>", memo))
 unknown <-
   tibble(name = c("カジュアル スパニッシュイタリアン エスパニョール",
                   "肉バル ミートボーイN.Y",
@@ -61,7 +63,7 @@ unknown <-
                   "伊。2h 3000円~, こじんまりっぽい、テーブル18人、個室36人。",
                   "博多。2h 3500円, 半個室24人テーブル。非常に当たり障りがない。",
                   "和。2h 3000円, 焼き鳥・串焼き系の食べ放題、22人個室。レビューを見るに対応は早いらしい。")) %>%
-  mutate(name = paste0(name, " <a href=", url, ">web</a><br>", memo))
+  mutate(name = paste0(name, " <a href=", url, " target='_top'>web</a><br>", memo))
 
 
 color_set <-
