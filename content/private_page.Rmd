@@ -20,17 +20,19 @@ title: " "
 
 ## おみせ候補
 
-<iframe seamless src="../leaflet/bounenkai_map/index.html" width="800px" height="1000px"></iframe>
+<iframe seamless src="../leaflet/bounenkai_map/index.html" width="95%" height="400px"></iframe>
 
 ```{r, include = FALSE, echo = FALSE}
 library(tidyverse)
 library(leaflet)
 library(htmlwidgets)
+library(DT)
 
 known <-
   tibble(name = c("蕎麦切り 黒むぎ",
                   "Bistro CinqCes ビストロサンクシー",
                   "金丸農園 野菜居酒屋ルンゴカーニバル"),
+         station = c("JR札幌", "西8丁目", "JR札幌"),
          lat = c(43.070994, 43.057606, 43.069536),
          lon = c(141.348435, 141.348112,  141.348381),
          class = c("c", "b", "b"),
@@ -48,6 +50,7 @@ unknown <-
                   "イタリア居酒屋Bocco",
                   "とりっくす",
                   "お鍋と炭焼き居酒屋  URARA"),
+         station = c("JR札幌/大通り", "JR札幌/大通り", "JR札幌/大通り", "すすきの", "すすきの", "すすきの"),
          lat = c(43.066069, 43.067035, 43.066997, 43.053978, 43.056776, 43.056192),
          lon = c(141.352930, 141.353231, 141.353188, 141.355010, 141.354247, 141.352114),
          class = c("a", "a", "b", "a", "b", "a"),
@@ -125,4 +128,10 @@ dir.create("leaflet", showWarnings = FALSE)
 setwd("leaflet")
 saveWidget(bounenkai, "bounenkai_map.html", selfcontained = T)
 setwd("..")
+```
+
+```{r, results="asis"}
+bind_rows(known, unknown) %>%
+  transmute(店名 = name, 最寄り = station) %>%
+  DT::datatable(escape = FALSE)
 ```
