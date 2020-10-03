@@ -107,7 +107,7 @@ setwd("..")
 ```{r, results="asis", echo = FALSE}
 restaurant %>%
   transmute(` ` = name, 駅 = station, 貸切 = style, 定員 = capacity) %>%
-  datatable(escape = FALSE, rownames = FALSE, options = list(dom = 'tp'))
+  datatable(escape = FALSE, rownames = FALSE, options = list(dom = 'tp', pageLength = 30))
 ```
 
 ## ２次会
