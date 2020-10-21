@@ -719,7 +719,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/leaflet/bounenkai_map/</guid>
-      <description>leaflet {&#34;x&#34;:{&#34;options&#34;:{&#34;crs&#34;:{&#34;crsClass&#34;:&#34;L.CRS.EPSG3857&#34;,&#34;code&#34;:null,&#34;proj</description>
+      <description>leaflet (function() { // If window.HTMLWidgets is already defined, then use it; otherwise create a // new object. This allows preceding code to set options that affect the // initialization process (though none currently exist). window.HTMLWidgets = window.HTMLWidgets || {}; // See if we&#39;re running in a viewer pane. If not, we&#39;re in a web browser. var viewerMode = window.HTMLWidgets.viewerMode = /\bviewer_pane=1\b/.test(window.location); // See if we&#39;re running in Shiny mode.</description>
     </item>
     
     <item>
@@ -782,7 +782,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/publication_list/</guid>
-      <description>Last update: 2019-10-28 Presentation +1 Journal Articles + -&amp;gt; Corresponding Author * -&amp;gt; Equally contributed {(First | Corresponding) &amp;amp; Original} papers 006 Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship with the photochemical yield of photosystem IIKeach Murakami+, Yasuomi Ibaraki Physiologia Plantarum (2019) 005 A mathematical model of photosynthetic electron transport in response to light spectrum based on excitation energy distributed to photosystemsKeach Murakami+, Ryo</description>
+      <description>Last update: 2020-10-21 Publication: 1 accept and 1 submit Journal Articles + -&amp;gt; Corresponding Author * -&amp;gt; Equally contributed {(First | Corresponding) &amp;amp; Original} papers 007 Bias correction for spatially interpolated daily mean air temperature during winter in eastern Hokkaido using multimodal machine learningKeach Murakami+, Tomoyoshi Hirota, Seiji Shimoda, Tomotsugu Yazaki Journal of Agricultural Meteorology (2020) 006 Time course of the photochemical reflectance index (PRI) during photosynthetic induction: its relationship</description>
     </item>
     
     <item>
@@ -823,7 +823,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://keachmurakami.github.io/private_page/</guid>
-      <description>Azzurri忘年会@さっぽろ (2019) タイムライン 11/3: 予約状況を確認 (まだ大丈夫そう、との判断) 11/4: フットサルで１次アナウンス 11/7: Labolaアンケート</description>
+      <description>Azzurri忘年会@さっぽろ (2019) １次会+２次会で6500円なイメージ 席はランダムにするといいかも 20-35人までありうる、難しいですね 集計は</description>
     </item>
     
   </channel>
