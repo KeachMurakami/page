@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css">
 
 <div style="text-align: right; font-size: .7em">
-<FONT color="grey">Last update: `r lubridate::today()`  <br>Presentation +1</FONT>
+<FONT color="grey">Last update: `r lubridate::today()`  <br>Publication: 1 accept and 1 submit</FONT>
 </div>
 
 ```{r functions, echo = F, message = F, warning = F}
@@ -25,7 +25,7 @@ unnest_braces <-
     if(sum(nested_index) == 0){
       return(.tbl)
     } else {
-      .tbl %>%
+      .tbl %>% 
         tidyr::extract(string, into = c("pre", "inner", "post"), regex = "([^\\{]*\\{{1})([^\\{]*\\{{1}[^\\{]*?\\})(.*)") %>%
         transmute(id, string = paste(pre, inner, post, sep = ":::")) %>%
         separate_rows(string, sep = ":::") %>%
@@ -260,11 +260,11 @@ biblio <-
     papers3 = papers$paper_coming %>%
       kable_styler(digit = 2, sub = journal, `  ` = title),
     books = books %>%
-      kable_styler(digit = 2, sub = booktitle, ` `, ` ` = title),
+      kable_styler(digit = 2, sub = booktitle, ` ` = title),
     talks1 = talks$talks_intl %>%
-      kable_styler(digit = 3, sub = short_symposium, ` `, `  ` = title),
+      kable_styler(digit = 3, sub = short_symposium, `  ` = title),
     talks2 = talks$talks_domestic %>%
-      kable_styler(digit = 3, sub = symposium, ` `, `  ` = title)
+      kable_styler(digit = 3, sub = symposium, `  ` = title)
   )
 ```
 
